@@ -34,34 +34,10 @@ app.get("/GTSAttempts", async (req: Request, res: Response) => {
       clearInterval(intervalID); // очистка интервала отправки данных
       res.end();
     });
-    // const dynamicStream = new Readable({
-    //   read() {
-    //     const intervalID = setInterval(() => {
-    //       const data = new Date();
-    //       this.push(`data: ${JSON.stringify(data)}\n\n`);
-    //     }, 1000);
-    //     setTimeout(() => {
-    //       clearInterval(intervalID);
-    //       this.push(null); // signals end of the stream
-    //       console.log("stream closed");
-    //     }, 5000);
-    //   },
-    // });
-    // dynamicStream.pipe(res);
   } catch (error) {
     console.log(error);
     res.status(500).send("Server error");
   }
-  // return new Response(responseStream.readable, {
-  //   headers: {
-  //     "Access-Control-Allow-Origin": "*",
-  //     Connection: "keep-alive",
-  //     "X-Accel-Buffering": "no",
-  //     "Content-Type": "text/event-stream; charset=utf-8",
-  //     "Cache-Control": "no-cache, no-transform",
-  //     "Content-Encoding": "none",
-  //   },
-  // });
 });
 
 app.get("/", (req: Request, res: Response) => {
