@@ -12,25 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const dotenv_1 = __importDefault(require("dotenv"));
-const MongoConnect_1 = require("./libs/MongoConnect");
-dotenv_1.default.config();
-const app = (0, express_1.default)();
-const port = process.env.PORT || 3000;
-console.log("start");
-app.get("/GTSAttempts", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send("GTSAttempts + TypeScript Server");
-}));
-app.get("/", (req, res) => {
-    res.send("Express + TypeScript Server");
+exports.connectMongoDB = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
+const connectMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    if (mongoose_1.default.connection.readyState === 1) {
+        return mongoose_1.default.connection.asPromise();
+    }
+    return yield mongoose_1.default.connect(`mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@n1-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017,n2-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017/bnjpnqkq0agsple?replicaSet=rs0`);
 });
-app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield (0, MongoConnect_1.connectMongoDB)();
-        console.log(`[server]: Server is running at http://localhost:${port} and connect to database`);
-    }
-    catch (error) {
-        console.log(error);
-    }
-}));
+exports.connectMongoDB = connectMongoDB;

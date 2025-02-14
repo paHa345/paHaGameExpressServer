@@ -1,15 +1,79 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
+import { connectMongoDB } from "../libs/MongoConnect";
+import GTSGameAttempt from "../models/GTSGameAttemptModel";
+import { Readable } from "stream";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
+console.log("start");
+app.get("/GTSAttempts", async (req: Request, res: Response) => {
+  try {
+    const headers = {
+      // Тип соединения 'text/event-stream' необходим для SSE
+      "Content-Type": "text/event-stream",
+      "Access-Control-Allow-Origin": "*",
+      // Отставляем соединение открытым 'keep-alive'
+      Connection: "keep-alive",
+      "Cache-Control": "no-cache",
+    };
+    // Записываем в заголовок статус успешного ответа 200
+    res.writeHead(200, headers);
+
+    const sendData = () => {
+      const data = new Date();
+      console.log(data);
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    };
+    const intervalID = setInterval(sendData, 1000);
+
+    req.on("close", () => {
+      console.log("client disconnected");
+      clearInterval(intervalID); // очистка интервала отправки данных
+      res.end();
+    });
+    // const dynamicStream = new Readable({
+    //   read() {
+    //     const intervalID = setInterval(() => {
+    //       const data = new Date();
+    //       this.push(`data: ${JSON.stringify(data)}\n\n`);
+    //     }, 1000);
+    //     setTimeout(() => {
+    //       clearInterval(intervalID);
+    //       this.push(null); // signals end of the stream
+    //       console.log("stream closed");
+    //     }, 5000);
+    //   },
+    // });
+    // dynamicStream.pipe(res);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server error");
+  }
+  // return new Response(responseStream.readable, {
+  //   headers: {
+  //     "Access-Control-Allow-Origin": "*",
+  //     Connection: "keep-alive",
+  //     "X-Accel-Buffering": "no",
+  //     "Content-Type": "text/event-stream; charset=utf-8",
+  //     "Cache-Control": "no-cache, no-transform",
+  //     "Content-Encoding": "none",
+  //   },
+  // });
+});
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+app.listen(port, async () => {
+  try {
+    await connectMongoDB();
+
+    console.log(`[server]: Server is running at http://localhost:${port} and connect to database`);
+  } catch (error) {
+    console.log(error);
+  }
 });
