@@ -19,7 +19,6 @@ app.get("/GTSAttempts", async (req: Request, res: Response) => {
       Connection: "keep-alive",
       "Cache-Control": "no-cache",
     };
-    // Записываем в заголовок статус успешного ответа 200
     res.writeHead(200, headers);
 
     const sendData = () => {
