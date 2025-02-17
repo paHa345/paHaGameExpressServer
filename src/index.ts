@@ -9,7 +9,7 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 console.log("start");
-app.get("/GTSAttempts", async (req: Request, res: Response) => {
+app.get("/GTSAttempts/:attemptID", async (req: Request, res: Response) => {
   try {
     const headers = {
       // Тип соединения 'text/event-stream' необходим для SSE
@@ -21,14 +21,29 @@ app.get("/GTSAttempts", async (req: Request, res: Response) => {
     };
     res.writeHead(200, headers);
 
-    const sendData = () => {
-      const data = new Date();
-      console.log(data);
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    console.log(req.params.attemptID);
+
+    const sendData = async () => {
+      const currentGTSGameAttemptTime = await GTSGameAttempt.findById(
+        "679affc8d6353d1c90440870"
+      ).select("timeRemained");
+
+      const currentTime = JSON.parse(JSON.stringify(currentGTSGameAttemptTime.timeRemained));
+      const updatedGTSGameAttempt = await GTSGameAttempt.findByIdAndUpdate(
+        "679affc8d6353d1c90440870",
+        {
+          $set: { timeRemained: currentTime - 10 },
+        },
+        {
+          new: true,
+        }
+      );
+      res.write(`attemptTimeRemained: ${JSON.stringify(updatedGTSGameAttempt.timeRemained)}\n\n`);
     };
     const intervalID = setInterval(sendData, 1000);
 
     req.on("close", () => {
+      res.write(`stopAttempt: ${true}\n\n`);
       console.log("client disconnected");
       clearInterval(intervalID); // очистка интервала отправки данных
       res.end();
