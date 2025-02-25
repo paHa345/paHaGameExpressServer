@@ -33,10 +33,10 @@ app.get("/GTSAttempts/:attemptID", (req, res) => __awaiter(void 0, void 0, void 
         res.writeHead(200, headers);
         console.log(req.params.attemptID);
         const sendData = () => __awaiter(void 0, void 0, void 0, function* () {
-            const currentGTSGameAttemptTime = yield GTSGameAttemptModel_1.default.findById("679affc8d6353d1c90440870").select("timeRemained");
+            const currentGTSGameAttemptTime = yield GTSGameAttemptModel_1.default.findById(req.params.attemptID).select("timeRemained");
             const currentTime = JSON.parse(JSON.stringify(currentGTSGameAttemptTime.timeRemained));
-            const updatedGTSGameAttempt = yield GTSGameAttemptModel_1.default.findByIdAndUpdate("679affc8d6353d1c90440870", {
-                $set: { timeRemained: currentTime - 10 },
+            const updatedGTSGameAttempt = yield GTSGameAttemptModel_1.default.findByIdAndUpdate(req.params.attemptID, {
+                $set: { timeRemained: currentTime - 1 },
             }, {
                 new: true,
             });

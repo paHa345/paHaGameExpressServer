@@ -24,15 +24,15 @@ app.get("/GTSAttempts/:attemptID", async (req: Request, res: Response) => {
     console.log(req.params.attemptID);
 
     const sendData = async () => {
-      const currentGTSGameAttemptTime = await GTSGameAttempt.findById(
-        "679affc8d6353d1c90440870"
-      ).select("timeRemained");
+      const currentGTSGameAttemptTime = await GTSGameAttempt.findById(req.params.attemptID).select(
+        "timeRemained"
+      );
 
       const currentTime = JSON.parse(JSON.stringify(currentGTSGameAttemptTime.timeRemained));
       const updatedGTSGameAttempt = await GTSGameAttempt.findByIdAndUpdate(
-        "679affc8d6353d1c90440870",
+        req.params.attemptID,
         {
-          $set: { timeRemained: currentTime - 10 },
+          $set: { timeRemained: currentTime - 1 },
         },
         {
           new: true,
