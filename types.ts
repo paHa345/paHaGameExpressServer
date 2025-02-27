@@ -237,7 +237,15 @@ export interface IGTSAttemptSchema {
   startDate: Date;
   GTSGameID: string;
   timeRemained: number;
+  attemptTime: number;
   isCompleted: boolean;
+  currentQuestion: number;
+  answerTime: number;
+  attemptQuestionStatus: {
+    questionID: string;
+    getAnswer: boolean;
+    answerIsCorrect?: boolean;
+  }[];
 }
 
 export interface IGTSGameSchema {
