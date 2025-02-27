@@ -10,7 +10,17 @@ const GTSGameAttemptSchema = new mongoose_1.default.Schema({
     startDate: { type: Date, required: true },
     GTSGameID: { type: String, required: true },
     timeRemained: { type: Number, required: true },
+    attemptTime: { type: Number, required: true },
     isCompleted: { type: Boolean, required: true },
+    currentQuestion: { type: Number, required: true },
+    answerTime: { type: Number, required: true },
+    attemptQuestionStatus: [
+        {
+            questionID: { type: String, required: true },
+            getAnswer: { type: Boolean, required: true },
+            answerIsCorrect: { type: Boolean, required: false },
+        },
+    ],
 });
 const GTSGameAttempt = mongoose_1.default.models.GTSAttempt ||
     mongoose_1.default.model("GTSAttempt", GTSGameAttemptSchema, "GTSAttempts");

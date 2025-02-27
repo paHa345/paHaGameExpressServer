@@ -55,6 +55,50 @@ app.get("/GTSAttempts/:attemptID", (req, res) => __awaiter(void 0, void 0, void 
         res.status(500).send("Server error");
     }
 }));
+app.get("/answerTime/:attemptID", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const headers = {
+            "Content-Type": "text/event-stream",
+            "Access-Control-Allow-Origin": "*",
+            Connection: "keep-alive",
+            "Cache-Control": "no-cache",
+        };
+        res.writeHead(200, headers);
+        const decrementAnswerTime = () => __awaiter(void 0, void 0, void 0, function* () {
+            const currentGTSGameAttemptTime = yield GTSGameAttemptModel_1.default.findById(req.params.attemptID).select("answerTime");
+            const currentAnswerTime = JSON.parse(JSON.stringify(currentGTSGameAttemptTime.answerTime));
+            if (currentAnswerTime <= 0) {
+                const updatedGTSGameAttempt = yield GTSGameAttemptModel_1.default.findByIdAndUpdate(req.params.attemptID, {
+                    $set: { answerTime: 0 },
+                }, {
+                    new: true,
+                });
+                res.write(`timesUp: ${true}\n\n`);
+                console.log("timesUp");
+                clearInterval(intervalID);
+                res.end();
+                return;
+            }
+            const updatedGTSGameAttempt = yield GTSGameAttemptModel_1.default.findByIdAndUpdate(req.params.attemptID, {
+                $set: { answerTime: currentAnswerTime - 1 },
+            }, {
+                new: true,
+            });
+            res.write(`answerTimeRemained: ${JSON.stringify(updatedGTSGameAttempt.answerTime)}\n\n`);
+        });
+        const intervalID = setInterval(decrementAnswerTime, 1000);
+        req.on("close", () => {
+            res.write(`stopAttempt: ${true}\n\n`);
+            console.log("client disconnected");
+            clearInterval(intervalID); // очистка интервала отправки данных
+            res.end();
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send("Server error");
+    }
+}));
 app.get("/", (req, res) => {
     res.send("Express + TypeScript Server");
 });
