@@ -19,8 +19,13 @@ const GTSGameAttemptSchema = new mongoose_1.default.Schema({
             questionID: { type: String, required: true },
             getAnswer: { type: Boolean, required: true },
             answerIsCorrect: { type: Boolean, required: false },
+            userAnswerSongName: { type: String, required: false },
+            correctAnswerSongName: { type: String, required: false },
         },
     ],
+    firstName: { type: String, required: false },
+    lastName: { type: String, required: false },
+    userPhoto: { type: String, required: false },
 });
 const GTSGameAttempt = mongoose_1.default.models.GTSAttempt ||
     mongoose_1.default.model("GTSAttempt", GTSGameAttemptSchema, "GTSAttempts");
