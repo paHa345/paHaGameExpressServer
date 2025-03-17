@@ -247,6 +247,7 @@ export interface IGTSAttemptSchema {
     answerIsCorrect?: boolean;
     userAnswerSongName?: string;
     correctAnswerSongName?: string;
+    bonusTime?: number;
   }[];
   firstName?: string;
   lastName?: string;

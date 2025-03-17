@@ -18,6 +18,7 @@ const GTSGameAttemptSchema = new mongoose.Schema<IGTSAttemptSchema>({
       answerIsCorrect: { type: Boolean, required: false },
       userAnswerSongName: { type: String, required: false },
       correctAnswerSongName: { type: String, required: false },
+      bonusTime: { type: Number, required: false },
     },
   ],
   firstName: { type: String, required: false },
