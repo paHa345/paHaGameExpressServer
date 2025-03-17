@@ -6,6 +6,7 @@ const GTSGameAttemptSchema = new mongoose.Schema<IGTSAttemptSchema>({
   telegramID: { type: Number, required: true },
   startDate: { type: Date, required: true },
   GTSGameID: { type: String, required: true },
+  GTSGameName: { type: String, required: true },
   timeRemained: { type: Number, required: true },
   attemptTime: { type: Number, required: true },
   isCompleted: { type: Boolean, required: true },
