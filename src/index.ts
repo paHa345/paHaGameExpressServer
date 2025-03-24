@@ -2,12 +2,22 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { connectMongoDB } from "../libs/MongoConnect";
 import GTSGameAttempt from "../models/GTSGameAttemptModel";
+const cors = require("cors");
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 console.log("start");
+
+app.use(cors());
+
+const corsOptions = {
+  origin: "https://s3.timeweb.com",
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.get("/GTSAttempts/:attemptID", async (req: Request, res: Response) => {
   try {
     const headers = {
@@ -116,6 +126,54 @@ app.get("/answerTime/:attemptID", async (req: Request, res: Response) => {
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
+});
+
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import fs from "fs";
+
+app.get("/uploadFile", async (req: Request, res: Response) => {
+  const CREDENTIAL = {
+    accessKeyId: "RUEYZDINIEP2SO663H37",
+    secretAccessKey: "zqvXoz5xz82HIGMBqI2vKLhKaPdwSDTh9tVld9GG",
+  };
+  const s3Client = new S3Client({
+    region: "ru-1",
+    credentials: CREDENTIAL,
+    endpoint: "https://s3.timeweb.com",
+    forcePathStyle: true,
+    apiVersion: "latest",
+  });
+
+  try {
+    const fileStream = fs.createReadStream("./src/channels4_profile.jpg");
+
+    const params = {
+      Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb",
+      Key: "app.ts", // Путь в хранилище
+      Body: fileStream,
+      ContentType: "image/jpeg",
+    };
+
+    // // Загрузка с отслеживанием прогресса
+    // const upload = new Upload({
+    //   client: s3Client,
+    //   params: params,
+    // });
+    const command = new PutObjectCommand(params);
+
+    const response = await s3Client.send(command);
+    // upload.on('httpUploadProgress', (progress) => {
+    //   console.log(Прогресс: ${progress.loaded} / ${progress.total});
+    // });
+
+    // const result = await upload.done();
+    console.log("Файл загружен:", response);
+  } catch (err) {
+    console.error("Ошибка:", err);
+  }
+
+  res.send("UploadFile to timeWeb");
 });
 
 app.listen(port, async () => {

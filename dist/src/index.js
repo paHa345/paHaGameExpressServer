@@ -16,10 +16,17 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const MongoConnect_1 = require("../libs/MongoConnect");
 const GTSGameAttemptModel_1 = __importDefault(require("../models/GTSGameAttemptModel"));
+const cors = require("cors");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
 console.log("start");
+app.use(cors());
+const corsOptions = {
+    origin: "https://s3.timeweb.com",
+    optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 app.get("/GTSAttempts/:attemptID", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const headers = {
@@ -102,6 +109,46 @@ app.get("/answerTime/:attemptID", (req, res) => __awaiter(void 0, void 0, void 0
 app.get("/", (req, res) => {
     res.send("Express + TypeScript Server");
 });
+const client_s3_1 = require("@aws-sdk/client-s3");
+const fs_1 = __importDefault(require("fs"));
+app.get("/uploadFile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const CREDENTIAL = {
+        accessKeyId: "RUEYZDINIEP2SO663H37",
+        secretAccessKey: "zqvXoz5xz82HIGMBqI2vKLhKaPdwSDTh9tVld9GG",
+    };
+    const s3Client = new client_s3_1.S3Client({
+        region: "ru-1",
+        credentials: CREDENTIAL,
+        endpoint: "https://s3.timeweb.com",
+        forcePathStyle: true,
+        apiVersion: "latest",
+    });
+    try {
+        const fileStream = fs_1.default.createReadStream("./src/channels4_profile.jpg");
+        const params = {
+            Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb",
+            Key: "app.ts", // Путь в хранилище
+            Body: fileStream,
+            ContentType: "image/jpeg",
+        };
+        // // Загрузка с отслеживанием прогресса
+        // const upload = new Upload({
+        //   client: s3Client,
+        //   params: params,
+        // });
+        const command = new client_s3_1.PutObjectCommand(params);
+        const response = yield s3Client.send(command);
+        // upload.on('httpUploadProgress', (progress) => {
+        //   console.log(Прогресс: ${progress.loaded} / ${progress.total});
+        // });
+        // const result = await upload.done();
+        console.log("Файл загружен:", response);
+    }
+    catch (err) {
+        console.error("Ошибка:", err);
+    }
+    res.send("UploadFile to timeWeb");
+}));
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield (0, MongoConnect_1.connectMongoDB)();
