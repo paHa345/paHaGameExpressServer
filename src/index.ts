@@ -134,8 +134,8 @@ import fs from "fs";
 
 app.get("/uploadFile", async (req: Request, res: Response) => {
   const CREDENTIAL = {
-    accessKeyId: "RUEYZDINIEP2SO663H37",
-    secretAccessKey: "zqvXoz5xz82HIGMBqI2vKLhKaPdwSDTh9tVld9GG",
+    accessKeyId: process.env.NEXT_PUBLIC_ACCESSKEYID as string,
+    secretAccessKey: process.env.NEXT_PUBLIC_SECRETACCESSKEY as string,
   };
   const s3Client = new S3Client({
     region: "ru-1",
@@ -155,19 +155,10 @@ app.get("/uploadFile", async (req: Request, res: Response) => {
       ContentType: "image/jpeg",
     };
 
-    // // Загрузка с отслеживанием прогресса
-    // const upload = new Upload({
-    //   client: s3Client,
-    //   params: params,
-    // });
     const command = new PutObjectCommand(params);
 
     const response = await s3Client.send(command);
-    // upload.on('httpUploadProgress', (progress) => {
-    //   console.log(Прогресс: ${progress.loaded} / ${progress.total});
-    // });
 
-    // const result = await upload.done();
     console.log("Файл загружен:", response);
   } catch (err) {
     console.error("Ошибка:", err);

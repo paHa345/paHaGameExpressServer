@@ -113,8 +113,8 @@ const client_s3_1 = require("@aws-sdk/client-s3");
 const fs_1 = __importDefault(require("fs"));
 app.get("/uploadFile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const CREDENTIAL = {
-        accessKeyId: "RUEYZDINIEP2SO663H37",
-        secretAccessKey: "zqvXoz5xz82HIGMBqI2vKLhKaPdwSDTh9tVld9GG",
+        accessKeyId: process.env.NEXT_PUBLIC_ACCESSKEYID,
+        secretAccessKey: process.env.NEXT_PUBLIC_SECRETACCESSKEY,
     };
     const s3Client = new client_s3_1.S3Client({
         region: "ru-1",
@@ -131,17 +131,8 @@ app.get("/uploadFile", (req, res) => __awaiter(void 0, void 0, void 0, function*
             Body: fileStream,
             ContentType: "image/jpeg",
         };
-        // // Загрузка с отслеживанием прогресса
-        // const upload = new Upload({
-        //   client: s3Client,
-        //   params: params,
-        // });
         const command = new client_s3_1.PutObjectCommand(params);
         const response = yield s3Client.send(command);
-        // upload.on('httpUploadProgress', (progress) => {
-        //   console.log(Прогресс: ${progress.loaded} / ${progress.total});
-        // });
-        // const result = await upload.done();
         console.log("Файл загружен:", response);
     }
     catch (err) {
