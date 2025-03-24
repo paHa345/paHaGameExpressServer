@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connectMongoDB } from "../libs/MongoConnect";
 import GTSGameAttempt from "../models/GTSGameAttemptModel";
 const cors = require("cors");
+const S3 = require("aws-sdk/clients/s3");
 
 dotenv.config();
 
@@ -145,24 +146,56 @@ app.get("/uploadFile", async (req: Request, res: Response) => {
     apiVersion: "latest",
   });
 
-  try {
-    const fileStream = fs.createReadStream("./src/channels4_profile.jpg");
+  const bucketParams = { Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb" };
 
-    const params = {
-      Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb",
-      Key: "app.ts", // Путь в хранилище
-      Body: fileStream,
-      ContentType: "image/jpeg",
-    };
+  console.log("Создание клиента");
 
-    const command = new PutObjectCommand(params);
+  const s3 = new S3({
+    accessKeyId: process.env.NEXT_PUBLIC_ACCESSKEYID as string,
+    secretAccessKey: process.env.NEXT_PUBLIC_SECRETACCESSKEY as string,
+    endpoint: "https://s3.timeweb.com",
+    s3ForcePathStyle: true,
+    region: "ru-1",
+    apiVersion: "latest",
+  });
 
-    const response = await s3Client.send(command);
+  const runTest = async () => {
+    try {
+      console.log("Регион бакета");
 
-    console.log("Файл загружен:", response);
-  } catch (err) {
-    console.error("Ошибка:", err);
-  }
+      const res = await s3.getBucketLocation(bucketParams).promise();
+      console.log("Success", res);
+    } catch (e) {
+      console.log("Error", e);
+    }
+  };
+
+  runTest()
+    .then((_) => {
+      console.log("Done");
+    })
+    .catch((e) => {
+      console.log("Error", e);
+    });
+
+  // try {
+  //   const fileStream = fs.createReadStream("./src/channels4_profile.jpg");
+
+  //   const params = {
+  //     Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb",
+  //     Key: "app.ts", // Путь в хранилище
+  //     Body: fileStream,
+  //     ContentType: "image/jpeg",
+  //   };
+
+  //   const command = new PutObjectCommand(params);
+
+  //   const response = await s3Client.send(command);
+
+  //   console.log("Файл загружен:", response);
+  // } catch (err) {
+  //   console.error("Ошибка:", err);
+  // }
 
   res.send("UploadFile to timeWeb");
 });

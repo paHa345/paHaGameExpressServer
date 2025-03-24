@@ -17,6 +17,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const MongoConnect_1 = require("../libs/MongoConnect");
 const GTSGameAttemptModel_1 = __importDefault(require("../models/GTSGameAttemptModel"));
 const cors = require("cors");
+const S3 = require("aws-sdk/clients/s3");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
@@ -110,7 +111,6 @@ app.get("/", (req, res) => {
     res.send("Express + TypeScript Server");
 });
 const client_s3_1 = require("@aws-sdk/client-s3");
-const fs_1 = __importDefault(require("fs"));
 app.get("/uploadFile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const CREDENTIAL = {
         accessKeyId: process.env.NEXT_PUBLIC_ACCESSKEYID,
@@ -123,21 +123,47 @@ app.get("/uploadFile", (req, res) => __awaiter(void 0, void 0, void 0, function*
         forcePathStyle: true,
         apiVersion: "latest",
     });
-    try {
-        const fileStream = fs_1.default.createReadStream("./src/channels4_profile.jpg");
-        const params = {
-            Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb",
-            Key: "app.ts", // Путь в хранилище
-            Body: fileStream,
-            ContentType: "image/jpeg",
-        };
-        const command = new client_s3_1.PutObjectCommand(params);
-        const response = yield s3Client.send(command);
-        console.log("Файл загружен:", response);
-    }
-    catch (err) {
-        console.error("Ошибка:", err);
-    }
+    const bucketParams = { Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb" };
+    console.log("Создание клиента");
+    const s3 = new S3({
+        accessKeyId: process.env.NEXT_PUBLIC_ACCESSKEYID,
+        secretAccessKey: process.env.NEXT_PUBLIC_SECRETACCESSKEY,
+        endpoint: "https://s3.timeweb.com",
+        s3ForcePathStyle: true,
+        region: "ru-1",
+        apiVersion: "latest",
+    });
+    const runTest = () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            console.log("Регион бакета");
+            const res = yield s3.getBucketLocation(bucketParams).promise();
+            console.log("Success", res);
+        }
+        catch (e) {
+            console.log("Error", e);
+        }
+    });
+    runTest()
+        .then((_) => {
+        console.log("Done");
+    })
+        .catch((e) => {
+        console.log("Error", e);
+    });
+    // try {
+    //   const fileStream = fs.createReadStream("./src/channels4_profile.jpg");
+    //   const params = {
+    //     Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb",
+    //     Key: "app.ts", // Путь в хранилище
+    //     Body: fileStream,
+    //     ContentType: "image/jpeg",
+    //   };
+    //   const command = new PutObjectCommand(params);
+    //   const response = await s3Client.send(command);
+    //   console.log("Файл загружен:", response);
+    // } catch (err) {
+    //   console.error("Ошибка:", err);
+    // }
     res.send("UploadFile to timeWeb");
 }));
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
