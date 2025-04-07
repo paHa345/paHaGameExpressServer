@@ -4,6 +4,7 @@ import { connectMongoDB } from "../libs/MongoConnect";
 import GTSGameAttempt from "../models/GTSGameAttemptModel";
 const cors = require("cors");
 const S3 = require("aws-sdk/clients/s3");
+const AWS = require("aws-sdk");
 
 dotenv.config();
 
@@ -141,29 +142,57 @@ app.get("/uploadFile", async (req: Request, res: Response) => {
   const s3Client = new S3Client({
     region: "ru-1",
     credentials: CREDENTIAL,
-    endpoint: "https://s3.timeweb.com",
+    endpoint: "https://s3.timeweb.cloud",
     forcePathStyle: true,
     apiVersion: "latest",
   });
 
   const bucketParams = { Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb" };
+  const uploadParams = { Bucket: bucketParams.Bucket, Key: "", Body: "" };
 
   console.log("Создание клиента");
 
   const s3 = new S3({
     accessKeyId: process.env.NEXT_PUBLIC_ACCESSKEYID as string,
     secretAccessKey: process.env.NEXT_PUBLIC_SECRETACCESSKEY as string,
-    endpoint: "https://s3.timeweb.com",
+    endpoint: "https://s3.timeweb.cloud",
     s3ForcePathStyle: true,
     region: "ru-1",
     apiVersion: "latest",
   });
 
   const runTest = async () => {
+    // try {
+    //   console.log("Список объектов в бакете");
+
+    //   const res = await s3.listObjects(bucketParams).promise();
+    //   console.log("Success", res);
+    // } catch (e) {
+    //   console.log("Error", e);
+    // }
+
     try {
       console.log("Регион бакета");
 
       const res = await s3.getBucketLocation(bucketParams).promise();
+      console.log("Success", res);
+    } catch (e) {
+      console.log("Error", e);
+    }
+
+    try {
+      console.log("Загрузка файла в бакет");
+
+      const fs = require("fs");
+      const fileStream = fs.createReadStream("./src/channels4_profile.jpg");
+      fileStream.on("error", function (err: any) {
+        console.log("File Error", err);
+      });
+      uploadParams.Body = fileStream;
+      const path = require("path");
+      uploadParams.Key = path.basename("./channels4_profile.jpg");
+
+      const res = await s3.upload(uploadParams).promise();
       console.log("Success", res);
     } catch (e) {
       console.log("Error", e);
@@ -180,6 +209,8 @@ app.get("/uploadFile", async (req: Request, res: Response) => {
 
   // try {
   //   const fileStream = fs.createReadStream("./src/channels4_profile.jpg");
+
+  //   console.log(s3Client);
 
   //   const params = {
   //     Bucket: "f1525e96-2c5a759f-3888-4bd2-a52f-dbb62685b4bb",

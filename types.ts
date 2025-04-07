@@ -250,6 +250,9 @@ export interface IGTSAttemptSchema {
     userAnswerSongName?: string;
     correctAnswerSongName?: string;
     bonusTime?: number;
+    userAnswerArtistName?: string;
+    correctAnswerArtistName?: string;
+    artistAnswerIsCorrect?: boolean;
   }[];
   firstName?: string;
   lastName?: string;
