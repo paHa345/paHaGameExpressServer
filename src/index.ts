@@ -40,6 +40,16 @@ app.get("/GTSAttempts/:attemptID", async (req: Request, res: Response) => {
       );
 
       const currentTime = JSON.parse(JSON.stringify(currentGTSGameAttemptTime.timeRemained));
+
+      if (currentTime <= 0) {
+        res.write(`AttemptTimeIsUp: ${true}\n\n`);
+        console.log("Attempt time is up");
+
+        clearInterval(intervalID);
+        res.end();
+        return;
+      }
+
       const updatedGTSGameAttempt = await GTSGameAttempt.findByIdAndUpdate(
         req.params.attemptID,
         {

@@ -44,6 +44,13 @@ app.get("/GTSAttempts/:attemptID", (req, res) => __awaiter(void 0, void 0, void 
         const sendData = () => __awaiter(void 0, void 0, void 0, function* () {
             const currentGTSGameAttemptTime = yield GTSGameAttemptModel_1.default.findById(req.params.attemptID).select("timeRemained");
             const currentTime = JSON.parse(JSON.stringify(currentGTSGameAttemptTime.timeRemained));
+            if (currentTime <= 0) {
+                res.write(`AttemptTimeIsUp: ${true}\n\n`);
+                console.log("Attempt time is up");
+                clearInterval(intervalID);
+                res.end();
+                return;
+            }
             const updatedGTSGameAttempt = yield GTSGameAttemptModel_1.default.findByIdAndUpdate(req.params.attemptID, {
                 $set: { timeRemained: currentTime - 1 },
             }, {
