@@ -115,9 +115,11 @@ app.get("/answerTime/:attemptID", (req, res) => __awaiter(void 0, void 0, void 0
         res.status(500).send("Server error");
     }
 }));
-app.get("/", (req, res) => {
+app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield GTSGameAttemptModel_1.default.find();
+    console.log(data);
     res.send("Express + TypeScript Server");
-});
+}));
 const client_s3_1 = require("@aws-sdk/client-s3");
 app.get("/uploadFile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const CREDENTIAL = {

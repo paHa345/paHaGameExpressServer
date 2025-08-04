@@ -136,7 +136,11 @@ app.get("/answerTime/:attemptID", async (req: Request, res: Response) => {
   }
 });
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", async (req: Request, res: Response) => {
+  const data = await GTSGameAttempt.find();
+
+  console.log(data);
+
   res.send("Express + TypeScript Server");
 });
 

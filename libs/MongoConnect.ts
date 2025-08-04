@@ -5,6 +5,6 @@ export const connectMongoDB = async () => {
     return mongoose.connection.asPromise();
   }
   return await mongoose.connect(
-    `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@n1-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017,n2-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017/bnjpnqkq0agsple?replicaSet=rs0`
+    `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@95.140.157.193:27017/paHaGTSGameDB?authSource=admin&directConnection=true`
   );
 };

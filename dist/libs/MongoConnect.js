@@ -18,6 +18,6 @@ const connectMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
     if (mongoose_1.default.connection.readyState === 1) {
         return mongoose_1.default.connection.asPromise();
     }
-    return yield mongoose_1.default.connect(`mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@n1-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017,n2-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017/bnjpnqkq0agsple?replicaSet=rs0`);
+    return yield mongoose_1.default.connect(`mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@95.140.157.193:27017/paHaGTSGameDB?authSource=admin&directConnection=true`);
 });
 exports.connectMongoDB = connectMongoDB;
