@@ -1,4 +1,5 @@
 "use strict";
+// import express, { Express, NextFunction, Request, Response } from "express";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -12,6 +13,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// const app = express();
+// const http = require("http");
+// const cors = require("cors");
+// const { Server } = require("socket.io"); // Add this
+// app.use(cors()); // Add cors middleware
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"],
+//   },
+// });
+// app.get("/", async (req: Request, res: Response) => {
+//   res.send("alsd,ald");
+// });
+// io.on("connection", (socket: any) => {
+//   console.log(`User connected ${socket.id}`);
+// });
+// server.listen(3111, () => "Server is running on port 3000");
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const MongoConnect_1 = require("../libs/MongoConnect");
@@ -19,21 +39,39 @@ const users_1 = __importDefault(require("./../routes/users"));
 const uploadFile_1 = __importDefault(require("../routes/uploadFile"));
 const answerTime_1 = __importDefault(require("../routes/answerTime"));
 const GTSAttempts_1 = __importDefault(require("../routes/GTSAttempts"));
-const cors = require("cors");
+const webSocketServer_1 = __importDefault(require("../routes/webSocketServer"));
+// const cors = require("cors");
 const S3 = require("aws-sdk/clients/s3");
 const AWS = require("aws-sdk");
+const http_1 = __importDefault(require("http"));
+const cors_1 = __importDefault(require("cors"));
+const socket_io_1 = require("socket.io");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
 console.log("start");
-app.use(cors());
+const server = http_1.default.createServer(app);
+app.use((0, cors_1.default)());
 const corsOptions = {
     origin: "https://s3.timeweb.com",
     optionsSuccessStatus: 200,
 };
 app.use(express_1.default.json());
-app.use(cors(corsOptions));
+app.use((0, cors_1.default)(corsOptions));
 // app.get("/GTSAttempts/:attemptID", async (req: Request, res: Response) => {
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+    },
+});
+io.on("connection", (socket) => {
+    console.log(`User connected ${socket.id}`);
+    socket.on("send-message", (message) => {
+        console.log(`Message: ${message} from user ${socket.id}`);
+        // socket.to(roomID).emit("receive-message", message);
+    });
+});
 //   try {
 //     const headers = {
 //       // Тип соединения 'text/event-stream' необходим для SSE
@@ -147,6 +185,17 @@ const authorize = (req, res, next) => {
 };
 app.use(logMiddleware); // Apply middleware globally
 app.use("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    // const wss = new WebSocketServer({ port: 8080 });
+    // wss.on("connection", (ws) => {
+    //   console.log("Новый клиент подключился!");
+    //   ws.on("message", (message) => {
+    //     console.log(`Получено сообщение: ${message}`);
+    //     ws.send("Сообщение получено!");
+    //   });
+    //   ws.on("close", () => {
+    //     console.log("Клиент отключился");
+    //   });
+    // });
     // console.log("Middleware function");
     // const now = new Date();
     // const hour = now.getHours();
@@ -158,6 +207,18 @@ app.use("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
 }));
 app.get("/", authenticate, authorize, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("Express + TypeScript Server");
+    // const wss = new WebSocketServer({ port: 4000 });
+    // wss.on("connection", (ws) => {
+    //   console.log("Новый клиент подключился!");
+    //   ws.on("message", (message) => {
+    //     console.log(`Получено сообщение: ${message}`);
+    //     ws.send("Сообщение получено!");
+    //   });
+    //   ws.on("close", () => {
+    //     console.log("Клиент отключился");
+    //   });
+    // });
+    // console.log("Socket created");
 }));
 app.use("/users", users_1.default);
 app.use("/GTSAttempts", GTSAttempts_1.default);
@@ -244,7 +305,8 @@ app.use("/answerTime", answerTime_1.default);
 //   res.send("UploadFile to timeWeb");
 // });
 app.use("/uploadFile", uploadFile_1.default);
-app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
+app.use("/webSocketServer", webSocketServer_1.default);
+server.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield (0, MongoConnect_1.connectMongoDB)();
         console.log(`[server]: Server is running at http://localhost:${port} and connect to database`);
