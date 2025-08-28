@@ -67,9 +67,27 @@ const io = new socket_io_1.Server(server, {
 });
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
+    socket.join("TestRoom");
+    socket.emit("chatroom_users", "chatroomusers");
     socket.on("send-message", (message) => {
         console.log(`Message: ${message} from user ${socket.id}`);
         // socket.to(roomID).emit("receive-message", message);
+        io.emit("send-message", `Message: ${message} from user ${socket.id}`);
+    });
+    socket.on("test_action", (message) => {
+        console.log(`Message: ${message.message} from user ${socket.id}`);
+        socket.emit("chatroom_users", "chatroomusers");
+        // socket.to(roomID).emit("receive-message", message);
+    });
+    socket.on("GTSGameRoomMessage", (message) => {
+        io.to("68a82c599d9ad19c1b4ec4d2").emit("roomGTSGameMessage", "message to all users GTAGame room");
+    });
+    socket.on("join_room", (roomName) => {
+        socket.join(roomName);
+        console.log(`user Joined to room ${roomName}`);
+    });
+    socket.on("disconnect", (data) => {
+        console.log("User disconnected");
     });
 });
 //   try {
