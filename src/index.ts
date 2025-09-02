@@ -69,6 +69,7 @@ const io = new Server(server, {
     origin: "*",
     methods: ["GET", "POST"],
   },
+  connectionStateRecovery: {},
 });
 
 io.on("connection", (socket: any) => {
@@ -89,10 +90,11 @@ io.on("connection", (socket: any) => {
     // socket.to(roomID).emit("receive-message", message);
   });
 
-  socket.on("GTSGameRoomMessage", (message: string) => {
-    io.to("68a82c599d9ad19c1b4ec4d2").emit(
+  socket.on("GTSGameRoomMessage", ({ message, roomID }: { message: string; roomID: string }) => {
+    console.log(roomID);
+    io.to(roomID).emit(
       "roomGTSGameMessage",
-      "message to all users GTAGame room"
+      `message to all users room with ID ${roomID} room: ${message}`
     );
   });
 
