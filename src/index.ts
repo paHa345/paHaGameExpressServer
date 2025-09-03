@@ -43,7 +43,7 @@ import http from "http";
 
 import cors from "cors";
 
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 dotenv.config();
 
@@ -72,7 +72,7 @@ const io = new Server(server, {
   connectionStateRecovery: {},
 });
 
-io.on("connection", (socket: any) => {
+io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
   socket.join("TestRoom");
   socket.emit("chatroom_users", "chatroomusers");
@@ -98,12 +98,31 @@ io.on("connection", (socket: any) => {
     );
   });
 
-  socket.on("join_room", (roomName: string) => {
-    socket.join(roomName);
-    console.log(`user Joined to room ${roomName}`);
+  socket.on("join_room", async (roomName: string) => {
+    // console.log(socket.rooms.has(roomName));
+    if (!socket.rooms.has(roomName)) {
+      socket.join(roomName);
+      console.log(`user Joined to room ${roomName}`);
+    }
+    // const users = await io.in(roomName).fetchSockets();
+    // console.log(users);
   });
-  socket.on("disconnect", (data: { name: string; roomID: string }) => {
+  socket.on("leave_room", async (roomName: string) => {
+    socket.leave(roomName);
+    // const users = await io.in(roomName).socketsLeave;
+    // console.log(users);
+
+    console.log(`user leave room ${roomName}`);
+  });
+
+  socket.on("disconnectServer", (data: { name: string; roomID: string }) => {
     console.log("User disconnected");
+    io.sockets.disconnectSockets();
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+    io.sockets.disconnectSockets();
   });
 });
 

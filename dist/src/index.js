@@ -84,12 +84,28 @@ io.on("connection", (socket) => {
         console.log(roomID);
         io.to(roomID).emit("roomGTSGameMessage", `message to all users room with ID ${roomID} room: ${message}`);
     });
-    socket.on("join_room", (roomName) => {
-        socket.join(roomName);
-        console.log(`user Joined to room ${roomName}`);
-    });
-    socket.on("disconnect", (data) => {
+    socket.on("join_room", (roomName) => __awaiter(void 0, void 0, void 0, function* () {
+        // console.log(socket.rooms.has(roomName));
+        if (!socket.rooms.has(roomName)) {
+            socket.join(roomName);
+            console.log(`user Joined to room ${roomName}`);
+        }
+        // const users = await io.in(roomName).fetchSockets();
+        // console.log(users);
+    }));
+    socket.on("leave_room", (roomName) => __awaiter(void 0, void 0, void 0, function* () {
+        socket.leave(roomName);
+        // const users = await io.in(roomName).socketsLeave;
+        // console.log(users);
+        console.log(`user leave room ${roomName}`);
+    }));
+    socket.on("disconnectServer", (data) => {
         console.log("User disconnected");
+        io.sockets.disconnectSockets();
+    });
+    socket.on("disconnect", () => {
+        console.log("User disconnected");
+        io.sockets.disconnectSockets();
     });
 });
 //   try {
