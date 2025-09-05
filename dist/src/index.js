@@ -49,7 +49,6 @@ const socket_io_1 = require("socket.io");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
-console.log("start");
 const server = http_1.default.createServer(app);
 app.use((0, cors_1.default)());
 const corsOptions = {
@@ -68,24 +67,25 @@ const io = new socket_io_1.Server(server, {
 });
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
-    socket.join("TestRoom");
+    // socket.join("TestRoom");
     socket.emit("chatroom_users", "chatroomusers");
     socket.on("send-message", (message) => {
         console.log(`Message: ${message} from user ${socket.id}`);
         // socket.to(roomID).emit("receive-message", message);
         io.emit("send-message", `Message: ${message} from user ${socket.id}`);
     });
-    socket.on("test_action", (message) => {
-        console.log(`Message: ${message.message} from user ${socket.id}`);
-        socket.emit("chatroom_users", "chatroomusers");
-        // socket.to(roomID).emit("receive-message", message);
-    });
-    socket.on("GTSGameRoomMessage", ({ message, roomID }) => {
-        console.log(roomID);
-        io.to(roomID).emit("roomGTSGameMessage", `message to all users room with ID ${roomID} room: ${message}`);
+    // socket.on("test_action", (message: any) => {
+    //   console.log(`Message: ${message.message} from user ${socket.id}`);
+    //   socket.emit("chatroom_users", "chatroomusers");
+    //   // socket.to(roomID).emit("receive-message", message);
+    // });
+    socket.on("GTSGameRoomMessage", ({ message, currentJoinedRoomID }) => {
+        io.to(currentJoinedRoomID).emit("roomGTSGameMessage", `message to all users room with ID ${currentJoinedRoomID} room: ${message}`);
     });
     socket.on("join_room", (roomName) => __awaiter(void 0, void 0, void 0, function* () {
         // console.log(socket.rooms.has(roomName));
+        // console.log(io.sockets.adapter.rooms);
+        // console.log(socket.rooms);
         if (!socket.rooms.has(roomName)) {
             socket.join(roomName);
             console.log(`user Joined to room ${roomName}`);

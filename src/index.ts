@@ -49,7 +49,6 @@ dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
-console.log("start");
 
 const server = http.createServer(app);
 
@@ -74,7 +73,7 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
-  socket.join("TestRoom");
+  // socket.join("TestRoom");
   socket.emit("chatroom_users", "chatroomusers");
 
   socket.on("send-message", (message: any) => {
@@ -83,23 +82,27 @@ io.on("connection", (socket) => {
     io.emit("send-message", `Message: ${message} from user ${socket.id}`);
   });
 
-  socket.on("test_action", (message: any) => {
-    console.log(`Message: ${message.message} from user ${socket.id}`);
-    socket.emit("chatroom_users", "chatroomusers");
+  // socket.on("test_action", (message: any) => {
+  //   console.log(`Message: ${message.message} from user ${socket.id}`);
+  //   socket.emit("chatroom_users", "chatroomusers");
 
-    // socket.to(roomID).emit("receive-message", message);
-  });
+  //   // socket.to(roomID).emit("receive-message", message);
+  // });
 
-  socket.on("GTSGameRoomMessage", ({ message, roomID }: { message: string; roomID: string }) => {
-    console.log(roomID);
-    io.to(roomID).emit(
-      "roomGTSGameMessage",
-      `message to all users room with ID ${roomID} room: ${message}`
-    );
-  });
+  socket.on(
+    "GTSGameRoomMessage",
+    ({ message, currentJoinedRoomID }: { message: string; currentJoinedRoomID: string }) => {
+      io.to(currentJoinedRoomID).emit(
+        "roomGTSGameMessage",
+        `message to all users room with ID ${currentJoinedRoomID} room: ${message}`
+      );
+    }
+  );
 
   socket.on("join_room", async (roomName: string) => {
     // console.log(socket.rooms.has(roomName));
+    // console.log(io.sockets.adapter.rooms);
+    // console.log(socket.rooms);
     if (!socket.rooms.has(roomName)) {
       socket.join(roomName);
       console.log(`user Joined to room ${roomName}`);
