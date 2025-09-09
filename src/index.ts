@@ -92,6 +92,7 @@ io.on("connection", (socket) => {
   socket.on(
     "GTSGameRoomMessage",
     ({ message, currentJoinedRoomID }: { message: string; currentJoinedRoomID: string }) => {
+      console.log(io.of("/").adapter.rooms.get("68a82c599d9ad19c1b4ec4d2")?.size);
       io.to(currentJoinedRoomID).emit(
         "roomGTSGameMessage",
         `message to all users room with ID ${currentJoinedRoomID} room: ${message}`
@@ -118,14 +119,36 @@ io.on("connection", (socket) => {
     console.log(`user leave room ${roomName}`);
   });
 
-  socket.on("disconnectServer", (data: { name: string; roomID: string }) => {
-    console.log("User disconnected");
-    io.sockets.disconnectSockets();
+  socket.on("disconnectServer", async (data: { name: string; roomID: string }) => {
+    // console.log("User disconnected");
+    // console.log(socket.id);
+    // io.sockets.sockets.get(socket.id)?.disconnect();
+
+    const sockets2 = await io.in(socket.id).fetchSockets();
+    // console.log(sockets2);
+
+    sockets2[0].disconnect();
+
+    // const sockets = await io.fetchSockets();
+
+    // console.log(sockets);
+
+    // for (const userSocket of sockets) {
+    //   if (userSocket.id === socket.id) {
+    //     console.log("socket id", userSocket.id);
+
+    //     userSocket.disconnect(true);
+    //   }
+    // }
+  });
+
+  socket.on("getSocketID", () => {
+    console.log(socket.id);
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected");
-    io.sockets.disconnectSockets();
+    // io.sockets.disconnectSockets();
   });
 });
 
