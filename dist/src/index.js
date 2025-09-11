@@ -1,5 +1,4 @@
 "use strict";
-// import express, { Express, NextFunction, Request, Response } from "express";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -13,25 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// const app = express();
-// const http = require("http");
-// const cors = require("cors");
-// const { Server } = require("socket.io"); // Add this
-// app.use(cors()); // Add cors middleware
-// const server = http.createServer(app);
-// const io = new Server(server, {
-//   cors: {
-//     origin: "*",
-//     methods: ["GET", "POST"],
-//   },
-// });
-// app.get("/", async (req: Request, res: Response) => {
-//   res.send("alsd,ald");
-// });
-// io.on("connection", (socket: any) => {
-//   console.log(`User connected ${socket.id}`);
-// });
-// server.listen(3111, () => "Server is running on port 3000");
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const MongoConnect_1 = require("../libs/MongoConnect");
@@ -79,10 +59,16 @@ io.on("connection", (socket) => {
     //   socket.emit("chatroom_users", "chatroomusers");
     //   // socket.to(roomID).emit("receive-message", message);
     // });
-    socket.on("GTSGameRoomMessage", ({ message, currentJoinedRoomID }) => {
+    socket.on("GTSGameRoomMessage", ({ message, currentJoinedRoomID, telegramUser, }) => {
         var _a;
         console.log((_a = io.of("/").adapter.rooms.get("68a82c599d9ad19c1b4ec4d2")) === null || _a === void 0 ? void 0 : _a.size);
-        io.to(currentJoinedRoomID).emit("roomGTSGameMessage", `message to all users room with ID ${currentJoinedRoomID} room: ${message}`);
+        console.log(telegramUser);
+        io.to(currentJoinedRoomID).emit("roomGTSGameMessage", {
+            message: message,
+            telegramUserID: telegramUser.id,
+            telegramUserName: telegramUser.username,
+            messageDate: Date.now(),
+        });
     });
     socket.on("join_room", (roomName) => __awaiter(void 0, void 0, void 0, function* () {
         // console.log(socket.rooms.has(roomName));

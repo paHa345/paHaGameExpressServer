@@ -1,31 +1,3 @@
-// import express, { Express, NextFunction, Request, Response } from "express";
-
-// const app = express();
-// const http = require("http");
-// const cors = require("cors");
-// const { Server } = require("socket.io"); // Add this
-
-// app.use(cors()); // Add cors middleware
-
-// const server = http.createServer(app);
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: "*",
-//     methods: ["GET", "POST"],
-//   },
-// });
-// app.get("/", async (req: Request, res: Response) => {
-//   res.send("alsd,ald");
-// });
-
-// io.on("connection", (socket: any) => {
-//   console.log(`User connected ${socket.id}`);
-
-// });
-
-// server.listen(3111, () => "Server is running on port 3000");
-
 import express, { Express, NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import { connectMongoDB } from "../libs/MongoConnect";
@@ -91,11 +63,34 @@ io.on("connection", (socket) => {
 
   socket.on(
     "GTSGameRoomMessage",
-    ({ message, currentJoinedRoomID }: { message: string; currentJoinedRoomID: string }) => {
+    ({
+      message,
+      currentJoinedRoomID,
+      telegramUser,
+    }: {
+      message: string;
+      currentJoinedRoomID: string;
+      telegramUser: {
+        allows_write_to_pm: boolean | undefined;
+        first_name: string | undefined;
+        id: number | undefined;
+        language_code: string | undefined;
+        last_name: string | undefined;
+        photo_url: string | undefined;
+        username: string | undefined;
+      };
+    }) => {
       console.log(io.of("/").adapter.rooms.get("68a82c599d9ad19c1b4ec4d2")?.size);
+      console.log(telegramUser);
       io.to(currentJoinedRoomID).emit(
         "roomGTSGameMessage",
-        `message to all users room with ID ${currentJoinedRoomID} room: ${message}`
+
+        {
+          message: message,
+          telegramUserID: telegramUser.id,
+          telegramUserName: telegramUser.username,
+          messageDate: Date.now(),
+        }
       );
     }
   );
