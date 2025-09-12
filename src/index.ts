@@ -99,23 +99,35 @@ io.on("connection", (socket) => {
   }
 
   socket.on("join_room", async ({ roomID, telegramUser, type }: IJoinRoomProps) => {
-    console.log(`Room ID: ${roomID}`);
-    console.log(`TGUserName: ${telegramUser.username}`);
     socket.join(roomID);
-    io.to(roomID).emit("joinRoomUserMessage", {
+    socket.broadcast.to(roomID).emit("joinRoomUserMessage", {
       message: `Пользователь ${
         telegramUser.username ? telegramUser.username : telegramUser.id
       } подключился`,
       roomID: roomID,
       type,
     });
+    // io.to(roomID).emit("joinRoomUserMessage", {
+    //   message: `Пользователь ${
+    //     telegramUser.username ? telegramUser.username : telegramUser.id
+    //   } подключился`,
+    //   roomID: roomID,
+    //   type,
+    // });
     // if (!socket.rooms.has(roomName)) {
     //   console.log(`user Joined to room ${roomName}`);
     // }
   });
-  socket.on("leave_room", async (roomName: string) => {
-    socket.leave(roomName);
-    console.log(`user leave room ${roomName}`);
+  socket.on("leave_room", async ({ roomID, telegramUser, type }: IJoinRoomProps) => {
+    socket.leave(roomID);
+    console.log(`user leave room ${roomID}`);
+    socket.broadcast.to(roomID).emit("leaveRoomUserMessage", {
+      message: `Пользователь ${
+        telegramUser.username ? telegramUser.username : telegramUser.id
+      } отключился`,
+      roomID: roomID,
+      type,
+    });
   });
 
   socket.on("getSocketID", () => {
