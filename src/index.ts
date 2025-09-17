@@ -163,11 +163,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("getSocketID", () => {
-    console.log(socket.id);
+    io.to(socket.id).emit("socketID", socket.id);
+  });
+
+  socket.on("disconnecting", () => {
+    console.log(socket.rooms);
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected");
+    console.log(socket.id);
     // io.sockets.disconnectSockets();
   });
 });
