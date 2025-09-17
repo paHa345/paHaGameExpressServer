@@ -45,6 +45,7 @@ const io = new socket_io_1.Server(server, {
     },
     connectionStateRecovery: {},
 });
+const rooms = {};
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
     socket.on("send-message", (message) => {
@@ -63,31 +64,48 @@ io.on("connection", (socket) => {
         });
     });
     socket.on("join_room", (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomID, telegramUser, type }) {
+        socket.data.userdata = {
+            username: telegramUser.username,
+            userID: telegramUser.id,
+            photoURL: telegramUser.photo_url,
+            socketID: socket.id,
+        };
         socket.join(roomID);
         socket.broadcast.to(roomID).emit("joinRoomUserMessage", {
             message: `Пользователь ${telegramUser.username ? telegramUser.username : telegramUser.id} подключился`,
             roomID: roomID,
             type,
         });
-        // io.to(roomID).emit("joinRoomUserMessage", {
-        //   message: `Пользователь ${
-        //     telegramUser.username ? telegramUser.username : telegramUser.id
-        //   } подключился`,
-        //   roomID: roomID,
-        //   type,
-        // });
-        // if (!socket.rooms.has(roomName)) {
-        //   console.log(`user Joined to room ${roomName}`);
-        // }
+        const users = [];
+        try {
+            const roomUsers = yield io.in(roomID).fetchSockets();
+            for (const socket of roomUsers) {
+                users.push(socket.data.userdata);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+        io.of("/").to(roomID).emit("addUserInRoom", users);
     }));
     socket.on("leave_room", (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomID, telegramUser, type }) {
         socket.leave(roomID);
-        console.log(`user leave room ${roomID}`);
         socket.broadcast.to(roomID).emit("leaveRoomUserMessage", {
             message: `Пользователь ${telegramUser.username ? telegramUser.username : telegramUser.id} отключился`,
             roomID: roomID,
             type,
         });
+        const users = [];
+        try {
+            const roomUsers = yield io.in(roomID).fetchSockets();
+            for (const socket of roomUsers) {
+                users.push(socket.data.userdata);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+        io.of("/").to(roomID).emit("deleteUserFromRoom", users);
     }));
     socket.on("getSocketID", () => {
         console.log(socket.id);

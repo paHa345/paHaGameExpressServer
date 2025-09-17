@@ -1,7 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import { connectMongoDB } from "../libs/MongoConnect";
-import GTSGameAttempt from "../models/GTSGameAttemptModel";
 import userRoutes from "./../routes/users";
 import uploadFile from "../routes/uploadFile";
 import answerTime from "../routes/answerTime";
@@ -42,6 +41,21 @@ const io = new Server(server, {
   },
   connectionStateRecovery: {},
 });
+
+interface IRooms {
+  [name: string]: {
+    users: [
+      {
+        socketID: string;
+        username: string | undefined;
+        userID: number | undefined;
+        photo: string | undefined;
+      }
+    ];
+  };
+}
+
+const rooms: IRooms = {};
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
@@ -99,6 +113,12 @@ io.on("connection", (socket) => {
   }
 
   socket.on("join_room", async ({ roomID, telegramUser, type }: IJoinRoomProps) => {
+    socket.data.userdata = {
+      username: telegramUser.username,
+      userID: telegramUser.id,
+      photoURL: telegramUser.photo_url,
+      socketID: socket.id,
+    };
     socket.join(roomID);
     socket.broadcast.to(roomID).emit("joinRoomUserMessage", {
       message: `Пользователь ${
@@ -107,20 +127,22 @@ io.on("connection", (socket) => {
       roomID: roomID,
       type,
     });
-    // io.to(roomID).emit("joinRoomUserMessage", {
-    //   message: `Пользователь ${
-    //     telegramUser.username ? telegramUser.username : telegramUser.id
-    //   } подключился`,
-    //   roomID: roomID,
-    //   type,
-    // });
-    // if (!socket.rooms.has(roomName)) {
-    //   console.log(`user Joined to room ${roomName}`);
-    // }
+
+    const users = [];
+    try {
+      const roomUsers = await io.in(roomID).fetchSockets();
+      for (const socket of roomUsers) {
+        users.push(socket.data.userdata);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    io.of("/").to(roomID).emit("addUserInRoom", users);
   });
   socket.on("leave_room", async ({ roomID, telegramUser, type }: IJoinRoomProps) => {
     socket.leave(roomID);
-    console.log(`user leave room ${roomID}`);
+
     socket.broadcast.to(roomID).emit("leaveRoomUserMessage", {
       message: `Пользователь ${
         telegramUser.username ? telegramUser.username : telegramUser.id
@@ -128,6 +150,16 @@ io.on("connection", (socket) => {
       roomID: roomID,
       type,
     });
+    const users = [];
+    try {
+      const roomUsers = await io.in(roomID).fetchSockets();
+      for (const socket of roomUsers) {
+        users.push(socket.data.userdata);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    io.of("/").to(roomID).emit("deleteUserFromRoom", users);
   });
 
   socket.on("getSocketID", () => {
