@@ -166,6 +166,23 @@ io.on("connection", (socket) => {
     io.to(socket.id).emit("socketID", socket.id);
   });
 
+  const game = {
+    square: {
+      x: 10,
+      y: 10,
+    },
+  };
+
+  socket.on("startGame", (roomID: string) => {
+    console.log("start game");
+    //проверяем есть ли данная комната в списке комнат, к которым подключен данный сокет
+    if (!socket.rooms.has(roomID)) {
+      return;
+    }
+    io.of("/").to(roomID).emit("startGameInRoom", game);
+    console.log(socket.rooms.has(roomID));
+  });
+
   socket.on("disconnecting", () => {
     console.log(socket.rooms);
   });
