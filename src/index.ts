@@ -42,20 +42,22 @@ const io = new Server(server, {
   connectionStateRecovery: {},
 });
 
-interface IRooms {
-  [name: string]: {
-    users: [
-      {
-        socketID: string;
-        username: string | undefined;
-        userID: number | undefined;
-        photo: string | undefined;
-      }
-    ];
+interface IGame {
+  [socketID: string]: {
+    square: {
+      prevCoord: {
+        x: number;
+        y: number;
+      };
+      currentCoord: {
+        x: number;
+        y: number;
+      };
+    };
   };
 }
 
-const rooms: IRooms = {};
+const game: IGame = {};
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
@@ -166,21 +168,79 @@ io.on("connection", (socket) => {
     io.to(socket.id).emit("socketID", socket.id);
   });
 
-  const game = {
-    square: {
-      x: 10,
-      y: 10,
-    },
-  };
-
   socket.on("startGame", (roomID: string) => {
     console.log("start game");
     //проверяем есть ли данная комната в списке комнат, к которым подключен данный сокет
     if (!socket.rooms.has(roomID)) {
       return;
     }
+    const numberOfGamers = Object.keys(game).length;
+    game[socket.id] = {
+      square: {
+        prevCoord: {
+          x: 10 + numberOfGamers * 20,
+          y: 10,
+        },
+        currentCoord: {
+          x: 10 + numberOfGamers * 20,
+          y: 10,
+        },
+      },
+    };
+    console.log(Object.keys(game).length);
     io.of("/").to(roomID).emit("startGameInRoom", game);
-    console.log(socket.rooms.has(roomID));
+  });
+
+  socket.on("clientMoveDown", (roomID: string) => {
+    if (!socket.rooms.has(roomID)) {
+      return;
+    }
+    game[socket.id].square.prevCoord = JSON.parse(
+      JSON.stringify(game[socket.id].square.currentCoord)
+    );
+
+    game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y + 5;
+
+    io.of("/").to(roomID).emit("serverMoveDown", game);
+  });
+
+  socket.on("clientMoveUp", (roomID: string) => {
+    if (!socket.rooms.has(roomID)) {
+      return;
+    }
+    game[socket.id].square.prevCoord = JSON.parse(
+      JSON.stringify(game[socket.id].square.currentCoord)
+    );
+
+    game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y - 5;
+
+    io.of("/").to(roomID).emit("serverMoveUp", game);
+  });
+
+  socket.on("clientMoveLeft", (roomID: string) => {
+    if (!socket.rooms.has(roomID)) {
+      return;
+    }
+    game[socket.id].square.prevCoord = JSON.parse(
+      JSON.stringify(game[socket.id].square.currentCoord)
+    );
+
+    game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x - 5;
+
+    io.of("/").to(roomID).emit("serverMoveLeft", game);
+  });
+
+  socket.on("clientMoveRight", (roomID: string) => {
+    if (!socket.rooms.has(roomID)) {
+      return;
+    }
+    game[socket.id].square.prevCoord = JSON.parse(
+      JSON.stringify(game[socket.id].square.currentCoord)
+    );
+
+    game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x + 5;
+
+    io.of("/").to(roomID).emit("serverMoveRight", game);
   });
 
   socket.on("disconnecting", () => {
@@ -189,6 +249,8 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("User disconnected");
+    delete game[socket.id];
+
     console.log(socket.id);
     // io.sockets.disconnectSockets();
   });

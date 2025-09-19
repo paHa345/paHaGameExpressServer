@@ -45,7 +45,7 @@ const io = new socket_io_1.Server(server, {
     },
     connectionStateRecovery: {},
 });
-const rooms = {};
+const game = {};
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
     socket.on("send-message", (message) => {
@@ -110,26 +110,66 @@ io.on("connection", (socket) => {
     socket.on("getSocketID", () => {
         io.to(socket.id).emit("socketID", socket.id);
     });
-    const game = {
-        square: {
-            x: 10,
-            y: 10,
-        },
-    };
     socket.on("startGame", (roomID) => {
         console.log("start game");
         //проверяем есть ли данная комната в списке комнат, к которым подключен данный сокет
         if (!socket.rooms.has(roomID)) {
             return;
         }
+        const numberOfGamers = Object.keys(game).length;
+        game[socket.id] = {
+            square: {
+                prevCoord: {
+                    x: 10 + numberOfGamers * 20,
+                    y: 10,
+                },
+                currentCoord: {
+                    x: 10 + numberOfGamers * 20,
+                    y: 10,
+                },
+            },
+        };
+        console.log(Object.keys(game).length);
         io.of("/").to(roomID).emit("startGameInRoom", game);
-        console.log(socket.rooms.has(roomID));
+    });
+    socket.on("clientMoveDown", (roomID) => {
+        if (!socket.rooms.has(roomID)) {
+            return;
+        }
+        game[socket.id].square.prevCoord = JSON.parse(JSON.stringify(game[socket.id].square.currentCoord));
+        game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y + 5;
+        io.of("/").to(roomID).emit("serverMoveDown", game);
+    });
+    socket.on("clientMoveUp", (roomID) => {
+        if (!socket.rooms.has(roomID)) {
+            return;
+        }
+        game[socket.id].square.prevCoord = JSON.parse(JSON.stringify(game[socket.id].square.currentCoord));
+        game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y - 5;
+        io.of("/").to(roomID).emit("serverMoveUp", game);
+    });
+    socket.on("clientMoveLeft", (roomID) => {
+        if (!socket.rooms.has(roomID)) {
+            return;
+        }
+        game[socket.id].square.prevCoord = JSON.parse(JSON.stringify(game[socket.id].square.currentCoord));
+        game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x - 5;
+        io.of("/").to(roomID).emit("serverMoveLeft", game);
+    });
+    socket.on("clientMoveRight", (roomID) => {
+        if (!socket.rooms.has(roomID)) {
+            return;
+        }
+        game[socket.id].square.prevCoord = JSON.parse(JSON.stringify(game[socket.id].square.currentCoord));
+        game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x + 5;
+        io.of("/").to(roomID).emit("serverMoveRight", game);
     });
     socket.on("disconnecting", () => {
         console.log(socket.rooms);
     });
     socket.on("disconnect", () => {
         console.log("User disconnected");
+        delete game[socket.id];
         console.log(socket.id);
         // io.sockets.disconnectSockets();
     });
