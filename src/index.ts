@@ -42,6 +42,13 @@ const io = new Server(server, {
   connectionStateRecovery: {},
 });
 
+enum UserMoveDirections {
+  right = "right",
+  down = "down",
+  up = "up",
+  left = "left",
+}
+
 interface IGame {
   [socketID: string]: {
     square: {
@@ -191,56 +198,77 @@ io.on("connection", (socket) => {
     io.of("/").to(roomID).emit("startGameInRoom", game);
   });
 
-  socket.on("clientMoveDown", (roomID: string) => {
-    if (!socket.rooms.has(roomID)) {
-      return;
-    }
+  let moveClientSquare: any;
+  const setClientCoordinates = (clientData: {
+    direction: UserMoveDirections;
+    roomID: string;
+    shiftUserPixels: number;
+  }) => {
     game[socket.id].square.prevCoord = JSON.parse(
       JSON.stringify(game[socket.id].square.currentCoord)
     );
+    const setCurrentCoord = function (clientData: {
+      direction: UserMoveDirections;
+      roomID: string;
+      shiftUserPixels: number;
+    }) {
+      if (clientData.direction === UserMoveDirections.down) {
+        game[socket.id].square.currentCoord.y + clientData.shiftUserPixels > 280
+          ? (game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y)
+          : (game[socket.id].square.currentCoord.y =
+              game[socket.id].square.currentCoord.y + clientData.shiftUserPixels);
+      }
+      if (clientData.direction === UserMoveDirections.left) {
+        game[socket.id].square.currentCoord.x - clientData.shiftUserPixels < 0
+          ? (game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x)
+          : (game[socket.id].square.currentCoord.x =
+              game[socket.id].square.currentCoord.x - clientData.shiftUserPixels);
+      }
+      if (clientData.direction === UserMoveDirections.right) {
+        game[socket.id].square.currentCoord.x + clientData.shiftUserPixels > 280
+          ? (game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x)
+          : (game[socket.id].square.currentCoord.x =
+              game[socket.id].square.currentCoord.x + clientData.shiftUserPixels);
+      }
+      if (clientData.direction === UserMoveDirections.up) {
+        game[socket.id].square.currentCoord.y - clientData.shiftUserPixels < 0
+          ? (game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y)
+          : (game[socket.id].square.currentCoord.y =
+              game[socket.id].square.currentCoord.y - clientData.shiftUserPixels);
+      }
+    };
 
-    game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y + 5;
+    setCurrentCoord(clientData);
 
-    io.of("/").to(roomID).emit("serverMoveDown", game);
+    io.of("/").to(clientData.roomID).emit("serverMove", game);
+  };
+
+  socket.on("clientStartMove", (clientData: { direction: UserMoveDirections; roomID: string }) => {
+    if (!socket.rooms.has(clientData.roomID)) {
+      return;
+    }
+    if (!Object.values(UserMoveDirections).includes(clientData.direction)) {
+      return;
+    }
+
+    let timeCurrent: any;
+    let timePrev;
+
+    moveClientSquare = setInterval(() => {
+      if (!timeCurrent) {
+        timeCurrent = Date.now();
+        timePrev = Date.now() - 75;
+      } else {
+        timePrev = timeCurrent;
+        timeCurrent = Date.now();
+      }
+      const shiftUserPixels = Math.floor((timeCurrent - timePrev) / 25);
+      setClientCoordinates({ ...clientData, shiftUserPixels });
+    }, 75);
   });
 
-  socket.on("clientMoveUp", (roomID: string) => {
-    if (!socket.rooms.has(roomID)) {
-      return;
-    }
-    game[socket.id].square.prevCoord = JSON.parse(
-      JSON.stringify(game[socket.id].square.currentCoord)
-    );
-
-    game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y - 5;
-
-    io.of("/").to(roomID).emit("serverMoveUp", game);
-  });
-
-  socket.on("clientMoveLeft", (roomID: string) => {
-    if (!socket.rooms.has(roomID)) {
-      return;
-    }
-    game[socket.id].square.prevCoord = JSON.parse(
-      JSON.stringify(game[socket.id].square.currentCoord)
-    );
-
-    game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x - 5;
-
-    io.of("/").to(roomID).emit("serverMoveLeft", game);
-  });
-
-  socket.on("clientMoveRight", (roomID: string) => {
-    if (!socket.rooms.has(roomID)) {
-      return;
-    }
-    game[socket.id].square.prevCoord = JSON.parse(
-      JSON.stringify(game[socket.id].square.currentCoord)
-    );
-
-    game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x + 5;
-
-    io.of("/").to(roomID).emit("serverMoveRight", game);
+  socket.on("clientStopMove", (data: string) => {
+    clearInterval(moveClientSquare);
   });
 
   socket.on("disconnecting", () => {
