@@ -127,14 +127,19 @@ io.on("connection", (socket) => {
         game[socket.id] = {
             square: {
                 prevCoord: {
-                    x: 10 + numberOfGamers * 20,
-                    y: 10,
+                    x1: 10 + numberOfGamers * 40,
+                    x2: 30 + numberOfGamers * 40,
+                    y1: 10,
+                    y2: 30,
                 },
                 currentCoord: {
-                    x: 10 + numberOfGamers * 20,
-                    y: 10,
+                    x1: 10 + numberOfGamers * 40,
+                    x2: 30 + numberOfGamers * 40,
+                    y1: 10,
+                    y2: 30,
                 },
             },
+            userRole: numberOfGamers > 0 ? "creeper" : "steve",
         };
         console.log(Object.keys(game).length);
         io.of("/").to(roomID).emit("startGameInRoom", game);
@@ -142,30 +147,52 @@ io.on("connection", (socket) => {
     let moveClientSquare;
     const setClientCoordinates = (clientData) => {
         game[socket.id].square.prevCoord = JSON.parse(JSON.stringify(game[socket.id].square.currentCoord));
-        const setCurrentCoord = function (clientData) {
+        const setMoveCoord = () => {
             if (clientData.direction === UserMoveDirections.down) {
-                game[socket.id].square.currentCoord.y + clientData.shiftUserPixels > 280
-                    ? (game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y)
-                    : (game[socket.id].square.currentCoord.y =
-                        game[socket.id].square.currentCoord.y + clientData.shiftUserPixels);
+                game[socket.id].square.currentCoord.y1 =
+                    game[socket.id].square.currentCoord.y1 + clientData.shiftUserPixels;
+                game[socket.id].square.currentCoord.y2 =
+                    game[socket.id].square.currentCoord.y2 + clientData.shiftUserPixels;
             }
             if (clientData.direction === UserMoveDirections.left) {
-                game[socket.id].square.currentCoord.x - clientData.shiftUserPixels < 0
-                    ? (game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x)
-                    : (game[socket.id].square.currentCoord.x =
-                        game[socket.id].square.currentCoord.x - clientData.shiftUserPixels);
+                game[socket.id].square.currentCoord.x1 =
+                    game[socket.id].square.currentCoord.x1 - clientData.shiftUserPixels;
+                game[socket.id].square.currentCoord.x2 =
+                    game[socket.id].square.currentCoord.x2 - clientData.shiftUserPixels;
             }
             if (clientData.direction === UserMoveDirections.right) {
-                game[socket.id].square.currentCoord.x + clientData.shiftUserPixels > 280
-                    ? (game[socket.id].square.currentCoord.x = game[socket.id].square.currentCoord.x)
-                    : (game[socket.id].square.currentCoord.x =
-                        game[socket.id].square.currentCoord.x + clientData.shiftUserPixels);
+                game[socket.id].square.currentCoord.x1 =
+                    game[socket.id].square.currentCoord.x1 + clientData.shiftUserPixels;
+                game[socket.id].square.currentCoord.x2 =
+                    game[socket.id].square.currentCoord.x2 + clientData.shiftUserPixels;
             }
             if (clientData.direction === UserMoveDirections.up) {
-                game[socket.id].square.currentCoord.y - clientData.shiftUserPixels < 0
-                    ? (game[socket.id].square.currentCoord.y = game[socket.id].square.currentCoord.y)
-                    : (game[socket.id].square.currentCoord.y =
-                        game[socket.id].square.currentCoord.y - clientData.shiftUserPixels);
+                game[socket.id].square.currentCoord.y1 =
+                    game[socket.id].square.currentCoord.y1 - clientData.shiftUserPixels;
+                game[socket.id].square.currentCoord.y2 =
+                    game[socket.id].square.currentCoord.y2 - clientData.shiftUserPixels;
+            }
+        };
+        const setCurrentCoord = function (clientData) {
+            if (clientData.direction === UserMoveDirections.down) {
+                game[socket.id].square.currentCoord.y1 + clientData.shiftUserPixels > 300
+                    ? (game[socket.id].square.currentCoord.y1 = game[socket.id].square.currentCoord.y1)
+                    : setMoveCoord();
+            }
+            if (clientData.direction === UserMoveDirections.left) {
+                game[socket.id].square.currentCoord.x1 - clientData.shiftUserPixels < 0
+                    ? (game[socket.id].square.currentCoord.x1 = game[socket.id].square.currentCoord.x1)
+                    : setMoveCoord();
+            }
+            if (clientData.direction === UserMoveDirections.right) {
+                game[socket.id].square.currentCoord.x2 + clientData.shiftUserPixels > 300
+                    ? (game[socket.id].square.currentCoord.x2 = game[socket.id].square.currentCoord.x2)
+                    : setMoveCoord();
+            }
+            if (clientData.direction === UserMoveDirections.up) {
+                game[socket.id].square.currentCoord.y1 - clientData.shiftUserPixels < 0
+                    ? (game[socket.id].square.currentCoord.y1 = game[socket.id].square.currentCoord.y1)
+                    : setMoveCoord();
             }
         };
         setCurrentCoord(clientData);
