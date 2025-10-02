@@ -131,10 +131,138 @@ io.on("connection", (socket) => {
         for (let i = 0; i < 50; i++) {
             const gameFieldCreatedObjRow = {};
             for (let j = 0; j < 50; j++) {
-                gameFieldCreatedObjRow[j] = { type: "dirt" };
+                gameFieldCreatedObjRow[j] = {};
             }
             game.gameField[i] = gameFieldCreatedObjRow;
         }
+        game.gameField[10][10].type = "stone";
+        game.gameField[10][10].notMove = true;
+        game.gameField[10][10].coord = {
+            topLeft: { x: 8 * 10, y: 8 * 10 },
+            topRight: { x: 8 * 10 + 8, y: 8 * 10 },
+            bottomLeft: { x: 8 * 10, y: 8 * 10 + 8 },
+            bottomRight: { x: 8 * 10 + 8, y: 8 * 10 + 8 },
+        };
+        game.gameField[10][11].type = "stone";
+        game.gameField[10][11].notMove = true;
+        game.gameField[10][11].coord = {
+            topLeft: { x: 8 * 10, y: 8 * 11 },
+            topRight: { x: 8 * 10 + 8, y: 8 * 11 },
+            bottomLeft: { x: 8 * 10, y: 8 * 11 + 8 },
+            bottomRight: { x: 8 * 10 + 8, y: 8 * 11 + 8 },
+        };
+        game.gameField[10][12].type = "stone";
+        game.gameField[10][12].notMove = true;
+        game.gameField[10][12].coord = {
+            topLeft: { x: 8 * 10, y: 8 * 12 },
+            topRight: { x: 8 * 10 + 8, y: 8 * 12 },
+            bottomLeft: { x: 8 * 10, y: 8 * 12 + 8 },
+            bottomRight: { x: 8 * 10 + 8, y: 8 * 12 + 8 },
+        };
+        game.gameField[10][13].type = "stone";
+        game.gameField[10][13].notMove = true;
+        game.gameField[10][13].coord = {
+            topLeft: { x: 8 * 10, y: 8 * 13 },
+            topRight: { x: 8 * 10 + 8, y: 8 * 13 },
+            bottomLeft: { x: 8 * 10, y: 8 * 13 + 8 },
+            bottomRight: { x: 8 * 10 + 8, y: 8 * 13 + 8 },
+        };
+        game.gameField[10][14].type = "stone";
+        game.gameField[10][14].notMove = true;
+        game.gameField[10][14].coord = {
+            topLeft: { x: 8 * 10, y: 8 * 14 },
+            topRight: { x: 8 * 10 + 8, y: 8 * 14 },
+            bottomLeft: { x: 8 * 10, y: 8 * 14 + 8 },
+            bottomRight: { x: 8 * 10 + 8, y: 8 * 14 + 8 },
+        };
+        game.gameField[10][15].type = "stone";
+        game.gameField[10][15].notMove = true;
+        game.gameField[10][15].coord = {
+            topLeft: { x: 8 * 10, y: 8 * 15 },
+            topRight: { x: 8 * 10 + 8, y: 8 * 15 },
+            bottomLeft: { x: 8 * 10, y: 8 * 15 + 8 },
+            bottomRight: { x: 8 * 10 + 8, y: 8 * 15 + 8 },
+        };
+        game.gameField[11][10].type = "stone";
+        game.gameField[11][10].notMove = true;
+        game.gameField[11][10].coord = {
+            topLeft: { x: 8 * 11, y: 8 * 10 },
+            topRight: { x: 8 * 11 + 8, y: 8 * 10 },
+            bottomLeft: { x: 8 * 11, y: 8 * 10 + 8 },
+            bottomRight: { x: 8 * 11 + 8, y: 8 * 10 + 8 },
+        };
+        game.gameField[12][10].type = "stone";
+        game.gameField[12][10].notMove = true;
+        game.gameField[12][10].coord = {
+            topLeft: { x: 8 * 12, y: 8 * 10 },
+            topRight: { x: 8 * 12 + 8, y: 8 * 10 },
+            bottomLeft: { x: 8 * 12, y: 8 * 10 + 8 },
+            bottomRight: { x: 8 * 12 + 8, y: 8 * 10 + 8 },
+        };
+        game.gameField[13][10].type = "stone";
+        game.gameField[13][10].notMove = true;
+        game.gameField[13][10].coord = {
+            topLeft: { x: 8 * 13, y: 8 * 10 },
+            topRight: { x: 8 * 13 + 8, y: 8 * 10 },
+            bottomLeft: { x: 8 * 13, y: 8 * 10 + 8 },
+            bottomRight: { x: 8 * 13 + 8, y: 8 * 10 + 8 },
+        };
+        game.gameField[14][10].type = "stone";
+        game.gameField[14][10].notMove = true;
+        game.gameField[14][10].coord = {
+            topLeft: { x: 8 * 14, y: 8 * 10 },
+            topRight: { x: 8 * 14 + 8, y: 8 * 10 },
+            bottomLeft: { x: 8 * 14, y: 8 * 10 + 8 },
+            bottomRight: { x: 8 * 14 + 8, y: 8 * 10 + 8 },
+        };
+        game.gameField[15][10].type = "stone";
+        game.gameField[15][10].notMove = true;
+        game.gameField[15][10].coord = {
+            topLeft: { x: 8 * 15, y: 8 * 10 },
+            topRight: { x: 8 * 15 + 8, y: 8 * 10 },
+            bottomLeft: { x: 8 * 15, y: 8 * 10 + 8 },
+            bottomRight: { x: 8 * 15 + 8, y: 8 * 10 + 8 },
+        };
+        game.gameField[16][10].type = "stone";
+        game.gameField[16][10].notMove = true;
+        game.gameField[16][10].coord = {
+            topLeft: { x: 8 * 16, y: 8 * 10 },
+            topRight: { x: 8 * 16 + 8, y: 8 * 10 },
+            bottomLeft: { x: 8 * 16, y: 8 * 10 + 8 },
+            bottomRight: { x: 8 * 16 + 8, y: 8 * 10 + 8 },
+        };
+        game.gameField[4][10].type = "stone";
+        game.gameField[4][10].notMove = true;
+        game.gameField[4][10].coord = {
+            topLeft: { x: 8 * 4, y: 8 * 10 },
+            topRight: { x: 8 * 4 + 8, y: 8 * 10 },
+            bottomLeft: { x: 8 * 4, y: 8 * 10 + 8 },
+            bottomRight: { x: 8 * 4 + 8, y: 8 * 10 + 8 },
+        };
+        game.gameField[4][11].type = "stone";
+        game.gameField[4][11].notMove = true;
+        game.gameField[4][11].coord = {
+            topLeft: { x: 8 * 4, y: 8 * 11 },
+            topRight: { x: 8 * 4 + 8, y: 8 * 11 },
+            bottomLeft: { x: 8 * 4, y: 8 * 11 + 8 },
+            bottomRight: { x: 8 * 4 + 8, y: 8 * 11 + 8 },
+        };
+        game.gameField[4][12].type = "stone";
+        game.gameField[4][12].notMove = true;
+        game.gameField[4][12].coord = {
+            topLeft: { x: 8 * 4, y: 8 * 12 },
+            topRight: { x: 8 * 4 + 8, y: 8 * 12 },
+            bottomLeft: { x: 8 * 4, y: 8 * 12 + 8 },
+            bottomRight: { x: 8 * 4 + 8, y: 8 * 12 + 8 },
+        };
+        game.gameField[4][13].type = "stone";
+        game.gameField[4][13].notMove = true;
+        game.gameField[4][13].coord = {
+            topLeft: { x: 8 * 4, y: 8 * 13 },
+            topRight: { x: 8 * 4 + 8, y: 8 * 13 },
+            bottomLeft: { x: 8 * 4, y: 8 * 13 + 8 },
+            bottomRight: { x: 8 * 4 + 8, y: 8 * 13 + 8 },
+        };
         const numberOfGamers = Object.keys(game.users).length;
         game.users[socket.id] = {
             square: {
@@ -144,16 +272,16 @@ io.on("connection", (socket) => {
                         y: 10,
                     },
                     topRight: {
-                        x: 10 + 20 + numberOfGamers * 40,
+                        x: 10 + 16 + numberOfGamers * 40,
                         y: 10,
                     },
                     bottomLeft: {
                         x: 10 + numberOfGamers * 40,
-                        y: 10 + 20,
+                        y: 10 + 16,
                     },
                     bottomRight: {
-                        x: 10 + 20 + numberOfGamers * 40,
-                        y: 10,
+                        x: 10 + 16 + numberOfGamers * 40,
+                        y: 10 + 16,
                     },
                 },
                 currentCoord: {
@@ -162,16 +290,16 @@ io.on("connection", (socket) => {
                         y: 10,
                     },
                     topRight: {
-                        x: 10 + 20 + numberOfGamers * 40,
+                        x: 10 + 16 + numberOfGamers * 40,
                         y: 10,
                     },
                     bottomLeft: {
                         x: 10 + numberOfGamers * 40,
-                        y: 10 + 20,
+                        y: 10 + 16,
                     },
                     bottomRight: {
-                        x: 10 + 20 + numberOfGamers * 40,
-                        y: 10,
+                        x: 10 + 16 + numberOfGamers * 40,
+                        y: 10 + 16,
                     },
                 },
             },
@@ -229,28 +357,37 @@ io.on("connection", (socket) => {
             }
         };
         const setCurrentCoord = function (clientData) {
+            var _a, _b, _c, _d, _e, _f, _g, _h;
             if (!game.users[socket.id])
                 return;
             if (clientData.direction === UserMoveDirections.down) {
-                game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300
+                game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
+                    ((_a = game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _a === void 0 ? void 0 : _a.notMove) ||
+                    ((_b = game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _b === void 0 ? void 0 : _b.notMove)
                     ? (game.users[socket.id].square.currentCoord.bottomLeft.y =
                         game.users[socket.id].square.currentCoord.bottomLeft.y)
                     : setMoveCoord();
             }
             if (clientData.direction === UserMoveDirections.left) {
-                game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels < 0
+                game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels < 0 ||
+                    ((_c = game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y + 5) / 8)][Math.floor(game.users[socket.id].square.currentCoord.topLeft.x / 8)]) === null || _c === void 0 ? void 0 : _c.notMove) ||
+                    ((_d = game.gameField[Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 8)][Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.x / 8)]) === null || _d === void 0 ? void 0 : _d.notMove)
                     ? (game.users[socket.id].square.currentCoord.topLeft.x =
                         game.users[socket.id].square.currentCoord.topLeft.x)
                     : setMoveCoord();
             }
             if (clientData.direction === UserMoveDirections.right) {
-                game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300
+                game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
+                    ((_e = game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topRight.y + 5) / 8)][Math.floor(game.users[socket.id].square.currentCoord.topRight.x / 8)]) === null || _e === void 0 ? void 0 : _e.notMove) ||
+                    ((_f = game.gameField[Math.floor((game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 8)][Math.floor(game.users[socket.id].square.currentCoord.bottomRight.x / 8)]) === null || _f === void 0 ? void 0 : _f.notMove)
                     ? (game.users[socket.id].square.currentCoord.topRight.x =
                         game.users[socket.id].square.currentCoord.topRight.x)
                     : setMoveCoord();
             }
             if (clientData.direction === UserMoveDirections.up) {
-                game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels < 0
+                game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels < 0 ||
+                    ((_g = game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topLeft.y / 8)][Math.floor((game.users[socket.id].square.currentCoord.topLeft.x + 5) / 8)]) === null || _g === void 0 ? void 0 : _g.notMove) ||
+                    ((_h = game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topRight.y / 8)][Math.floor((game.users[socket.id].square.currentCoord.topRight.x - 5) / 8)]) === null || _h === void 0 ? void 0 : _h.notMove)
                     ? (game.users[socket.id].square.currentCoord.topLeft.y =
                         game.users[socket.id].square.currentCoord.topLeft.y)
                     : setMoveCoord();
