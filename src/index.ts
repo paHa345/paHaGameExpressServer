@@ -579,7 +579,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("clientStopMove", (data: string) => {
-    game.users[socket.id].moveDirection = UserMoveDirections.stop;
+    if (game.users[socket.id].moveDirection) {
+      game.users[socket.id].moveDirection = UserMoveDirections.stop;
+    }
     clearInterval(moveClientSquare);
   });
   socket.on("clientStartAttack", (clientData: { roomID: string }) => {

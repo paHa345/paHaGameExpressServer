@@ -424,7 +424,9 @@ io.on("connection", (socket) => {
         }, 33);
     });
     socket.on("clientStopMove", (data) => {
-        game.users[socket.id].moveDirection = UserMoveDirections.stop;
+        if (game.users[socket.id].moveDirection) {
+            game.users[socket.id].moveDirection = UserMoveDirections.stop;
+        }
         clearInterval(moveClientSquare);
     });
     socket.on("clientStartAttack", (clientData) => {
