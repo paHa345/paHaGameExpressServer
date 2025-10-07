@@ -51,6 +51,7 @@ var UserMoveDirections;
     UserMoveDirections["down"] = "down";
     UserMoveDirections["up"] = "up";
     UserMoveDirections["left"] = "left";
+    UserMoveDirections["stop"] = "stop";
 })(UserMoveDirections || (UserMoveDirections = {}));
 const game = {
     users: {},
@@ -265,6 +266,7 @@ io.on("connection", (socket) => {
         };
         const numberOfGamers = Object.keys(game.users).length;
         game.users[socket.id] = {
+            attackStatus: { isCooldown: false },
             square: {
                 prevCoord: {
                     topLeft: {
@@ -303,6 +305,7 @@ io.on("connection", (socket) => {
                     },
                 },
             },
+            moveDirection: UserMoveDirections.stop,
             userRole: numberOfGamers > 0 ? "creeper" : "steve",
         };
         io.of("/")
@@ -360,6 +363,7 @@ io.on("connection", (socket) => {
             var _a, _b, _c, _d, _e, _f, _g, _h;
             if (!game.users[socket.id])
                 return;
+            game.users[socket.id].moveDirection = clientData.direction;
             if (clientData.direction === UserMoveDirections.down) {
                 game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
                     ((_a = game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _a === void 0 ? void 0 : _a.notMove) ||
@@ -420,7 +424,33 @@ io.on("connection", (socket) => {
         }, 33);
     });
     socket.on("clientStopMove", (data) => {
+        game.users[socket.id].moveDirection = UserMoveDirections.stop;
         clearInterval(moveClientSquare);
+    });
+    socket.on("clientStartAttack", (clientData) => {
+        const startAttackTimestamp = Date.now();
+        game.users[socket.id].attackStatus.time = startAttackTimestamp;
+        game.users[socket.id].attackStatus.isCooldown = true;
+        io.of("/").to(clientData.roomID).emit("serverStartAttack", {
+            roomID: clientData.roomID,
+            socketID: socket.id,
+            attackStatus: game.users[socket.id].attackStatus,
+            isCooldown: true,
+        });
+        let cooldownInterval;
+        cooldownInterval = setInterval(() => {
+            if (Date.now() - startAttackTimestamp > 1000) {
+                game.users[socket.id].attackStatus.isCooldown = false;
+                io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
+                    roomID: clientData.roomID,
+                    socketID: socket.id,
+                    attackStatus: game.users[socket.id].attackStatus,
+                    isCooldown: false,
+                });
+                clearInterval(cooldownInterval);
+            }
+            console.log(startAttackTimestamp - Date.now() + 1000);
+        }, 100);
     });
     socket.on("disconnecting", () => {
         console.log(socket.rooms);
