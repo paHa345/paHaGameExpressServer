@@ -6,6 +6,9 @@ import uploadFile from "../routes/uploadFile";
 import answerTime from "../routes/answerTime";
 import GTSAttempts from "../routes/GTSAttempts";
 import webSocketServer from "../routes/webSocketServer";
+import { createGameField, game } from "../objects/gameObject";
+import { UserMoveDirections } from "../objects/gameObject";
+
 import { WebSocketServer } from "ws";
 // const cors = require("cors");
 const S3 = require("aws-sdk/clients/s3");
@@ -43,103 +46,15 @@ const io = new Server(server, {
   connectionStateRecovery: {},
 });
 
-enum UserMoveDirections {
-  right = "right",
-  down = "down",
-  up = "up",
-  left = "left",
-  stop = "stop",
-}
-
-interface IGameUserMain<T> {
-  [socketID: string]: T;
-}
-
-interface IGameMain {
-  goodPlayer?: string;
-  gameField: {
-    [row: number]: {
-      [col: number]: {
-        type?: string;
-        notMove: boolean;
-        coord: {
-          topLeft: { x: number; y: number };
-          topRight: { x: number; y: number };
-          bottomLeft: { x: number; y: number };
-          bottomRight: { x: number; y: number };
-        };
-      };
-    };
-  };
-  frameObj: {
-    mainFrame: number;
-    objects: {
-      [id: string]: {
-        idFrame: number;
-      };
-    };
-  };
-  attackStatusObj: {
-    [objectID: string]: {
-      time?: number | undefined;
-      isCooldown: boolean;
-      isActive: boolean;
-    };
-  };
-  users: IGameUserMain<{
-    square: {
-      prevCoord: {
-        topLeft: {
-          x: number;
-          y: number;
-        };
-        topRight: {
-          x: number;
-          y: number;
-        };
-        bottomLeft: {
-          x: number;
-          y: number;
-        };
-        bottomRight: {
-          x: number;
-          y: number;
-        };
-      };
-      currentCoord: {
-        topLeft: {
-          x: number;
-          y: number;
-        };
-        topRight: {
-          x: number;
-          y: number;
-        };
-        bottomLeft: {
-          x: number;
-          y: number;
-        };
-        bottomRight: {
-          x: number;
-          y: number;
-        };
-      };
-    };
-    userRole: string;
-    attackStatus: { time?: number; isCooldown: boolean };
-    moveDirection: UserMoveDirections;
-  }>;
-}
-
-const game: IGameMain = {
-  users: {},
-  gameField: {},
-  attackStatusObj: {},
-  frameObj: {
-    mainFrame: 0,
-    objects: {},
-  },
-};
+setInterval(() => {
+  if (game.gameIsstarted) {
+    io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("sendDataFromServer", {
+      frameObj: game.frameObj,
+      attackStatus: game.attackStatusObj,
+      users: game.users,
+    });
+  }
+}, 33);
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
@@ -258,204 +173,19 @@ io.on("connection", (socket) => {
     }
 
     //создаём игровое поле
+    createGameField(socket?.id);
 
-    const gameFieldCreatedObj: any = {};
-
-    for (let i = 0; i < 50; i++) {
-      const gameFieldCreatedObjRow: any = {};
-      for (let j = 0; j < 50; j++) {
-        gameFieldCreatedObjRow[j] = {};
-      }
-
-      game.gameField[i] = gameFieldCreatedObjRow;
-    }
-
-    game.gameField[10][10].type = "stone";
-    game.gameField[10][10].notMove = true;
-    game.gameField[10][10].coord = {
-      topLeft: { x: 8 * 10, y: 8 * 10 },
-      topRight: { x: 8 * 10 + 8, y: 8 * 10 },
-      bottomLeft: { x: 8 * 10, y: 8 * 10 + 8 },
-      bottomRight: { x: 8 * 10 + 8, y: 8 * 10 + 8 },
-    };
-    game.gameField[10][11].type = "stone";
-    game.gameField[10][11].notMove = true;
-
-    game.gameField[10][11].coord = {
-      topLeft: { x: 8 * 10, y: 8 * 11 },
-      topRight: { x: 8 * 10 + 8, y: 8 * 11 },
-      bottomLeft: { x: 8 * 10, y: 8 * 11 + 8 },
-      bottomRight: { x: 8 * 10 + 8, y: 8 * 11 + 8 },
-    };
-    game.gameField[10][12].type = "stone";
-    game.gameField[10][12].notMove = true;
-
-    game.gameField[10][12].coord = {
-      topLeft: { x: 8 * 10, y: 8 * 12 },
-      topRight: { x: 8 * 10 + 8, y: 8 * 12 },
-      bottomLeft: { x: 8 * 10, y: 8 * 12 + 8 },
-      bottomRight: { x: 8 * 10 + 8, y: 8 * 12 + 8 },
-    };
-    game.gameField[10][13].type = "stone";
-    game.gameField[10][13].notMove = true;
-
-    game.gameField[10][13].coord = {
-      topLeft: { x: 8 * 10, y: 8 * 13 },
-      topRight: { x: 8 * 10 + 8, y: 8 * 13 },
-      bottomLeft: { x: 8 * 10, y: 8 * 13 + 8 },
-      bottomRight: { x: 8 * 10 + 8, y: 8 * 13 + 8 },
-    };
-    game.gameField[10][14].type = "stone";
-    game.gameField[10][14].notMove = true;
-    game.gameField[10][14].coord = {
-      topLeft: { x: 8 * 10, y: 8 * 14 },
-      topRight: { x: 8 * 10 + 8, y: 8 * 14 },
-      bottomLeft: { x: 8 * 10, y: 8 * 14 + 8 },
-      bottomRight: { x: 8 * 10 + 8, y: 8 * 14 + 8 },
-    };
-    game.gameField[10][15].type = "stone";
-    game.gameField[10][15].notMove = true;
-    game.gameField[10][15].coord = {
-      topLeft: { x: 8 * 10, y: 8 * 15 },
-      topRight: { x: 8 * 10 + 8, y: 8 * 15 },
-      bottomLeft: { x: 8 * 10, y: 8 * 15 + 8 },
-      bottomRight: { x: 8 * 10 + 8, y: 8 * 15 + 8 },
-    };
-    game.gameField[11][10].type = "stone";
-    game.gameField[11][10].notMove = true;
-    game.gameField[11][10].coord = {
-      topLeft: { x: 8 * 11, y: 8 * 10 },
-      topRight: { x: 8 * 11 + 8, y: 8 * 10 },
-      bottomLeft: { x: 8 * 11, y: 8 * 10 + 8 },
-      bottomRight: { x: 8 * 11 + 8, y: 8 * 10 + 8 },
-    };
-    game.gameField[12][10].type = "stone";
-    game.gameField[12][10].notMove = true;
-    game.gameField[12][10].coord = {
-      topLeft: { x: 8 * 12, y: 8 * 10 },
-      topRight: { x: 8 * 12 + 8, y: 8 * 10 },
-      bottomLeft: { x: 8 * 12, y: 8 * 10 + 8 },
-      bottomRight: { x: 8 * 12 + 8, y: 8 * 10 + 8 },
-    };
-    game.gameField[13][10].type = "stone";
-    game.gameField[13][10].notMove = true;
-    game.gameField[13][10].coord = {
-      topLeft: { x: 8 * 13, y: 8 * 10 },
-      topRight: { x: 8 * 13 + 8, y: 8 * 10 },
-      bottomLeft: { x: 8 * 13, y: 8 * 10 + 8 },
-      bottomRight: { x: 8 * 13 + 8, y: 8 * 10 + 8 },
-    };
-    game.gameField[14][10].type = "stone";
-    game.gameField[14][10].notMove = true;
-    game.gameField[14][10].coord = {
-      topLeft: { x: 8 * 14, y: 8 * 10 },
-      topRight: { x: 8 * 14 + 8, y: 8 * 10 },
-      bottomLeft: { x: 8 * 14, y: 8 * 10 + 8 },
-      bottomRight: { x: 8 * 14 + 8, y: 8 * 10 + 8 },
-    };
-    game.gameField[15][10].type = "stone";
-    game.gameField[15][10].notMove = true;
-    game.gameField[15][10].coord = {
-      topLeft: { x: 8 * 15, y: 8 * 10 },
-      topRight: { x: 8 * 15 + 8, y: 8 * 10 },
-      bottomLeft: { x: 8 * 15, y: 8 * 10 + 8 },
-      bottomRight: { x: 8 * 15 + 8, y: 8 * 10 + 8 },
-    };
-    game.gameField[16][10].type = "stone";
-    game.gameField[16][10].notMove = true;
-    game.gameField[16][10].coord = {
-      topLeft: { x: 8 * 16, y: 8 * 10 },
-      topRight: { x: 8 * 16 + 8, y: 8 * 10 },
-      bottomLeft: { x: 8 * 16, y: 8 * 10 + 8 },
-      bottomRight: { x: 8 * 16 + 8, y: 8 * 10 + 8 },
-    };
-
-    game.gameField[4][10].type = "stone";
-    game.gameField[4][10].notMove = true;
-    game.gameField[4][10].coord = {
-      topLeft: { x: 8 * 4, y: 8 * 10 },
-      topRight: { x: 8 * 4 + 8, y: 8 * 10 },
-      bottomLeft: { x: 8 * 4, y: 8 * 10 + 8 },
-      bottomRight: { x: 8 * 4 + 8, y: 8 * 10 + 8 },
-    };
-    game.gameField[4][11].type = "stone";
-    game.gameField[4][11].notMove = true;
-    game.gameField[4][11].coord = {
-      topLeft: { x: 8 * 4, y: 8 * 11 },
-      topRight: { x: 8 * 4 + 8, y: 8 * 11 },
-      bottomLeft: { x: 8 * 4, y: 8 * 11 + 8 },
-      bottomRight: { x: 8 * 4 + 8, y: 8 * 11 + 8 },
-    };
-    game.gameField[4][12].type = "stone";
-    game.gameField[4][12].notMove = true;
-    game.gameField[4][12].coord = {
-      topLeft: { x: 8 * 4, y: 8 * 12 },
-      topRight: { x: 8 * 4 + 8, y: 8 * 12 },
-      bottomLeft: { x: 8 * 4, y: 8 * 12 + 8 },
-      bottomRight: { x: 8 * 4 + 8, y: 8 * 12 + 8 },
-    };
-    game.gameField[4][13].type = "stone";
-    game.gameField[4][13].notMove = true;
-    game.gameField[4][13].coord = {
-      topLeft: { x: 8 * 4, y: 8 * 13 },
-      topRight: { x: 8 * 4 + 8, y: 8 * 13 },
-      bottomLeft: { x: 8 * 4, y: 8 * 13 + 8 },
-      bottomRight: { x: 8 * 4 + 8, y: 8 * 13 + 8 },
-    };
-
-    const numberOfGamers = Object.keys(game.users).length;
-
-    game.users[socket.id] = {
-      attackStatus: { isCooldown: false },
-      square: {
-        prevCoord: {
-          topLeft: {
-            x: 10 + numberOfGamers * 40,
-            y: 10,
-          },
-          topRight: {
-            x: 10 + 16 + numberOfGamers * 40,
-            y: 10,
-          },
-          bottomLeft: {
-            x: 10 + numberOfGamers * 40,
-            y: 10 + 16,
-          },
-          bottomRight: {
-            x: 10 + 16 + numberOfGamers * 40,
-            y: 10 + 16,
-          },
-        },
-
-        currentCoord: {
-          topLeft: {
-            x: 10 + numberOfGamers * 40,
-            y: 10,
-          },
-          topRight: {
-            x: 10 + 16 + numberOfGamers * 40,
-            y: 10,
-          },
-          bottomLeft: {
-            x: 10 + numberOfGamers * 40,
-            y: 10 + 16,
-          },
-          bottomRight: {
-            x: 10 + 16 + numberOfGamers * 40,
-            y: 10 + 16,
-          },
-        },
-      },
-      moveDirection: UserMoveDirections.stop,
-      userRole: numberOfGamers > 0 ? "creeper" : "steve",
-    };
-    game.frameObj.objects[socket?.id] = { idFrame: 0 };
     io.of("/").to(roomID).emit("startGameInRoom", {
       usersData: game.users,
       gameFieldData: game.gameField,
       frameObject: game.frameObj,
     });
   });
+
+  // setInterval(() => {
+  //   console.log(Date.now());
+  //   io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("sendDataFromServer", Date.now);
+  // }, 1000);
 
   let moveClientSquare: any;
   const setClientCoordinates = (clientData: {
@@ -522,11 +252,11 @@ io.on("connection", (socket) => {
       game.users[socket.id].moveDirection = clientData.direction;
       if (clientData.direction === UserMoveDirections.down) {
         game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
-        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][
-          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 16)][
+          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 16)
         ]?.notMove ||
-        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 8)][
-          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 16)][
+          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 16)
         ]?.notMove
           ? (game.users[socket.id].square.currentCoord.bottomLeft.y =
               game.users[socket.id].square.currentCoord.bottomLeft.y)
@@ -534,35 +264,35 @@ io.on("connection", (socket) => {
       }
       if (clientData.direction === UserMoveDirections.left) {
         game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels < 0 ||
-        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y + 5) / 8)][
-          Math.floor(game.users[socket.id].square.currentCoord.topLeft.x / 8)
+        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y + 5) / 16)][
+          Math.floor(game.users[socket.id].square.currentCoord.topLeft.x / 16)
         ]?.notMove ||
         game.gameField[
-          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 8)
-        ][Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.x / 8)]?.notMove
+          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 16)
+        ][Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.x / 16)]?.notMove
           ? (game.users[socket.id].square.currentCoord.topLeft.x =
               game.users[socket.id].square.currentCoord.topLeft.x)
           : setMoveCoord();
       }
       if (clientData.direction === UserMoveDirections.right) {
         game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
-        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topRight.y + 5) / 8)][
-          Math.floor(game.users[socket.id].square.currentCoord.topRight.x / 8)
+        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topRight.y + 5) / 16)][
+          Math.floor(game.users[socket.id].square.currentCoord.topRight.x / 16)
         ]?.notMove ||
         game.gameField[
-          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 8)
-        ][Math.floor(game.users[socket.id].square.currentCoord.bottomRight.x / 8)]?.notMove
+          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 16)
+        ][Math.floor(game.users[socket.id].square.currentCoord.bottomRight.x / 16)]?.notMove
           ? (game.users[socket.id].square.currentCoord.topRight.x =
               game.users[socket.id].square.currentCoord.topRight.x)
           : setMoveCoord();
       }
       if (clientData.direction === UserMoveDirections.up) {
         game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels < 0 ||
-        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topLeft.y / 8)][
-          Math.floor((game.users[socket.id].square.currentCoord.topLeft.x + 5) / 8)
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topLeft.y / 16)][
+          Math.floor((game.users[socket.id].square.currentCoord.topLeft.x + 5) / 16)
         ]?.notMove ||
-        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topRight.y / 8)][
-          Math.floor((game.users[socket.id].square.currentCoord.topRight.x - 5) / 8)
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topRight.y / 16)][
+          Math.floor((game.users[socket.id].square.currentCoord.topRight.x - 5) / 16)
         ]?.notMove
           ? (game.users[socket.id].square.currentCoord.topLeft.y =
               game.users[socket.id].square.currentCoord.topLeft.y)
@@ -572,7 +302,7 @@ io.on("connection", (socket) => {
 
     setCurrentCoord(clientData);
 
-    io.of("/").to(clientData.roomID).emit("serverMove", game.users);
+    // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
   };
 
   socket.on("clientStartMove", (clientData: { direction: UserMoveDirections; roomID: string }) => {
@@ -615,11 +345,11 @@ io.on("connection", (socket) => {
       isActive: true,
     };
 
-    io.of("/").to(clientData.roomID).emit("serverStartAttack", {
-      roomID: clientData.roomID,
-      socketID: socket.id,
-      attackStatusObj: game.attackStatusObj,
-    });
+    // io.of("/").to(clientData.roomID).emit("serverStartAttack", {
+    //   roomID: clientData.roomID,
+    //   socketID: socket.id,
+    //   attackStatusObj: game.attackStatusObj,
+    // });
 
     let stopAttackInterval: any;
 
@@ -627,7 +357,7 @@ io.on("connection", (socket) => {
       if (Date.now() - startAttackTimestamp > 500) {
         game.attackStatusObj[socket?.id].isActive = false;
 
-        io.of("/").to(clientData.roomID).emit("serverStopAttack", game.attackStatusObj);
+        // io.of("/").to(clientData.roomID).emit("serverStopAttack", game.attackStatusObj);
         clearInterval(stopAttackInterval);
       }
     }, 100);
