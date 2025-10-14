@@ -6,7 +6,12 @@ import uploadFile from "../routes/uploadFile";
 import answerTime from "../routes/answerTime";
 import GTSAttempts from "../routes/GTSAttempts";
 import webSocketServer from "../routes/webSocketServer";
-import { createGameField, game } from "../objects/gameObject";
+import {
+  createGameField,
+  game,
+  increaseFrameNumber,
+  setUserCurrentChanks,
+} from "../objects/gameObject";
 import { UserMoveDirections } from "../objects/gameObject";
 
 import { WebSocketServer } from "ws";
@@ -52,9 +57,16 @@ setInterval(() => {
       frameObj: game.frameObj,
       attackStatus: game.attackStatusObj,
       users: game.users,
+      // gameField: game.gameField,
     });
   }
 }, 33);
+
+setInterval(() => {
+  if (game.gameIsstarted) {
+    increaseFrameNumber();
+  }
+}, 150);
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
@@ -251,49 +263,78 @@ io.on("connection", (socket) => {
 
       game.users[socket.id].moveDirection = clientData.direction;
       if (clientData.direction === UserMoveDirections.down) {
+        // смотрим чанки, на которые хотим встать
         game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
-        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 16)][
-          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 16)
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)
         ]?.notMove ||
-        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 16)][
-          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 16)
-        ]?.notMove
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)
+        ]?.notMove ||
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)
+        ]?.type === "user" ||
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)
+        ]?.type === "user"
           ? (game.users[socket.id].square.currentCoord.bottomLeft.y =
               game.users[socket.id].square.currentCoord.bottomLeft.y)
           : setMoveCoord();
       }
       if (clientData.direction === UserMoveDirections.left) {
         game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels < 0 ||
-        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y + 5) / 16)][
-          Math.floor(game.users[socket.id].square.currentCoord.topLeft.x / 16)
+        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y + 5) / 8)][
+          Math.floor(game.users[socket.id].square.currentCoord.topLeft.x / 8)
         ]?.notMove ||
         game.gameField[
-          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 16)
-        ][Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.x / 16)]?.notMove
+          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 8)
+        ][Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.x / 8)]?.notMove ||
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topLeft.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.topLeft.x - 8) / 8)
+        ]?.type === "user" ||
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x - 8) / 8)
+        ]?.type === "user"
           ? (game.users[socket.id].square.currentCoord.topLeft.x =
               game.users[socket.id].square.currentCoord.topLeft.x)
           : setMoveCoord();
       }
       if (clientData.direction === UserMoveDirections.right) {
         game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
-        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topRight.y + 5) / 16)][
-          Math.floor(game.users[socket.id].square.currentCoord.topRight.x / 16)
+        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topRight.y + 5) / 8)][
+          Math.floor(game.users[socket.id].square.currentCoord.topRight.x / 8)
         ]?.notMove ||
         game.gameField[
-          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 16)
-        ][Math.floor(game.users[socket.id].square.currentCoord.bottomRight.x / 16)]?.notMove
+          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 8)
+        ][Math.floor(game.users[socket.id].square.currentCoord.bottomRight.x / 8)]?.notMove ||
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topRight.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.topRight.x + 8) / 8)
+        ]?.type === "user" ||
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x + 8) / 8)
+        ]?.type === "user"
           ? (game.users[socket.id].square.currentCoord.topRight.x =
               game.users[socket.id].square.currentCoord.topRight.x)
           : setMoveCoord();
       }
       if (clientData.direction === UserMoveDirections.up) {
+        if (Math.floor((game.users[socket.id].square.currentCoord.topLeft.y - 13) / 8) < 0) {
+          return;
+        }
+
         game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels < 0 ||
-        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topLeft.y / 16)][
-          Math.floor((game.users[socket.id].square.currentCoord.topLeft.x + 5) / 16)
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topLeft.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.topLeft.x + 5) / 8)
         ]?.notMove ||
-        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topRight.y / 16)][
-          Math.floor((game.users[socket.id].square.currentCoord.topRight.x - 5) / 16)
-        ]?.notMove
+        game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topRight.y / 8)][
+          Math.floor((game.users[socket.id].square.currentCoord.topRight.x - 5) / 8)
+        ]?.notMove ||
+        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][
+          Math.floor(game.users[socket.id].square.currentCoord.topLeft.x / 8)
+        ]?.type === "user" ||
+        game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][
+          Math.floor(game.users[socket.id].square.currentCoord.topRight.x / 8)
+        ]?.type === "user"
           ? (game.users[socket.id].square.currentCoord.topLeft.y =
               game.users[socket.id].square.currentCoord.topLeft.y)
           : setMoveCoord();
@@ -301,6 +342,8 @@ io.on("connection", (socket) => {
     };
 
     setCurrentCoord(clientData);
+
+    setUserCurrentChanks(socket.id, clientData.direction);
 
     // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
   };
@@ -338,6 +381,9 @@ io.on("connection", (socket) => {
     clearInterval(moveClientSquare);
   });
   socket.on("clientStartAttack", (clientData: { roomID: string }) => {
+    if (game.attackStatusObj[socket.id]?.isCooldown) {
+      return;
+    }
     const startAttackTimestamp = Date.now();
     game.attackStatusObj[socket?.id] = {
       time: startAttackTimestamp,
@@ -366,16 +412,15 @@ io.on("connection", (socket) => {
 
     cooldownInterval = setInterval(() => {
       if (Date.now() - startAttackTimestamp > 1000) {
-        // game.users[socket.id].attackStatus.isCooldown = false;
-        io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
-          // roomID: clientData.roomID,
-          // socketID: socket.id,
-          // attackStatus: game.users[socket.id].attackStatus,
-          // isCooldown: false,
-        });
+        game.attackStatusObj[socket.id].isCooldown = false;
+        // io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
+        //   // roomID: clientData.roomID,
+        //   // socketID: socket.id,
+        //   // attackStatus: game.users[socket.id].attackStatus,
+        //   // isCooldown: false,
+        // });
         clearInterval(cooldownInterval);
       }
-      // console.log(startAttackTimestamp - Date.now() + 1000);
     }, 100);
   });
 

@@ -53,9 +53,15 @@ setInterval(() => {
             frameObj: gameObject_1.game.frameObj,
             attackStatus: gameObject_1.game.attackStatusObj,
             users: gameObject_1.game.users,
+            // gameField: game.gameField,
         });
     }
 }, 33);
+setInterval(() => {
+    if (gameObject_1.game.gameIsstarted) {
+        (0, gameObject_1.increaseFrameNumber)();
+    }
+}, 150);
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
     socket.on("send-message", (message) => {
@@ -186,44 +192,57 @@ io.on("connection", (socket) => {
             }
         };
         const setCurrentCoord = function (clientData) {
-            var _a, _b, _c, _d, _e, _f, _g, _h;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
             if (!gameObject_1.game.users[socket.id])
                 return;
             gameObject_1.game.users[socket.id].moveDirection = clientData.direction;
             if (clientData.direction === gameObject_2.UserMoveDirections.down) {
+                // смотрим чанки, на которые хотим встать
                 gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
-                    ((_a = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 16)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 16)]) === null || _a === void 0 ? void 0 : _a.notMove) ||
-                    ((_b = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 16)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 16)]) === null || _b === void 0 ? void 0 : _b.notMove)
+                    ((_a = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _a === void 0 ? void 0 : _a.notMove) ||
+                    ((_b = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _b === void 0 ? void 0 : _b.notMove) ||
+                    ((_c = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _c === void 0 ? void 0 : _c.type) === "user" ||
+                    ((_d = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _d === void 0 ? void 0 : _d.type) === "user"
                     ? (gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y =
                         gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y)
                     : setMoveCoord();
             }
             if (clientData.direction === gameObject_2.UserMoveDirections.left) {
                 gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels < 0 ||
-                    ((_c = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y + 5) / 16)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x / 16)]) === null || _c === void 0 ? void 0 : _c.notMove) ||
-                    ((_d = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 16)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x / 16)]) === null || _d === void 0 ? void 0 : _d.notMove)
+                    ((_e = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y + 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x / 8)]) === null || _e === void 0 ? void 0 : _e.notMove) ||
+                    ((_f = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x / 8)]) === null || _f === void 0 ? void 0 : _f.notMove) ||
+                    ((_g = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x - 8) / 8)]) === null || _g === void 0 ? void 0 : _g.type) === "user" ||
+                    ((_h = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x - 8) / 8)]) === null || _h === void 0 ? void 0 : _h.type) === "user"
                     ? (gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x =
                         gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x)
                     : setMoveCoord();
             }
             if (clientData.direction === gameObject_2.UserMoveDirections.right) {
                 gameObject_1.game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
-                    ((_e = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.y + 5) / 16)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.x / 16)]) === null || _e === void 0 ? void 0 : _e.notMove) ||
-                    ((_f = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 16)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x / 16)]) === null || _f === void 0 ? void 0 : _f.notMove)
+                    ((_j = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.y + 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.x / 8)]) === null || _j === void 0 ? void 0 : _j.notMove) ||
+                    ((_k = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x / 8)]) === null || _k === void 0 ? void 0 : _k.notMove) ||
+                    ((_l = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.x + 8) / 8)]) === null || _l === void 0 ? void 0 : _l.type) === "user" ||
+                    ((_m = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x + 8) / 8)]) === null || _m === void 0 ? void 0 : _m.type) === "user"
                     ? (gameObject_1.game.users[socket.id].square.currentCoord.topRight.x =
                         gameObject_1.game.users[socket.id].square.currentCoord.topRight.x)
                     : setMoveCoord();
             }
             if (clientData.direction === gameObject_2.UserMoveDirections.up) {
+                if (Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 13) / 8) < 0) {
+                    return;
+                }
                 gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels < 0 ||
-                    ((_g = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y / 16)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x + 5) / 16)]) === null || _g === void 0 ? void 0 : _g.notMove) ||
-                    ((_h = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.y / 16)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.x - 5) / 16)]) === null || _h === void 0 ? void 0 : _h.notMove)
+                    ((_o = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x + 5) / 8)]) === null || _o === void 0 ? void 0 : _o.notMove) ||
+                    ((_p = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.x - 5) / 8)]) === null || _p === void 0 ? void 0 : _p.notMove) ||
+                    ((_q = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x / 8)]) === null || _q === void 0 ? void 0 : _q.type) === "user" ||
+                    ((_r = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.x / 8)]) === null || _r === void 0 ? void 0 : _r.type) === "user"
                     ? (gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y =
                         gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y)
                     : setMoveCoord();
             }
         };
         setCurrentCoord(clientData);
+        (0, gameObject_1.setUserCurrentChanks)(socket.id, clientData.direction);
         // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
     };
     socket.on("clientStartMove", (clientData) => {
@@ -257,6 +276,10 @@ io.on("connection", (socket) => {
         clearInterval(moveClientSquare);
     });
     socket.on("clientStartAttack", (clientData) => {
+        var _a;
+        if ((_a = gameObject_1.game.attackStatusObj[socket.id]) === null || _a === void 0 ? void 0 : _a.isCooldown) {
+            return;
+        }
         const startAttackTimestamp = Date.now();
         gameObject_1.game.attackStatusObj[socket === null || socket === void 0 ? void 0 : socket.id] = {
             time: startAttackTimestamp,
@@ -279,16 +302,15 @@ io.on("connection", (socket) => {
         let cooldownInterval;
         cooldownInterval = setInterval(() => {
             if (Date.now() - startAttackTimestamp > 1000) {
-                // game.users[socket.id].attackStatus.isCooldown = false;
-                io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
-                // roomID: clientData.roomID,
-                // socketID: socket.id,
-                // attackStatus: game.users[socket.id].attackStatus,
-                // isCooldown: false,
-                });
+                gameObject_1.game.attackStatusObj[socket.id].isCooldown = false;
+                // io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
+                //   // roomID: clientData.roomID,
+                //   // socketID: socket.id,
+                //   // attackStatus: game.users[socket.id].attackStatus,
+                //   // isCooldown: false,
+                // });
                 clearInterval(cooldownInterval);
             }
-            // console.log(startAttackTimestamp - Date.now() + 1000);
         }, 100);
     });
     socket.on("disconnecting", () => {
