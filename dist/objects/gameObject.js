@@ -24,7 +24,9 @@ const createGameField = (socketID) => {
         for (let i = 0; i < 50; i++) {
             const gameFieldCreatedObjRow = {};
             for (let j = 0; j < 50; j++) {
-                gameFieldCreatedObjRow[j] = {};
+                gameFieldCreatedObjRow[j] = {
+                    isUserChank: false,
+                };
             }
             exports.game.gameField[i] = gameFieldCreatedObjRow;
         }
@@ -231,22 +233,22 @@ const setUserCurrentChanks = (socketID, direction) => {
     const topRightYChank = Math.floor(exports.game.users[socketID].square.currentCoord.topRight.y / 8);
     for (let i = 0; i < 4; i++) {
         if (direction === UserMoveDirections.down) {
-            exports.game.gameField[prevTopLeftYChank][prevTopLeftXChank + i].type = undefined;
+            exports.game.gameField[prevTopLeftYChank][prevTopLeftXChank + i].isUserChank = false;
         }
-        exports.game.gameField[topLeftYChank][topLeftXChank + i].type = "user";
+        exports.game.gameField[topLeftYChank][topLeftXChank + i].isUserChank = true;
         if (direction === UserMoveDirections.up) {
-            exports.game.gameField[prevBottomLeftYChank - 1][prevBottomLeftXChank + i].type = undefined;
+            exports.game.gameField[prevBottomLeftYChank - 1][prevBottomLeftXChank + i].isUserChank = false;
         }
-        exports.game.gameField[bottomLeftYChank - 1][bottomLeftXChank + i].type = "user";
+        exports.game.gameField[bottomLeftYChank - 1][bottomLeftXChank + i].isUserChank = true;
     }
     for (let i = 0; i < 4; i++) {
-        exports.game.gameField[topLeftYChank + i][topLeftXChank].type = "user";
+        exports.game.gameField[topLeftYChank + i][topLeftXChank].isUserChank = true;
         if (direction === UserMoveDirections.right) {
-            exports.game.gameField[prevTopLeftYChank + i][prevTopLeftXChank].type = undefined;
+            exports.game.gameField[prevTopLeftYChank + i][prevTopLeftXChank].isUserChank = false;
         }
-        exports.game.gameField[topRightYChank + i][topRightXChank].type = "user";
+        exports.game.gameField[topRightYChank + i][topRightXChank].isUserChank = true;
         if (direction === UserMoveDirections.left) {
-            exports.game.gameField[prevTopRightYChank + i][prevTopRightXChank].type = undefined;
+            exports.game.gameField[prevTopRightYChank + i][prevTopRightXChank].isUserChank = false;
         }
     }
 };

@@ -201,8 +201,8 @@ io.on("connection", (socket) => {
                 gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
                     ((_a = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _a === void 0 ? void 0 : _a.notMove) ||
                     ((_b = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _b === void 0 ? void 0 : _b.notMove) ||
-                    ((_c = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _c === void 0 ? void 0 : _c.type) === "user" ||
-                    ((_d = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _d === void 0 ? void 0 : _d.type) === "user"
+                    ((_c = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _c === void 0 ? void 0 : _c.isUserChank) ||
+                    ((_d = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _d === void 0 ? void 0 : _d.isUserChank)
                     ? (gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y =
                         gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y)
                     : setMoveCoord();
@@ -211,8 +211,8 @@ io.on("connection", (socket) => {
                 gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels < 0 ||
                     ((_e = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y + 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x / 8)]) === null || _e === void 0 ? void 0 : _e.notMove) ||
                     ((_f = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x / 8)]) === null || _f === void 0 ? void 0 : _f.notMove) ||
-                    ((_g = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x - 8) / 8)]) === null || _g === void 0 ? void 0 : _g.type) === "user" ||
-                    ((_h = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x - 8) / 8)]) === null || _h === void 0 ? void 0 : _h.type) === "user"
+                    ((_g = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x - 8) / 8)]) === null || _g === void 0 ? void 0 : _g.isUserChank) ||
+                    ((_h = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x - 8) / 8)]) === null || _h === void 0 ? void 0 : _h.isUserChank)
                     ? (gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x =
                         gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x)
                     : setMoveCoord();
@@ -221,8 +221,8 @@ io.on("connection", (socket) => {
                 gameObject_1.game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
                     ((_j = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.y + 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.x / 8)]) === null || _j === void 0 ? void 0 : _j.notMove) ||
                     ((_k = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x / 8)]) === null || _k === void 0 ? void 0 : _k.notMove) ||
-                    ((_l = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.x + 8) / 8)]) === null || _l === void 0 ? void 0 : _l.type) === "user" ||
-                    ((_m = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x + 8) / 8)]) === null || _m === void 0 ? void 0 : _m.type) === "user"
+                    ((_l = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.x + 8) / 8)]) === null || _l === void 0 ? void 0 : _l.isUserChank) ||
+                    ((_m = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x + 8) / 8)]) === null || _m === void 0 ? void 0 : _m.isUserChank)
                     ? (gameObject_1.game.users[socket.id].square.currentCoord.topRight.x =
                         gameObject_1.game.users[socket.id].square.currentCoord.topRight.x)
                     : setMoveCoord();
@@ -234,8 +234,8 @@ io.on("connection", (socket) => {
                 gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels < 0 ||
                     ((_o = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x + 5) / 8)]) === null || _o === void 0 ? void 0 : _o.notMove) ||
                     ((_p = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.x - 5) / 8)]) === null || _p === void 0 ? void 0 : _p.notMove) ||
-                    ((_q = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x / 8)]) === null || _q === void 0 ? void 0 : _q.type) === "user" ||
-                    ((_r = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.x / 8)]) === null || _r === void 0 ? void 0 : _r.type) === "user"
+                    ((_q = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x / 8)]) === null || _q === void 0 ? void 0 : _q.isUserChank) ||
+                    ((_r = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.x / 8)]) === null || _r === void 0 ? void 0 : _r.isUserChank)
                     ? (gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y =
                         gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y)
                     : setMoveCoord();
@@ -276,8 +276,11 @@ io.on("connection", (socket) => {
         clearInterval(moveClientSquare);
     });
     socket.on("clientStartAttack", (clientData) => {
-        var _a;
+        var _a, _b;
         if ((_a = gameObject_1.game.attackStatusObj[socket.id]) === null || _a === void 0 ? void 0 : _a.isCooldown) {
+            return;
+        }
+        if ((_b = gameObject_1.game.attackStatusObj[socket.id]) === null || _b === void 0 ? void 0 : _b.isActive) {
             return;
         }
         const startAttackTimestamp = Date.now();
@@ -286,6 +289,7 @@ io.on("connection", (socket) => {
             isCooldown: true,
             isActive: true,
         };
+        // increaseFrameNumber();
         // io.of("/").to(clientData.roomID).emit("serverStartAttack", {
         //   roomID: clientData.roomID,
         //   socketID: socket.id,
@@ -295,7 +299,11 @@ io.on("connection", (socket) => {
         stopAttackInterval = setInterval(() => {
             if (Date.now() - startAttackTimestamp > 500) {
                 gameObject_1.game.attackStatusObj[socket === null || socket === void 0 ? void 0 : socket.id].isActive = false;
-                // io.of("/").to(clientData.roomID).emit("serverStopAttack", game.attackStatusObj);
+                // console.log("Stop interval");
+                // increaseFrameNumber();
+                // io.of("/").to(clientData.roomID).emit("serverStopAttack", {
+                //   attackStatusObj: game.attackStatusObj,
+                // });
                 clearInterval(stopAttackInterval);
             }
         }, 100);
@@ -309,9 +317,25 @@ io.on("connection", (socket) => {
                 //   // attackStatus: game.users[socket.id].attackStatus,
                 //   // isCooldown: false,
                 // });
+                // console.log("Stop interval");
+                // increaseFrameNumber();
+                // io.of("/").to(clientData.roomID).emit("serverResetCooldown", {
+                //   attackStatusObj: game.attackStatusObj,
+                // });
                 clearInterval(cooldownInterval);
             }
         }, 100);
+    });
+    socket.on("resetCraftOrgServer", (data) => {
+        console.log(data);
+        gameObject_1.game.attackStatusObj = {};
+        gameObject_1.game.gameIsstarted = false;
+        gameObject_1.game.gameField = {};
+        gameObject_1.game.users = {};
+        gameObject_1.game.frameObj = {
+            mainFrame: 0,
+            objects: {},
+        };
     });
     socket.on("disconnecting", () => {
         console.log(socket.rooms);
