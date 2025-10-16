@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.increaseFrameNumber = exports.setUserCurrentChanks = exports.createGameField = exports.game = exports.UserMoveDirections = void 0;
+exports.setClientCoordinates = exports.moveNPC = exports.increaseFrameNumber = exports.setUserCurrentChanks = exports.createGameField = exports.game = exports.UserMoveDirections = void 0;
 var UserMoveDirections;
 (function (UserMoveDirections) {
     UserMoveDirections["right"] = "right";
@@ -18,6 +18,61 @@ exports.game = {
         mainFrame: 0,
         objects: {},
     },
+};
+const addGamerOrNPC = (addedElType, addedElID) => {
+    const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(exports.game.users).length;
+    exports.game.users[addedElID] = {
+        type: addedElType,
+        chanks: {
+            topChanks: {},
+            bottomChanks: {},
+            rightChanks: {},
+            leftChanks: {},
+        },
+        attackStatus: { isCooldown: false },
+        square: {
+            prevCoord: {
+                topLeft: {
+                    x: 8 + numberOfGamers * 40,
+                    y: 8,
+                },
+                topRight: {
+                    x: 8 + 32 + numberOfGamers * 40,
+                    y: 8,
+                },
+                bottomLeft: {
+                    x: 8 + numberOfGamers * 40,
+                    y: 8 + 32,
+                },
+                bottomRight: {
+                    x: 8 + 32 + numberOfGamers * 40,
+                    y: 8 + 32,
+                },
+            },
+            currentCoord: {
+                topLeft: {
+                    x: 8 + numberOfGamers * 40,
+                    y: 8,
+                },
+                topRight: {
+                    x: 8 + 24 + numberOfGamers * 40,
+                    y: 8,
+                },
+                bottomLeft: {
+                    x: 8 + numberOfGamers * 40,
+                    y: 8 + 32,
+                },
+                bottomRight: {
+                    x: 8 + 24 + numberOfGamers * 40,
+                    y: 8 + 32,
+                },
+            },
+        },
+        moveDirection: UserMoveDirections.stop,
+        userRole: numberOfGamers > 0 ? "creeper" : "steve",
+    };
+    (0, exports.setUserCurrentChanks)(addedElID);
+    exports.game.frameObj.objects[addedElID] = { idFrame: 0 };
 };
 const createGameField = (socketID) => {
     if (!exports.game.gameField[0]) {
@@ -158,59 +213,9 @@ const createGameField = (socketID) => {
             bottomLeft: { x: 8 * 4, y: 8 * 13 + 8 },
             bottomRight: { x: 8 * 4 + 8, y: 8 * 13 + 8 },
         };
+        addGamerOrNPC("NPC", "ORC#1");
     }
-    const numberOfGamers = Object.keys(exports.game.users).length;
-    exports.game.users[socketID] = {
-        chanks: {
-            topChanks: {},
-            bottomChanks: {},
-            rightChanks: {},
-            leftChanks: {},
-        },
-        attackStatus: { isCooldown: false },
-        square: {
-            prevCoord: {
-                topLeft: {
-                    x: 8 + numberOfGamers * 40,
-                    y: 8,
-                },
-                topRight: {
-                    x: 8 + 32 + numberOfGamers * 40,
-                    y: 8,
-                },
-                bottomLeft: {
-                    x: 8 + numberOfGamers * 40,
-                    y: 8 + 32,
-                },
-                bottomRight: {
-                    x: 8 + 32 + numberOfGamers * 40,
-                    y: 8 + 32,
-                },
-            },
-            currentCoord: {
-                topLeft: {
-                    x: 8 + numberOfGamers * 40,
-                    y: 8,
-                },
-                topRight: {
-                    x: 8 + 24 + numberOfGamers * 40,
-                    y: 8,
-                },
-                bottomLeft: {
-                    x: 8 + numberOfGamers * 40,
-                    y: 8 + 32,
-                },
-                bottomRight: {
-                    x: 8 + 24 + numberOfGamers * 40,
-                    y: 8 + 32,
-                },
-            },
-        },
-        moveDirection: UserMoveDirections.stop,
-        userRole: numberOfGamers > 0 ? "creeper" : "steve",
-    };
-    (0, exports.setUserCurrentChanks)(socketID);
-    exports.game.frameObj.objects[socketID] = { idFrame: 0 };
+    addGamerOrNPC("gamer", socketID);
     exports.game.gameIsstarted = true;
 };
 exports.createGameField = createGameField;
@@ -268,3 +273,122 @@ const increaseFrameNumber = () => {
     }
 };
 exports.increaseFrameNumber = increaseFrameNumber;
+let moveClientSquare;
+const moveNPC = () => {
+    let timeCurrent;
+    let timePrev;
+    moveClientSquare = setInterval(() => {
+        if (!timeCurrent) {
+            timeCurrent = Date.now();
+            timePrev = Date.now() - 33;
+        }
+        else {
+            timePrev = timeCurrent;
+            timeCurrent = Date.now();
+        }
+        const shiftUserPixels = Math.floor((timeCurrent - timePrev) / 20);
+        // setClientCoordinates({ ...clientData, shiftUserPixels });
+    }, 33);
+};
+exports.moveNPC = moveNPC;
+const setClientCoordinates = (objectID, clientData) => {
+    if (exports.game.users[objectID]) {
+        exports.game.users[objectID].square.prevCoord = JSON.parse(JSON.stringify(exports.game.users[objectID].square.currentCoord));
+    }
+    const setMoveCoord = () => {
+        if (clientData.direction === UserMoveDirections.down) {
+            exports.game.users[objectID].square.currentCoord.bottomLeft.y =
+                exports.game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.bottomRight.y =
+                exports.game.users[objectID].square.currentCoord.bottomRight.y + clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.topLeft.y =
+                exports.game.users[objectID].square.currentCoord.topLeft.y + clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.topRight.y =
+                exports.game.users[objectID].square.currentCoord.topRight.y + clientData.shiftUserPixels;
+        }
+        if (clientData.direction === UserMoveDirections.left) {
+            exports.game.users[objectID].square.currentCoord.bottomLeft.x =
+                exports.game.users[objectID].square.currentCoord.bottomLeft.x - clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.bottomRight.x =
+                exports.game.users[objectID].square.currentCoord.bottomRight.x - clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.topLeft.x =
+                exports.game.users[objectID].square.currentCoord.topLeft.x - clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.topRight.x =
+                exports.game.users[objectID].square.currentCoord.topRight.x - clientData.shiftUserPixels;
+        }
+        if (clientData.direction === UserMoveDirections.right) {
+            exports.game.users[objectID].square.currentCoord.bottomLeft.x =
+                exports.game.users[objectID].square.currentCoord.bottomLeft.x + clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.bottomRight.x =
+                exports.game.users[objectID].square.currentCoord.bottomRight.x + clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.topLeft.x =
+                exports.game.users[objectID].square.currentCoord.topLeft.x + clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.topRight.x =
+                exports.game.users[objectID].square.currentCoord.topRight.x + clientData.shiftUserPixels;
+        }
+        if (clientData.direction === UserMoveDirections.up) {
+            exports.game.users[objectID].square.currentCoord.bottomLeft.y =
+                exports.game.users[objectID].square.currentCoord.bottomLeft.y - clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.bottomRight.y =
+                exports.game.users[objectID].square.currentCoord.bottomRight.y - clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.topLeft.y =
+                exports.game.users[objectID].square.currentCoord.topLeft.y - clientData.shiftUserPixels;
+            exports.game.users[objectID].square.currentCoord.topRight.y =
+                exports.game.users[objectID].square.currentCoord.topRight.y - clientData.shiftUserPixels;
+        }
+    };
+    const setCurrentCoord = function (clientData) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        if (!exports.game.users[objectID])
+            return;
+        exports.game.users[objectID].moveDirection = clientData.direction;
+        if (clientData.direction === UserMoveDirections.down) {
+            // смотрим чанки, на которые хотим встать
+            exports.game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
+                ((_a = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.bottomLeft.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _a === void 0 ? void 0 : _a.notMove) ||
+                ((_b = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.bottomRight.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _b === void 0 ? void 0 : _b.notMove) ||
+                ((_c = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.bottomLeft.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _c === void 0 ? void 0 : _c.isUserChank) ||
+                ((_d = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.bottomRight.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _d === void 0 ? void 0 : _d.isUserChank)
+                ? (exports.game.users[objectID].square.currentCoord.bottomLeft.y =
+                    exports.game.users[objectID].square.currentCoord.bottomLeft.y)
+                : setMoveCoord();
+        }
+        if (clientData.direction === UserMoveDirections.left) {
+            exports.game.users[objectID].square.currentCoord.topLeft.x - clientData.shiftUserPixels < 0 ||
+                ((_e = exports.game.gameField[Math.floor((exports.game.users[objectID].square.currentCoord.topLeft.y + 5) / 8)][Math.floor(exports.game.users[objectID].square.currentCoord.topLeft.x / 8)]) === null || _e === void 0 ? void 0 : _e.notMove) ||
+                ((_f = exports.game.gameField[Math.floor((exports.game.users[objectID].square.currentCoord.bottomLeft.y - 5) / 8)][Math.floor(exports.game.users[objectID].square.currentCoord.bottomLeft.x / 8)]) === null || _f === void 0 ? void 0 : _f.notMove) ||
+                ((_g = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.topLeft.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.topLeft.x - 8) / 8)]) === null || _g === void 0 ? void 0 : _g.isUserChank) ||
+                ((_h = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.bottomLeft.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.bottomLeft.x - 8) / 8)]) === null || _h === void 0 ? void 0 : _h.isUserChank)
+                ? (exports.game.users[objectID].square.currentCoord.topLeft.x =
+                    exports.game.users[objectID].square.currentCoord.topLeft.x)
+                : setMoveCoord();
+        }
+        if (clientData.direction === UserMoveDirections.right) {
+            exports.game.users[objectID].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
+                ((_j = exports.game.gameField[Math.floor((exports.game.users[objectID].square.currentCoord.topRight.y + 5) / 8)][Math.floor(exports.game.users[objectID].square.currentCoord.topRight.x / 8)]) === null || _j === void 0 ? void 0 : _j.notMove) ||
+                ((_k = exports.game.gameField[Math.floor((exports.game.users[objectID].square.currentCoord.bottomRight.y - 5) / 8)][Math.floor(exports.game.users[objectID].square.currentCoord.bottomRight.x / 8)]) === null || _k === void 0 ? void 0 : _k.notMove) ||
+                ((_l = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.topRight.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.topRight.x + 8) / 8)]) === null || _l === void 0 ? void 0 : _l.isUserChank) ||
+                ((_m = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.bottomRight.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.bottomRight.x + 8) / 8)]) === null || _m === void 0 ? void 0 : _m.isUserChank)
+                ? (exports.game.users[objectID].square.currentCoord.topRight.x =
+                    exports.game.users[objectID].square.currentCoord.topRight.x)
+                : setMoveCoord();
+        }
+        if (clientData.direction === UserMoveDirections.up) {
+            if (Math.floor((exports.game.users[objectID].square.currentCoord.topLeft.y - 13) / 8) < 0) {
+                return;
+            }
+            exports.game.users[objectID].square.currentCoord.topLeft.y - clientData.shiftUserPixels < 0 ||
+                ((_o = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.topLeft.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.topLeft.x + 5) / 8)]) === null || _o === void 0 ? void 0 : _o.notMove) ||
+                ((_p = exports.game.gameField[Math.floor(exports.game.users[objectID].square.currentCoord.topRight.y / 8)][Math.floor((exports.game.users[objectID].square.currentCoord.topRight.x - 5) / 8)]) === null || _p === void 0 ? void 0 : _p.notMove) ||
+                ((_q = exports.game.gameField[Math.floor((exports.game.users[objectID].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(exports.game.users[objectID].square.currentCoord.topLeft.x / 8)]) === null || _q === void 0 ? void 0 : _q.isUserChank) ||
+                ((_r = exports.game.gameField[Math.floor((exports.game.users[objectID].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(exports.game.users[objectID].square.currentCoord.topRight.x / 8)]) === null || _r === void 0 ? void 0 : _r.isUserChank)
+                ? (exports.game.users[objectID].square.currentCoord.topLeft.y =
+                    exports.game.users[objectID].square.currentCoord.topLeft.y)
+                : setMoveCoord();
+        }
+    };
+    setCurrentCoord(clientData);
+    (0, exports.setUserCurrentChanks)(objectID, clientData.direction);
+    // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
+};
+exports.setClientCoordinates = setClientCoordinates;

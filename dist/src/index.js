@@ -145,106 +145,146 @@ io.on("connection", (socket) => {
     //   io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("sendDataFromServer", Date.now);
     // }, 1000);
     let moveClientSquare;
-    const setClientCoordinates = (clientData) => {
-        if (gameObject_1.game.users[socket.id]) {
-            gameObject_1.game.users[socket.id].square.prevCoord = JSON.parse(JSON.stringify(gameObject_1.game.users[socket.id].square.currentCoord));
-        }
-        const setMoveCoord = () => {
-            if (clientData.direction === gameObject_2.UserMoveDirections.down) {
-                gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y =
-                    gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y =
-                    gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y + clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y =
-                    gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y + clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.topRight.y =
-                    gameObject_1.game.users[socket.id].square.currentCoord.topRight.y + clientData.shiftUserPixels;
-            }
-            if (clientData.direction === gameObject_2.UserMoveDirections.left) {
-                gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x =
-                    gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x - clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x =
-                    gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x - clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x =
-                    gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.topRight.x =
-                    gameObject_1.game.users[socket.id].square.currentCoord.topRight.x - clientData.shiftUserPixels;
-            }
-            if (clientData.direction === gameObject_2.UserMoveDirections.right) {
-                gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x =
-                    gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x + clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x =
-                    gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x + clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x =
-                    gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x + clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.topRight.x =
-                    gameObject_1.game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels;
-            }
-            if (clientData.direction === gameObject_2.UserMoveDirections.up) {
-                gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y =
-                    gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y - clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y =
-                    gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y - clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y =
-                    gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels;
-                gameObject_1.game.users[socket.id].square.currentCoord.topRight.y =
-                    gameObject_1.game.users[socket.id].square.currentCoord.topRight.y - clientData.shiftUserPixels;
-            }
-        };
-        const setCurrentCoord = function (clientData) {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
-            if (!gameObject_1.game.users[socket.id])
-                return;
-            gameObject_1.game.users[socket.id].moveDirection = clientData.direction;
-            if (clientData.direction === gameObject_2.UserMoveDirections.down) {
-                // смотрим чанки, на которые хотим встать
-                gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
-                    ((_a = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _a === void 0 ? void 0 : _a.notMove) ||
-                    ((_b = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _b === void 0 ? void 0 : _b.notMove) ||
-                    ((_c = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _c === void 0 ? void 0 : _c.isUserChank) ||
-                    ((_d = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _d === void 0 ? void 0 : _d.isUserChank)
-                    ? (gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y =
-                        gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y)
-                    : setMoveCoord();
-            }
-            if (clientData.direction === gameObject_2.UserMoveDirections.left) {
-                gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels < 0 ||
-                    ((_e = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y + 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x / 8)]) === null || _e === void 0 ? void 0 : _e.notMove) ||
-                    ((_f = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x / 8)]) === null || _f === void 0 ? void 0 : _f.notMove) ||
-                    ((_g = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x - 8) / 8)]) === null || _g === void 0 ? void 0 : _g.isUserChank) ||
-                    ((_h = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomLeft.x - 8) / 8)]) === null || _h === void 0 ? void 0 : _h.isUserChank)
-                    ? (gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x =
-                        gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x)
-                    : setMoveCoord();
-            }
-            if (clientData.direction === gameObject_2.UserMoveDirections.right) {
-                gameObject_1.game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
-                    ((_j = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.y + 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.x / 8)]) === null || _j === void 0 ? void 0 : _j.notMove) ||
-                    ((_k = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x / 8)]) === null || _k === void 0 ? void 0 : _k.notMove) ||
-                    ((_l = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.x + 8) / 8)]) === null || _l === void 0 ? void 0 : _l.isUserChank) ||
-                    ((_m = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.bottomRight.x + 8) / 8)]) === null || _m === void 0 ? void 0 : _m.isUserChank)
-                    ? (gameObject_1.game.users[socket.id].square.currentCoord.topRight.x =
-                        gameObject_1.game.users[socket.id].square.currentCoord.topRight.x)
-                    : setMoveCoord();
-            }
-            if (clientData.direction === gameObject_2.UserMoveDirections.up) {
-                if (Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 13) / 8) < 0) {
-                    return;
-                }
-                gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels < 0 ||
-                    ((_o = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x + 5) / 8)]) === null || _o === void 0 ? void 0 : _o.notMove) ||
-                    ((_p = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.y / 8)][Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topRight.x - 5) / 8)]) === null || _p === void 0 ? void 0 : _p.notMove) ||
-                    ((_q = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topLeft.x / 8)]) === null || _q === void 0 ? void 0 : _q.isUserChank) ||
-                    ((_r = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][Math.floor(gameObject_1.game.users[socket.id].square.currentCoord.topRight.x / 8)]) === null || _r === void 0 ? void 0 : _r.isUserChank)
-                    ? (gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y =
-                        gameObject_1.game.users[socket.id].square.currentCoord.topLeft.y)
-                    : setMoveCoord();
-            }
-        };
-        setCurrentCoord(clientData);
-        (0, gameObject_1.setUserCurrentChanks)(socket.id, clientData.direction);
-        // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
-    };
+    // const setClientCoordinates = (clientData: {
+    //   direction: UserMoveDirections;
+    //   roomID: string;
+    //   shiftUserPixels: number;
+    // }) => {
+    //   if (game.users[socket.id]) {
+    //     game.users[socket.id].square.prevCoord = JSON.parse(
+    //       JSON.stringify(game.users[socket.id].square.currentCoord)
+    //     );
+    //   }
+    //   const setMoveCoord = () => {
+    //     if (clientData.direction === UserMoveDirections.down) {
+    //       game.users[socket.id].square.currentCoord.bottomLeft.y =
+    //         game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.bottomRight.y =
+    //         game.users[socket.id].square.currentCoord.bottomRight.y + clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.topLeft.y =
+    //         game.users[socket.id].square.currentCoord.topLeft.y + clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.topRight.y =
+    //         game.users[socket.id].square.currentCoord.topRight.y + clientData.shiftUserPixels;
+    //     }
+    //     if (clientData.direction === UserMoveDirections.left) {
+    //       game.users[socket.id].square.currentCoord.bottomLeft.x =
+    //         game.users[socket.id].square.currentCoord.bottomLeft.x - clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.bottomRight.x =
+    //         game.users[socket.id].square.currentCoord.bottomRight.x - clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.topLeft.x =
+    //         game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.topRight.x =
+    //         game.users[socket.id].square.currentCoord.topRight.x - clientData.shiftUserPixels;
+    //     }
+    //     if (clientData.direction === UserMoveDirections.right) {
+    //       game.users[socket.id].square.currentCoord.bottomLeft.x =
+    //         game.users[socket.id].square.currentCoord.bottomLeft.x + clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.bottomRight.x =
+    //         game.users[socket.id].square.currentCoord.bottomRight.x + clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.topLeft.x =
+    //         game.users[socket.id].square.currentCoord.topLeft.x + clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.topRight.x =
+    //         game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels;
+    //     }
+    //     if (clientData.direction === UserMoveDirections.up) {
+    //       game.users[socket.id].square.currentCoord.bottomLeft.y =
+    //         game.users[socket.id].square.currentCoord.bottomLeft.y - clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.bottomRight.y =
+    //         game.users[socket.id].square.currentCoord.bottomRight.y - clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.topLeft.y =
+    //         game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels;
+    //       game.users[socket.id].square.currentCoord.topRight.y =
+    //         game.users[socket.id].square.currentCoord.topRight.y - clientData.shiftUserPixels;
+    //     }
+    //   };
+    //   const setCurrentCoord = function (clientData: {
+    //     direction: UserMoveDirections;
+    //     roomID: string;
+    //     shiftUserPixels: number;
+    //   }) {
+    //     if (!game.users[socket.id]) return;
+    //     game.users[socket.id].moveDirection = clientData.direction;
+    //     if (clientData.direction === UserMoveDirections.down) {
+    //       // смотрим чанки, на которые хотим встать
+    //       game.users[socket.id].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)
+    //       ]?.notMove ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)
+    //       ]?.notMove ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x + 5) / 8)
+    //       ]?.isUserChank ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x - 5) / 8)
+    //       ]?.isUserChank
+    //         ? (game.users[socket.id].square.currentCoord.bottomLeft.y =
+    //             game.users[socket.id].square.currentCoord.bottomLeft.y)
+    //         : setMoveCoord();
+    //     }
+    //     if (clientData.direction === UserMoveDirections.left) {
+    //       game.users[socket.id].square.currentCoord.topLeft.x - clientData.shiftUserPixels < 0 ||
+    //       game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y + 5) / 8)][
+    //         Math.floor(game.users[socket.id].square.currentCoord.topLeft.x / 8)
+    //       ]?.notMove ||
+    //       game.gameField[
+    //         Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.y - 5) / 8)
+    //       ][Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.x / 8)]?.notMove ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topLeft.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.topLeft.x - 8) / 8)
+    //       ]?.isUserChank ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomLeft.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.bottomLeft.x - 8) / 8)
+    //       ]?.isUserChank
+    //         ? (game.users[socket.id].square.currentCoord.topLeft.x =
+    //             game.users[socket.id].square.currentCoord.topLeft.x)
+    //         : setMoveCoord();
+    //     }
+    //     if (clientData.direction === UserMoveDirections.right) {
+    //       game.users[socket.id].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
+    //       game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topRight.y + 5) / 8)][
+    //         Math.floor(game.users[socket.id].square.currentCoord.topRight.x / 8)
+    //       ]?.notMove ||
+    //       game.gameField[
+    //         Math.floor((game.users[socket.id].square.currentCoord.bottomRight.y - 5) / 8)
+    //       ][Math.floor(game.users[socket.id].square.currentCoord.bottomRight.x / 8)]?.notMove ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topRight.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.topRight.x + 8) / 8)
+    //       ]?.isUserChank ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.bottomRight.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.bottomRight.x + 8) / 8)
+    //       ]?.isUserChank
+    //         ? (game.users[socket.id].square.currentCoord.topRight.x =
+    //             game.users[socket.id].square.currentCoord.topRight.x)
+    //         : setMoveCoord();
+    //     }
+    //     if (clientData.direction === UserMoveDirections.up) {
+    //       if (Math.floor((game.users[socket.id].square.currentCoord.topLeft.y - 13) / 8) < 0) {
+    //         return;
+    //       }
+    //       game.users[socket.id].square.currentCoord.topLeft.y - clientData.shiftUserPixels < 0 ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topLeft.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.topLeft.x + 5) / 8)
+    //       ]?.notMove ||
+    //       game.gameField[Math.floor(game.users[socket.id].square.currentCoord.topRight.y / 8)][
+    //         Math.floor((game.users[socket.id].square.currentCoord.topRight.x - 5) / 8)
+    //       ]?.notMove ||
+    //       game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][
+    //         Math.floor(game.users[socket.id].square.currentCoord.topLeft.x / 8)
+    //       ]?.isUserChank ||
+    //       game.gameField[Math.floor((game.users[socket.id].square.currentCoord.topLeft.y - 8) / 8)][
+    //         Math.floor(game.users[socket.id].square.currentCoord.topRight.x / 8)
+    //       ]?.isUserChank
+    //         ? (game.users[socket.id].square.currentCoord.topLeft.y =
+    //             game.users[socket.id].square.currentCoord.topLeft.y)
+    //         : setMoveCoord();
+    //     }
+    //   };
+    //   setCurrentCoord(clientData);
+    //   setUserCurrentChanks(socket.id, clientData.direction);
+    //   // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
+    // };
     socket.on("clientStartMove", (clientData) => {
         if (!socket.rooms.has(clientData.roomID)) {
             return;
@@ -265,7 +305,7 @@ io.on("connection", (socket) => {
                 timeCurrent = Date.now();
             }
             const shiftUserPixels = Math.floor((timeCurrent - timePrev) / 20);
-            setClientCoordinates(Object.assign(Object.assign({}, clientData), { shiftUserPixels }));
+            (0, gameObject_1.setClientCoordinates)(socket.id, Object.assign(Object.assign({}, clientData), { shiftUserPixels }));
         }, 33);
     });
     socket.on("clientStopMove", (data) => {
