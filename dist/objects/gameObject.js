@@ -19,10 +19,11 @@ exports.game = {
         objects: {},
     },
 };
-const addGamerOrNPC = (addedElType, addedElID) => {
+const addGamerOrNPC = (addedElType, objectType, addedElID) => {
     const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(exports.game.users).length;
     exports.game.users[addedElID] = {
         type: addedElType,
+        objectType: objectType,
         chanks: {
             topChanks: {},
             bottomChanks: {},
@@ -213,9 +214,9 @@ const createGameField = (socketID) => {
             bottomLeft: { x: 8 * 4, y: 8 * 13 + 8 },
             bottomRight: { x: 8 * 4 + 8, y: 8 * 13 + 8 },
         };
-        addGamerOrNPC("NPC", "ORC#1");
+        addGamerOrNPC("NPC", "orc3", "ORC#1");
     }
-    addGamerOrNPC("gamer", socketID);
+    addGamerOrNPC("gamer", "gamer", socketID);
     exports.game.gameIsstarted = true;
 };
 exports.createGameField = createGameField;

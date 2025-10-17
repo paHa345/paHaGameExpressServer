@@ -45,7 +45,7 @@ export interface IGameMain {
   };
   users: IGameUserMain<{
     type: "gamer" | "NPC";
-    NPCType?: string;
+    objectType: string;
     square: {
       prevCoord: {
         topLeft: {
@@ -107,11 +107,12 @@ export const game: IGameMain = {
   },
 };
 
-const addGamerOrNPC = (addedElType: "gamer" | "NPC", addedElID: string) => {
+const addGamerOrNPC = (addedElType: "gamer" | "NPC", objectType: string, addedElID: string) => {
   const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(game.users).length;
 
   game.users[addedElID] = {
     type: addedElType,
+    objectType: objectType,
     chanks: {
       topChanks: {},
       bottomChanks: {},
@@ -313,9 +314,9 @@ export const createGameField = (socketID: string) => {
       bottomRight: { x: 8 * 4 + 8, y: 8 * 13 + 8 },
     };
 
-    addGamerOrNPC("NPC", "ORC#1");
+    addGamerOrNPC("NPC", "orc3", "ORC#1");
   }
-  addGamerOrNPC("gamer", socketID);
+  addGamerOrNPC("gamer", "gamer", socketID);
 
   game.gameIsstarted = true;
 };

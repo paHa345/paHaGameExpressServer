@@ -69,6 +69,34 @@ setInterval(() => {
   }
 }, 150);
 
+let moveNPCInterval: any;
+
+const directions = [
+  UserMoveDirections.right,
+  UserMoveDirections.down,
+  UserMoveDirections.up,
+  UserMoveDirections.left,
+  UserMoveDirections.stop,
+];
+const moveNPC = () => {
+  let directionPointer = 0;
+  let time = Date.now();
+
+  moveNPCInterval = setInterval(() => {
+    if (Date.now() - time > 5000) {
+      directionPointer === 4 ? (directionPointer = 0) : (directionPointer = directionPointer + 1);
+      time = Date.now();
+    }
+    setClientCoordinates("ORC#1", {
+      direction: directions[directionPointer],
+      roomID: "asdasd",
+      shiftUserPixels: 1,
+    });
+  }, 33);
+};
+
+moveNPC();
+
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
 

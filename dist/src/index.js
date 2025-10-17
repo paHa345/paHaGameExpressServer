@@ -62,6 +62,30 @@ setInterval(() => {
         (0, gameObject_1.increaseFrameNumber)();
     }
 }, 150);
+let moveNPCInterval;
+const directions = [
+    gameObject_2.UserMoveDirections.right,
+    gameObject_2.UserMoveDirections.down,
+    gameObject_2.UserMoveDirections.up,
+    gameObject_2.UserMoveDirections.left,
+    gameObject_2.UserMoveDirections.stop,
+];
+const moveNPC = () => {
+    let directionPointer = 0;
+    let time = Date.now();
+    moveNPCInterval = setInterval(() => {
+        if (Date.now() - time > 5000) {
+            directionPointer === 4 ? (directionPointer = 0) : (directionPointer = directionPointer + 1);
+            time = Date.now();
+        }
+        (0, gameObject_1.setClientCoordinates)("ORC#1", {
+            direction: directions[directionPointer],
+            roomID: "asdasd",
+            shiftUserPixels: 1,
+        });
+    }, 33);
+};
+moveNPC();
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
     socket.on("send-message", (message) => {
