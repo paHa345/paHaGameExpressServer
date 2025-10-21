@@ -305,3 +305,21 @@ export const exerciseTypes: IOneExerciseTypes[] = [
   { nameRu: "Плечи", nameEn: "shoulders" },
   { nameRu: "Спина", nameEn: "back" },
 ];
+
+interface INPCOrGamerObjectsData {
+  [objectID: string]: {
+    heightChanks: number;
+    widthChanks: number;
+  };
+}
+
+export const NPCOrGamerObjectsData: INPCOrGamerObjectsData = {
+  gamer: {
+    heightChanks: 5,
+    widthChanks: 3,
+  },
+  orc3: {
+    heightChanks: 6,
+    widthChanks: 4,
+  },
+};
