@@ -208,6 +208,7 @@ io.on("connection", (socket) => {
             return;
         }
         (0, gameObject_1.getChanksUnderAttack)(gameObject_1.game.users[socket.id].moveDirection, socket.id);
+        gameObject_1.game.users[socket.id].imgName = "gamerAttackImage";
         const startAttackTimestamp = Date.now();
         gameObject_1.game.attackStatusObj[socket === null || socket === void 0 ? void 0 : socket.id] = {
             time: startAttackTimestamp,
@@ -223,6 +224,7 @@ io.on("connection", (socket) => {
         stopAttackInterval = setInterval(() => {
             if (Date.now() - startAttackTimestamp > 500) {
                 gameObject_1.game.attackStatusObj[socket === null || socket === void 0 ? void 0 : socket.id].isActive = false;
+                gameObject_1.game.users[socket === null || socket === void 0 ? void 0 : socket.id].imgName = `${gameObject_1.game.users[socket === null || socket === void 0 ? void 0 : socket.id].objectType}WalkImage`;
                 // console.log("Stop interval");
                 // increaseFrameNumber();
                 // io.of("/").to(clientData.roomID).emit("serverStopAttack", {

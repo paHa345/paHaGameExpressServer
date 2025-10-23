@@ -22,10 +22,11 @@ exports.game = {
 };
 const addGamerOrNPC = (addedElType, objectType, addedElID) => {
     const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(exports.game.users).length;
-    console.log(types_1.NPCOrGamerObjectsData[objectType].heightChanks);
     exports.game.users[addedElID] = {
         type: addedElType,
         objectType: objectType,
+        getDamageStatus: false,
+        imgName: `${objectType}WalkImage`,
         chanks: {
             topChanks: {},
             bottomChanks: {},
@@ -327,6 +328,11 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
     if (exports.game.users[objectID]) {
         exports.game.users[objectID].square.prevCoord = JSON.parse(JSON.stringify(exports.game.users[objectID].square.currentCoord));
     }
+    if (exports.game.users[objectID]) {
+        exports.game.users[objectID].getDamageStatus
+            ? (exports.game.users[objectID].imgName = `${objectType}GetDamageImage`)
+            : (exports.game.users[objectID].imgName = `${objectType}WalkImage`);
+    }
     const setMoveCoord = () => {
         if (clientData.direction === UserMoveDirections.down) {
             exports.game.users[objectID].square.currentCoord.bottomLeft.y =
@@ -396,11 +402,6 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
                 : setMoveCoord();
         }
         if (clientData.direction === UserMoveDirections.right) {
-            // console.log(
-            //   game.gameField[Math.floor(game.users[objectID].square.currentCoord.topRight.y / 8)][
-            //     Math.floor((game.users[objectID].square.currentCoord.topRight.x + 8) / 8)
-            //   ]?.objectDataChank.isObjectChank
-            // );
             exports.game.users[objectID].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
                 ((_j = exports.game.gameField[Math.floor((exports.game.users[objectID].square.currentCoord.topRight.y + 5) / 8)][Math.floor(exports.game.users[objectID].square.currentCoord.topRight.x / 8)]) === null || _j === void 0 ? void 0 : _j.notMove) ||
                 ((_k = exports.game.gameField[Math.floor((exports.game.users[objectID].square.currentCoord.bottomRight.y - 5) / 8)][Math.floor(exports.game.users[objectID].square.currentCoord.bottomRight.x / 8)]) === null || _k === void 0 ? void 0 : _k.notMove) ||
@@ -446,6 +447,20 @@ const getChanksUnderAttack = (direction, objectID) => {
         if (underAttackChankObjectID) {
             objectUnderAttack[underAttackChankObjectID] = 1;
         }
+        for (const objectID in objectUnderAttack) {
+            (0, exports.setClientCoordinates)(exports.game.users[objectID].objectType, objectID, {
+                direction: direction,
+                roomID: "asdasd",
+                shiftUserPixels: 1,
+            });
+            exports.game.users[objectID].getDamageStatus = true;
+            exports.game.users[objectID].imgName = `${exports.game.users[objectID].objectType}GetDamageImage`;
+            setTimeout(() => {
+                console.log("Stop Damage");
+                exports.game.users[objectID].getDamageStatus = false;
+                exports.game.users[objectID].imgName = `${exports.game.users[objectID].objectType}WalkImage`;
+            }, 900);
+        }
     };
     if (direction === UserMoveDirections.up || direction === UserMoveDirections.stop) {
         for (let i = 0; i <= types_1.NPCOrGamerObjectsData[exports.game.users[objectID].objectType].widthChanks; i++) {
@@ -460,6 +475,9 @@ const getChanksUnderAttack = (direction, objectID) => {
         }
     }
     if (direction === UserMoveDirections.left) {
+        if (topLeftXChank - 1 < 0) {
+            return;
+        }
         for (let i = 0; i < types_1.NPCOrGamerObjectsData[exports.game.users[objectID].objectType].heightChanks; i++) {
             exports.game.gameField[topLeftYChank + i][topLeftXChank - 1].chankUnderAttack = true;
             addUnderAttackObjectsAndChunksArr(exports.game.gameField[topLeftYChank + i][topLeftXChank - 1].objectDataChank.objectID, topLeftYChank + i, topLeftXChank - 1);
@@ -470,9 +488,6 @@ const getChanksUnderAttack = (direction, objectID) => {
             exports.game.gameField[topRightYChank + i][topRightXChank + 1].chankUnderAttack = true;
             addUnderAttackObjectsAndChunksArr(exports.game.gameField[topRightYChank + i][topRightXChank + 1].objectDataChank.objectID, topRightYChank + i, topRightXChank + 1);
         }
-    }
-    for (const objectID in objectUnderAttack) {
-        console.log(objectID);
     }
     setTimeout(() => {
         chanksUnderAttack.map((chank) => {

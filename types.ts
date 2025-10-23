@@ -323,3 +323,11 @@ export const NPCOrGamerObjectsData: INPCOrGamerObjectsData = {
     widthChanks: 4,
   },
 };
+
+export type ImageNames =
+  | "orc3AttackImage"
+  | "orc3WalkImage"
+  | "orc3GetDamageImage"
+  | "gamerAttackImage"
+  | "gamerWalkImage"
+  | "gamerGetDamageImage";
