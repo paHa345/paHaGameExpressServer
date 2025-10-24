@@ -50,11 +50,32 @@ export interface IGameMain {
       isActive: boolean;
     };
   };
+  statObj: {
+    NPC: {
+      [objectID: string]: {
+        currentHP: number;
+        baseHP: number;
+        currentArmour: number;
+        currentDamage: number;
+        percentHP: number;
+      };
+    };
+    gamers: {
+      [objectID: string]: {
+        currentHP: number;
+        baseHP: number;
+        currentArmour: number;
+        currentDamage: number;
+        percentHP: number;
+      };
+    };
+  };
   users: IGameUserMain<{
     type: "gamer" | "NPC";
     objectType: string;
     getDamageStatus: boolean;
     imgName: string;
+
     square: {
       prevCoord: {
         topLeft: {
@@ -106,6 +127,7 @@ export interface IGameMain {
 }
 
 export const game: IGameMain = {
+  statObj: { NPC: {}, gamers: {} },
   gameIsstarted: false,
   users: {},
   gameField: {},
@@ -116,8 +138,33 @@ export const game: IGameMain = {
   },
 };
 
-const addGamerOrNPC = (addedElType: "gamer" | "NPC", objectType: string, addedElID: string) => {
+const addGamerOrNPC = (
+  addedElType: "gamer" | "NPC",
+  objectType: string,
+  addedElID: string,
+  hp: number,
+  armour: number,
+  damage: number
+) => {
   const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(game.users).length;
+
+  if (addedElType === "gamer") {
+    game.statObj.gamers[addedElID] = {
+      baseHP: hp,
+      currentHP: hp,
+      currentArmour: armour,
+      currentDamage: damage,
+      percentHP: 100,
+    };
+  } else {
+    game.statObj.NPC[addedElID] = {
+      baseHP: hp,
+      currentHP: hp,
+      currentArmour: armour,
+      currentDamage: damage,
+      percentHP: 100,
+    };
+  }
 
   game.users[addedElID] = {
     type: addedElType,
@@ -333,9 +380,9 @@ export const createGameField = (socketID: string) => {
       bottomRight: { x: 8 * 4 + 8, y: 8 * 13 + 8 },
     };
 
-    addGamerOrNPC("NPC", "orc3", "ORC#1");
+    addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
   }
-  addGamerOrNPC("gamer", "gamer", socketID);
+  addGamerOrNPC("gamer", "gamer", socketID, 100, 0.2, 10);
 
   game.gameIsstarted = true;
 };

@@ -11,6 +11,7 @@ var UserMoveDirections;
     UserMoveDirections["stop"] = "stop";
 })(UserMoveDirections || (exports.UserMoveDirections = UserMoveDirections = {}));
 exports.game = {
+    statObj: { NPC: {}, gamers: {} },
     gameIsstarted: false,
     users: {},
     gameField: {},
@@ -20,8 +21,26 @@ exports.game = {
         objects: {},
     },
 };
-const addGamerOrNPC = (addedElType, objectType, addedElID) => {
+const addGamerOrNPC = (addedElType, objectType, addedElID, hp, armour, damage) => {
     const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(exports.game.users).length;
+    if (addedElType === "gamer") {
+        exports.game.statObj.gamers[addedElID] = {
+            baseHP: hp,
+            currentHP: hp,
+            currentArmour: armour,
+            currentDamage: damage,
+            percentHP: 100,
+        };
+    }
+    else {
+        exports.game.statObj.NPC[addedElID] = {
+            baseHP: hp,
+            currentHP: hp,
+            currentArmour: armour,
+            currentDamage: damage,
+            percentHP: 100,
+        };
+    }
     exports.game.users[addedElID] = {
         type: addedElType,
         objectType: objectType,
@@ -222,9 +241,9 @@ const createGameField = (socketID) => {
             bottomLeft: { x: 8 * 4, y: 8 * 13 + 8 },
             bottomRight: { x: 8 * 4 + 8, y: 8 * 13 + 8 },
         };
-        addGamerOrNPC("NPC", "orc3", "ORC#1");
+        addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
     }
-    addGamerOrNPC("gamer", "gamer", socketID);
+    addGamerOrNPC("gamer", "gamer", socketID, 100, 0.2, 10);
     exports.game.gameIsstarted = true;
 };
 exports.createGameField = createGameField;
