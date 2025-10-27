@@ -352,7 +352,7 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
             ? (exports.game.users[objectID].imgName = `${objectType}GetDamageImage`)
             : (exports.game.users[objectID].imgName = `${objectType}WalkImage`);
         exports.game.attackStatusObj[objectID].isActive
-            ? (exports.game.users[objectID].imgName = `${objectType}gamerAttackImage`)
+            ? (exports.game.users[objectID].imgName = `${objectType}AttackImage`)
             : (exports.game.users[objectID].imgName = `${objectType}WalkImage`);
     }
     const setMoveCoord = () => {

@@ -510,7 +510,7 @@ export const setClientCoordinates = (
       ? (game.users[objectID].imgName = `${objectType}GetDamageImage`)
       : (game.users[objectID].imgName = `${objectType}WalkImage`);
     game.attackStatusObj[objectID].isActive
-      ? (game.users[objectID].imgName = `${objectType}gamerAttackImage`)
+      ? (game.users[objectID].imgName = `${objectType}AttackImage`)
       : (game.users[objectID].imgName = `${objectType}WalkImage`);
   }
 
