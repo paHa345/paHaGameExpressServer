@@ -53,7 +53,7 @@ setInterval(() => {
             frameObj: gameObject_1.game.frameObj,
             attackStatus: gameObject_1.game.attackStatusObj,
             users: gameObject_1.game.users,
-            gameField: gameObject_1.game.gameField,
+            // gameField: game.gameField,
         });
     }
 }, 33);
@@ -162,6 +162,7 @@ io.on("connection", (socket) => {
             usersData: gameObject_1.game.users,
             gameFieldData: gameObject_1.game.gameField,
             frameObject: gameObject_1.game.frameObj,
+            statsObj: gameObject_1.game.statObj,
         });
     });
     // setInterval(() => {

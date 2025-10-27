@@ -347,9 +347,12 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
     if (exports.game.users[objectID]) {
         exports.game.users[objectID].square.prevCoord = JSON.parse(JSON.stringify(exports.game.users[objectID].square.currentCoord));
     }
-    if (exports.game.users[objectID]) {
+    if (exports.game.users[objectID] && exports.game.attackStatusObj[objectID]) {
         exports.game.users[objectID].getDamageStatus
             ? (exports.game.users[objectID].imgName = `${objectType}GetDamageImage`)
+            : (exports.game.users[objectID].imgName = `${objectType}WalkImage`);
+        exports.game.attackStatusObj[objectID].isActive
+            ? (exports.game.users[objectID].imgName = `${objectType}gamerAttackImage`)
             : (exports.game.users[objectID].imgName = `${objectType}WalkImage`);
     }
     const setMoveCoord = () => {
@@ -467,6 +470,8 @@ const getChanksUnderAttack = (direction, objectID) => {
             objectUnderAttack[underAttackChankObjectID] = 1;
         }
         for (const objectID in objectUnderAttack) {
+            if (!exports.game.users[objectID])
+                return;
             (0, exports.setClientCoordinates)(exports.game.users[objectID].objectType, objectID, {
                 direction: direction,
                 roomID: "asdasd",
