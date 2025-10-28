@@ -455,13 +455,13 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
     // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
 };
 exports.setClientCoordinates = setClientCoordinates;
-const getChanksUnderAttack = (direction, objectID) => {
-    const topLeftXChank = Math.floor(exports.game.users[objectID].square.currentCoord.topLeft.x / 8);
-    const topLeftYChank = Math.floor(exports.game.users[objectID].square.currentCoord.topLeft.y / 8);
-    const bottomLeftXChank = Math.floor(exports.game.users[objectID].square.currentCoord.bottomLeft.x / 8);
-    const bottomLeftYChank = Math.floor(exports.game.users[objectID].square.currentCoord.bottomLeft.y / 8);
-    const topRightXChank = Math.floor(exports.game.users[objectID].square.currentCoord.topRight.x / 8);
-    const topRightYChank = Math.floor(exports.game.users[objectID].square.currentCoord.topRight.y / 8);
+const getChanksUnderAttack = (direction, attackObjectID, io) => {
+    const topLeftXChank = Math.floor(exports.game.users[attackObjectID].square.currentCoord.topLeft.x / 8);
+    const topLeftYChank = Math.floor(exports.game.users[attackObjectID].square.currentCoord.topLeft.y / 8);
+    const bottomLeftXChank = Math.floor(exports.game.users[attackObjectID].square.currentCoord.bottomLeft.x / 8);
+    const bottomLeftYChank = Math.floor(exports.game.users[attackObjectID].square.currentCoord.bottomLeft.y / 8);
+    const topRightXChank = Math.floor(exports.game.users[attackObjectID].square.currentCoord.topRight.x / 8);
+    const topRightYChank = Math.floor(exports.game.users[attackObjectID].square.currentCoord.topRight.y / 8);
     const objectUnderAttack = {};
     const chanksUnderAttack = [];
     const addUnderAttackObjectsAndChunksArr = (underAttackChankObjectID, row, col) => {
@@ -469,31 +469,15 @@ const getChanksUnderAttack = (direction, objectID) => {
         if (underAttackChankObjectID) {
             objectUnderAttack[underAttackChankObjectID] = 1;
         }
-        for (const objectID in objectUnderAttack) {
-            if (!exports.game.users[objectID])
-                return;
-            (0, exports.setClientCoordinates)(exports.game.users[objectID].objectType, objectID, {
-                direction: direction,
-                roomID: "asdasd",
-                shiftUserPixels: 1,
-            });
-            exports.game.users[objectID].getDamageStatus = true;
-            exports.game.users[objectID].imgName = `${exports.game.users[objectID].objectType}GetDamageImage`;
-            setTimeout(() => {
-                console.log("Stop Damage");
-                exports.game.users[objectID].getDamageStatus = false;
-                exports.game.users[objectID].imgName = `${exports.game.users[objectID].objectType}WalkImage`;
-            }, 900);
-        }
     };
     if (direction === UserMoveDirections.up || direction === UserMoveDirections.stop) {
-        for (let i = 0; i <= types_1.NPCOrGamerObjectsData[exports.game.users[objectID].objectType].widthChanks; i++) {
+        for (let i = 0; i <= types_1.NPCOrGamerObjectsData[exports.game.users[attackObjectID].objectType].widthChanks; i++) {
             exports.game.gameField[topLeftYChank - 1][topLeftXChank + i].chankUnderAttack = true;
             addUnderAttackObjectsAndChunksArr(exports.game.gameField[topLeftYChank - 1][topLeftXChank + i].objectDataChank.objectID, topLeftYChank - 1, topLeftXChank + i);
         }
     }
     if (direction === UserMoveDirections.down) {
-        for (let i = 0; i <= types_1.NPCOrGamerObjectsData[exports.game.users[objectID].objectType].widthChanks; i++) {
+        for (let i = 0; i <= types_1.NPCOrGamerObjectsData[exports.game.users[attackObjectID].objectType].widthChanks; i++) {
             exports.game.gameField[bottomLeftYChank][bottomLeftXChank + i].chankUnderAttack = true;
             addUnderAttackObjectsAndChunksArr(exports.game.gameField[bottomLeftYChank][bottomLeftXChank + i].objectDataChank.objectID, bottomLeftYChank, bottomLeftXChank + i);
         }
@@ -502,16 +486,82 @@ const getChanksUnderAttack = (direction, objectID) => {
         if (topLeftXChank - 1 < 0) {
             return;
         }
-        for (let i = 0; i < types_1.NPCOrGamerObjectsData[exports.game.users[objectID].objectType].heightChanks; i++) {
+        for (let i = 0; i < types_1.NPCOrGamerObjectsData[exports.game.users[attackObjectID].objectType].heightChanks; i++) {
             exports.game.gameField[topLeftYChank + i][topLeftXChank - 1].chankUnderAttack = true;
             addUnderAttackObjectsAndChunksArr(exports.game.gameField[topLeftYChank + i][topLeftXChank - 1].objectDataChank.objectID, topLeftYChank + i, topLeftXChank - 1);
         }
     }
     if (direction === UserMoveDirections.right) {
-        for (let i = 0; i < types_1.NPCOrGamerObjectsData[exports.game.users[objectID].objectType].heightChanks; i++) {
+        for (let i = 0; i < types_1.NPCOrGamerObjectsData[exports.game.users[attackObjectID].objectType].heightChanks; i++) {
             exports.game.gameField[topRightYChank + i][topRightXChank + 1].chankUnderAttack = true;
             addUnderAttackObjectsAndChunksArr(exports.game.gameField[topRightYChank + i][topRightXChank + 1].objectDataChank.objectID, topRightYChank + i, topRightXChank + 1);
         }
+    }
+    for (const underAttackObjectID in objectUnderAttack) {
+        if (!exports.game.users[underAttackObjectID])
+            return;
+        if (exports.game.statObj.NPC[underAttackObjectID] === undefined)
+            return;
+        // отнимаем hp у лбъекта, по которому проходит урон
+        exports.game.statObj.NPC[underAttackObjectID].currentHP =
+            exports.game.statObj.NPC[underAttackObjectID].currentHP -
+                (1 - exports.game.statObj.NPC[underAttackObjectID].currentArmour) *
+                    exports.game.statObj.gamers[attackObjectID].currentDamage;
+        exports.game.statObj.NPC[underAttackObjectID].percentHP =
+            (exports.game.statObj.NPC[underAttackObjectID].currentHP /
+                exports.game.statObj.NPC[underAttackObjectID].baseHP) *
+                100;
+        // если у объекта по которому проходит урон, не осталось hp, то запускается анимация
+        //  и объект удаляется и очищаются занимаемые чанки
+        if (exports.game.statObj.NPC[underAttackObjectID].currentHP <= 0) {
+            // находим чанки и очищаем их
+            const getDeletedObjectCurrentChanks = (underAttackObjectID) => {
+                const topLeftXChank = Math.floor(exports.game.users[underAttackObjectID].square.currentCoord.topLeft.x / 8);
+                const topLeftYChank = Math.floor(exports.game.users[underAttackObjectID].square.currentCoord.topLeft.y / 8);
+                // console.log(`Top Left X: ${topLeftXChank} , top left Y: ${topLeftYChank}`);
+                // console.log(
+                //   `Width: ${NPCOrGamerObjectsData[dalatedObjectType].widthChanks}, height: ${NPCOrGamerObjectsData[dalatedObjectType].heightChanks}`
+                // );
+                const deletedObjectType = exports.game.users[underAttackObjectID].objectType;
+                for (let i = 0; i <= types_1.NPCOrGamerObjectsData[deletedObjectType].widthChanks; i++) {
+                    for (let j = 0; j <= types_1.NPCOrGamerObjectsData[deletedObjectType].heightChanks; j++) {
+                        if (exports.game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank.objectID ===
+                            underAttackObjectID) {
+                            exports.game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank = {
+                                objectID: undefined,
+                                isObjectChank: false,
+                            };
+                        }
+                    }
+                }
+            };
+            getDeletedObjectCurrentChanks(underAttackObjectID);
+            delete exports.game.users[underAttackObjectID];
+            setTimeout(() => {
+                chanksUnderAttack.map((chank) => {
+                    exports.game.gameField[chank.row][chank.col].chankUnderAttack = false;
+                });
+            }, 600);
+            return;
+        }
+        // отправляем всем клиентам данные о hp объекта,
+        // по которому прошёл урон
+        io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverUnderAttackObjectStat", {
+            underAttackObjID: underAttackObjectID,
+            underAttackObjStat: exports.game.statObj.NPC[underAttackObjectID],
+        });
+        (0, exports.setClientCoordinates)(exports.game.users[underAttackObjectID].objectType, underAttackObjectID, {
+            direction: direction,
+            roomID: "asdasd",
+            shiftUserPixels: 4,
+        });
+        exports.game.users[underAttackObjectID].getDamageStatus = true;
+        exports.game.users[underAttackObjectID].imgName = `${exports.game.users[underAttackObjectID].objectType}GetDamageImage`;
+        setTimeout(() => {
+            console.log("Stop Damage");
+            exports.game.users[underAttackObjectID].getDamageStatus = false;
+            exports.game.users[underAttackObjectID].imgName = `${exports.game.users[underAttackObjectID].objectType}WalkImage`;
+        }, 900);
     }
     setTimeout(() => {
         chanksUnderAttack.map((chank) => {

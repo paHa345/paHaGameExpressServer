@@ -53,7 +53,7 @@ setInterval(() => {
             frameObj: gameObject_1.game.frameObj,
             attackStatus: gameObject_1.game.attackStatusObj,
             users: gameObject_1.game.users,
-            // gameField: game.gameField,
+            gameField: gameObject_1.game.gameField,
         });
     }
 }, 33);
@@ -74,15 +74,18 @@ const moveNPC = () => {
     let directionPointer = 0;
     let time = Date.now();
     moveNPCInterval = setInterval(() => {
+        var _a;
         if (Date.now() - time > 5000) {
             directionPointer === 4 ? (directionPointer = 0) : (directionPointer = directionPointer + 1);
             time = Date.now();
         }
-        (0, gameObject_1.setClientCoordinates)("orc3", "ORC#1", {
-            direction: directions[directionPointer],
-            roomID: "asdasd",
-            shiftUserPixels: 1,
-        });
+        if (!((_a = gameObject_1.game.users["ORC#1"]) === null || _a === void 0 ? void 0 : _a.getDamageStatus)) {
+            (0, gameObject_1.setClientCoordinates)("orc3", "ORC#1", {
+                direction: directions[directionPointer],
+                roomID: "asdasd",
+                shiftUserPixels: 1,
+            });
+        }
     }, 33);
 };
 moveNPC();
@@ -208,7 +211,7 @@ io.on("connection", (socket) => {
         if ((_b = gameObject_1.game.attackStatusObj[socket.id]) === null || _b === void 0 ? void 0 : _b.isActive) {
             return;
         }
-        (0, gameObject_1.getChanksUnderAttack)(gameObject_1.game.users[socket.id].moveDirection, socket.id);
+        (0, gameObject_1.getChanksUnderAttack)(gameObject_1.game.users[socket.id].moveDirection, socket.id, io);
         gameObject_1.game.users[socket.id].imgName = "gamerAttackImage";
         const startAttackTimestamp = Date.now();
         gameObject_1.game.attackStatusObj[socket === null || socket === void 0 ? void 0 : socket.id] = {

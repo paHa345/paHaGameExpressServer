@@ -60,7 +60,7 @@ setInterval(() => {
       frameObj: game.frameObj,
       attackStatus: game.attackStatusObj,
       users: game.users,
-      // gameField: game.gameField,
+      gameField: game.gameField,
     });
   }
 }, 33);
@@ -89,11 +89,13 @@ const moveNPC = () => {
       directionPointer === 4 ? (directionPointer = 0) : (directionPointer = directionPointer + 1);
       time = Date.now();
     }
-    setClientCoordinates("orc3", "ORC#1", {
-      direction: directions[directionPointer],
-      roomID: "asdasd",
-      shiftUserPixels: 1,
-    });
+    if (!game.users["ORC#1"]?.getDamageStatus) {
+      setClientCoordinates("orc3", "ORC#1", {
+        direction: directions[directionPointer],
+        roomID: "asdasd",
+        shiftUserPixels: 1,
+      });
+    }
   }, 33);
 };
 
@@ -273,7 +275,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    getChanksUnderAttack(game.users[socket.id].moveDirection, socket.id);
+    getChanksUnderAttack(game.users[socket.id].moveDirection, socket.id, io);
 
     game.users[socket.id].imgName = "gamerAttackImage";
 
