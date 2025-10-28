@@ -60,7 +60,7 @@ setInterval(() => {
       frameObj: game.frameObj,
       attackStatus: game.attackStatusObj,
       users: game.users,
-      gameField: game.gameField,
+      // gameField: game.gameField,
     });
   }
 }, 33);
