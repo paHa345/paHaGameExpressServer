@@ -6,15 +6,12 @@ import uploadFile from "../routes/uploadFile";
 import answerTime from "../routes/answerTime";
 import GTSAttempts from "../routes/GTSAttempts";
 import webSocketServer from "../routes/webSocketServer";
+
 import {
-  createGameField,
   game,
-  getChanksUnderAttack,
   increaseFrameNumber,
-  setClientCoordinates,
-  setUserCurrentChanks,
-} from "../objects/gameObject";
-import { UserMoveDirections } from "../objects/gameObject";
+  UserMoveDirections,
+} from "../MMORPGDungeonEngine/gameObject/gameObject";
 
 import { WebSocketServer } from "ws";
 // const cors = require("cors");
@@ -27,6 +24,9 @@ import cors from "cors";
 import { Server, Socket } from "socket.io";
 import { String } from "aws-sdk/clients/apigateway";
 import { NPCOrGamerObjectsData } from "../types";
+import { setClientCoordinates } from "../MMORPGDungeonEngine/MoveObjects/moveObjectsMain";
+import { createGameField } from "../MMORPGDungeonEngine/CreateGameField/createGameFieldMain";
+import { getChanksUnderAttack } from "../MMORPGDungeonEngine/AttackObjects/attackObjectsMain";
 
 dotenv.config();
 
@@ -57,7 +57,7 @@ const io = new Server(server, {
 setInterval(() => {
   if (game.gameIsstarted) {
     io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("sendDataFromServer", {
-      frameObj: game.frameObj,
+      // frameObj: game.frameObj,
       attackStatus: game.attackStatusObj,
       users: game.users,
       // gameField: game.gameField,
@@ -65,11 +65,11 @@ setInterval(() => {
   }
 }, 33);
 
-setInterval(() => {
-  if (game.gameIsstarted) {
-    increaseFrameNumber();
-  }
-}, 150);
+// setInterval(() => {
+//   if (game.gameIsstarted) {
+//     increaseFrameNumber();
+//   }
+// }, 150);
 
 let moveNPCInterval: any;
 
@@ -89,7 +89,10 @@ const moveNPC = () => {
       directionPointer === 4 ? (directionPointer = 0) : (directionPointer = directionPointer + 1);
       time = Date.now();
     }
-    if (!game.users["ORC#1"]?.getDamageStatus) {
+    if (game.users["ORC#1"]?.deathAnimationStatus) {
+      return;
+    }
+    if (!game.users["ORC#1"]?.getDamageStatus || !game.users["ORC#1"]?.deathAnimationStatus) {
       setClientCoordinates("orc3", "ORC#1", {
         direction: directions[directionPointer],
         roomID: "asdasd",

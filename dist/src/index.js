@@ -20,14 +20,16 @@ const uploadFile_1 = __importDefault(require("../routes/uploadFile"));
 const answerTime_1 = __importDefault(require("../routes/answerTime"));
 const GTSAttempts_1 = __importDefault(require("../routes/GTSAttempts"));
 const webSocketServer_1 = __importDefault(require("../routes/webSocketServer"));
-const gameObject_1 = require("../objects/gameObject");
-const gameObject_2 = require("../objects/gameObject");
+const gameObject_1 = require("../MMORPGDungeonEngine/gameObject/gameObject");
 // const cors = require("cors");
 const S3 = require("aws-sdk/clients/s3");
 const AWS = require("aws-sdk");
 const http_1 = __importDefault(require("http"));
 const cors_1 = __importDefault(require("cors"));
 const socket_io_1 = require("socket.io");
+const moveObjectsMain_1 = require("../MMORPGDungeonEngine/MoveObjects/moveObjectsMain");
+const createGameFieldMain_1 = require("../MMORPGDungeonEngine/CreateGameField/createGameFieldMain");
+const attackObjectsMain_1 = require("../MMORPGDungeonEngine/AttackObjects/attackObjectsMain");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
@@ -50,37 +52,40 @@ const io = new socket_io_1.Server(server, {
 setInterval(() => {
     if (gameObject_1.game.gameIsstarted) {
         io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("sendDataFromServer", {
-            frameObj: gameObject_1.game.frameObj,
+            // frameObj: game.frameObj,
             attackStatus: gameObject_1.game.attackStatusObj,
             users: gameObject_1.game.users,
             // gameField: game.gameField,
         });
     }
 }, 33);
-setInterval(() => {
-    if (gameObject_1.game.gameIsstarted) {
-        (0, gameObject_1.increaseFrameNumber)();
-    }
-}, 150);
+// setInterval(() => {
+//   if (game.gameIsstarted) {
+//     increaseFrameNumber();
+//   }
+// }, 150);
 let moveNPCInterval;
 const directions = [
-    gameObject_2.UserMoveDirections.right,
-    gameObject_2.UserMoveDirections.down,
-    gameObject_2.UserMoveDirections.up,
-    gameObject_2.UserMoveDirections.left,
-    gameObject_2.UserMoveDirections.stop,
+    gameObject_1.UserMoveDirections.right,
+    gameObject_1.UserMoveDirections.down,
+    gameObject_1.UserMoveDirections.up,
+    gameObject_1.UserMoveDirections.left,
+    gameObject_1.UserMoveDirections.stop,
 ];
 const moveNPC = () => {
     let directionPointer = 0;
     let time = Date.now();
     moveNPCInterval = setInterval(() => {
-        var _a;
+        var _a, _b, _c;
         if (Date.now() - time > 5000) {
             directionPointer === 4 ? (directionPointer = 0) : (directionPointer = directionPointer + 1);
             time = Date.now();
         }
-        if (!((_a = gameObject_1.game.users["ORC#1"]) === null || _a === void 0 ? void 0 : _a.getDamageStatus)) {
-            (0, gameObject_1.setClientCoordinates)("orc3", "ORC#1", {
+        if ((_a = gameObject_1.game.users["ORC#1"]) === null || _a === void 0 ? void 0 : _a.deathAnimationStatus) {
+            return;
+        }
+        if (!((_b = gameObject_1.game.users["ORC#1"]) === null || _b === void 0 ? void 0 : _b.getDamageStatus) || !((_c = gameObject_1.game.users["ORC#1"]) === null || _c === void 0 ? void 0 : _c.deathAnimationStatus)) {
+            (0, moveObjectsMain_1.setClientCoordinates)("orc3", "ORC#1", {
                 direction: directions[directionPointer],
                 roomID: "asdasd",
                 shiftUserPixels: 1,
@@ -160,7 +165,7 @@ io.on("connection", (socket) => {
             return;
         }
         //создаём игровое поле
-        (0, gameObject_1.createGameField)(socket === null || socket === void 0 ? void 0 : socket.id);
+        (0, createGameFieldMain_1.createGameField)(socket === null || socket === void 0 ? void 0 : socket.id);
         io.of("/").to(roomID).emit("startGameInRoom", {
             usersData: gameObject_1.game.users,
             gameFieldData: gameObject_1.game.gameField,
@@ -177,7 +182,7 @@ io.on("connection", (socket) => {
         if (!socket.rooms.has(clientData.roomID)) {
             return;
         }
-        if (!Object.values(gameObject_2.UserMoveDirections).includes(clientData.direction)) {
+        if (!Object.values(gameObject_1.UserMoveDirections).includes(clientData.direction)) {
             return;
         }
         clearInterval(moveClientSquare);
@@ -193,7 +198,7 @@ io.on("connection", (socket) => {
                 timeCurrent = Date.now();
             }
             const shiftUserPixels = Math.floor((timeCurrent - timePrev) / 20);
-            (0, gameObject_1.setClientCoordinates)("gamer", socket.id, Object.assign(Object.assign({}, clientData), { shiftUserPixels }));
+            (0, moveObjectsMain_1.setClientCoordinates)("gamer", socket.id, Object.assign(Object.assign({}, clientData), { shiftUserPixels }));
         }, 33);
     });
     socket.on("clientStopMove", (data) => {
@@ -211,7 +216,7 @@ io.on("connection", (socket) => {
         if ((_b = gameObject_1.game.attackStatusObj[socket.id]) === null || _b === void 0 ? void 0 : _b.isActive) {
             return;
         }
-        (0, gameObject_1.getChanksUnderAttack)(gameObject_1.game.users[socket.id].moveDirection, socket.id, io);
+        (0, attackObjectsMain_1.getChanksUnderAttack)(gameObject_1.game.users[socket.id].moveDirection, socket.id, io);
         gameObject_1.game.users[socket.id].imgName = "gamerAttackImage";
         const startAttackTimestamp = Date.now();
         gameObject_1.game.attackStatusObj[socket === null || socket === void 0 ? void 0 : socket.id] = {
