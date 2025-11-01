@@ -126,7 +126,8 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
         gameObject_1.game.users[objectID].moveDirection = clientData.direction;
         if (clientData.direction === gameObject_1.UserMoveDirections.down) {
             // смотрим чанки, на которые хотим встать
-            gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
+            gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels >
+                (gameObject_1.game.mapSize - 1) * 8 ||
                 ((_a = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _a === void 0 ? void 0 : _a.notMove) ||
                 ((_b = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[objectID].square.currentCoord.bottomRight.y / 8)][Math.floor((gameObject_1.game.users[objectID].square.currentCoord.bottomRight.x - 5) / 8)]) === null || _b === void 0 ? void 0 : _b.notMove) ||
                 ((_c = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _c === void 0 ? void 0 : _c.objectDataChank.isObjectChank) ||
@@ -146,7 +147,8 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
                 : setMoveCoord();
         }
         if (clientData.direction === gameObject_1.UserMoveDirections.right) {
-            gameObject_1.game.users[objectID].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
+            gameObject_1.game.users[objectID].square.currentCoord.topRight.x + clientData.shiftUserPixels >
+                (gameObject_1.game.mapSize - 1) * 8 ||
                 ((_j = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[objectID].square.currentCoord.topRight.y + 5) / 8)][Math.floor(gameObject_1.game.users[objectID].square.currentCoord.topRight.x / 8)]) === null || _j === void 0 ? void 0 : _j.notMove) ||
                 ((_k = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[objectID].square.currentCoord.bottomRight.y - 5) / 8)][Math.floor(gameObject_1.game.users[objectID].square.currentCoord.bottomRight.x / 8)]) === null || _k === void 0 ? void 0 : _k.notMove) ||
                 ((_l = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[objectID].square.currentCoord.topRight.y / 8)][Math.floor((gameObject_1.game.users[objectID].square.currentCoord.topRight.x + 8) / 8)]) === null || _l === void 0 ? void 0 : _l.objectDataChank.isObjectChank) ||

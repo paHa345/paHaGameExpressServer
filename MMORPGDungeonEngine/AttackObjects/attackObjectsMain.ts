@@ -4,7 +4,74 @@ import { NPCOrGamerObjectsData } from "../../types";
 import { setClientCoordinates } from "../MoveObjects/moveObjectsMain";
 import { reduceNPCHP } from "../StatObjects/statObjectsMain";
 
-export const getChanksUnderAttack = (
+export const attackObjectMainMechanism = (
+  attackObjectID: string,
+  direction: UserMoveDirections,
+
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+) => {
+  if (game.attackStatusObj[attackObjectID]?.isCooldown) {
+    return;
+  }
+  if (game.attackStatusObj[attackObjectID]?.isActive) {
+    return;
+  }
+
+  setAttackObjectStatus(attackObjectID, io);
+  getChanksUnderAttackAndCalculateDamage(direction, attackObjectID, io);
+};
+
+export const setAttackObjectStatus = (
+  attackObjectID: string,
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+) => {
+  game.users[attackObjectID].imgName = "gamerAttackImage";
+
+  const startAttackTimestamp = Date.now();
+  game.attackStatusObj[attackObjectID] = {
+    time: startAttackTimestamp,
+    isCooldown: true,
+    isActive: true,
+  };
+
+  io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverStartAttack", {
+    attackObjectID: attackObjectID,
+  });
+
+  let stopAttackInterval: any;
+
+  stopAttackInterval = setInterval(() => {
+    if (Date.now() - startAttackTimestamp > 500) {
+      game.attackStatusObj[attackObjectID].isActive = false;
+      game.users[attackObjectID].imgName = `${game.users[attackObjectID].objectType}WalkImage`;
+      clearInterval(stopAttackInterval);
+    }
+  }, 100);
+
+  let cooldownInterval: any;
+
+  cooldownInterval = setInterval(() => {
+    if (Date.now() - startAttackTimestamp > 1000) {
+      game.attackStatusObj[attackObjectID].isCooldown = false;
+      // io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
+      //   // roomID: clientData.roomID,
+      //   // socketID: attackObjectID,
+      //   // attackStatus: game.users[attackObjectID].attackStatus,
+      //   // isCooldown: false,
+      // });
+      // console.log("Stop interval");
+      // increaseFrameNumber();
+
+      // io.of("/").to(clientData.roomID).emit("serverResetCooldown", {
+      //   attackStatusObj: game.attackStatusObj,
+      // });
+
+      clearInterval(cooldownInterval);
+    }
+  }, 100);
+};
+
+export const getChanksUnderAttackAndCalculateDamage = (
   direction: UserMoveDirections,
   attackObjectID: string,
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
@@ -140,9 +207,13 @@ export const getChanksUnderAttack = (
         underAttackObjectID
       ].imgName = `${game.users[underAttackObjectID].objectType}DeathImage`;
 
+      io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverNPCDeathAnimationStatus", {
+        underAttackObjectID: underAttackObjectID,
+      });
+
       setTimeout(() => {
         delete game.users[underAttackObjectID];
-      }, 1200);
+      }, 600);
 
       setTimeout(() => {
         chanksUnderAttack.map((chank) => {

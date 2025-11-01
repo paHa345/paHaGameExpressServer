@@ -30,6 +30,7 @@ export const setUserCurrentChanks = (
         isObjectChank: false,
       };
     }
+
     game.gameField[topLeftYChank][topLeftXChank + i].objectDataChank = {
       objectID: socketID,
       isObjectChank: true,
@@ -148,7 +149,8 @@ export const setClientCoordinates = (
     if (clientData.direction === UserMoveDirections.down) {
       // смотрим чанки, на которые хотим встать
 
-      game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels > 300 ||
+      game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels >
+        (game.mapSize - 1) * 8 ||
       game.gameField[Math.floor(game.users[objectID].square.currentCoord.bottomLeft.y / 8)][
         Math.floor((game.users[objectID].square.currentCoord.bottomLeft.x + 5) / 8)
       ]?.notMove ||
@@ -184,7 +186,8 @@ export const setClientCoordinates = (
         : setMoveCoord();
     }
     if (clientData.direction === UserMoveDirections.right) {
-      game.users[objectID].square.currentCoord.topRight.x + clientData.shiftUserPixels > 300 ||
+      game.users[objectID].square.currentCoord.topRight.x + clientData.shiftUserPixels >
+        (game.mapSize - 1) * 8 ||
       game.gameField[Math.floor((game.users[objectID].square.currentCoord.topRight.y + 5) / 8)][
         Math.floor(game.users[objectID].square.currentCoord.topRight.x / 8)
       ]?.notMove ||

@@ -1,11 +1,62 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getChanksUnderAttack = void 0;
+exports.getChanksUnderAttackAndCalculateDamage = exports.setAttackObjectStatus = exports.attackObjectMainMechanism = void 0;
 const gameObject_1 = require("../gameObject/gameObject");
 const types_1 = require("../../types");
 const moveObjectsMain_1 = require("../MoveObjects/moveObjectsMain");
 const statObjectsMain_1 = require("../StatObjects/statObjectsMain");
-const getChanksUnderAttack = (direction, attackObjectID, io) => {
+const attackObjectMainMechanism = (attackObjectID, direction, io) => {
+    var _a, _b;
+    if ((_a = gameObject_1.game.attackStatusObj[attackObjectID]) === null || _a === void 0 ? void 0 : _a.isCooldown) {
+        return;
+    }
+    if ((_b = gameObject_1.game.attackStatusObj[attackObjectID]) === null || _b === void 0 ? void 0 : _b.isActive) {
+        return;
+    }
+    (0, exports.setAttackObjectStatus)(attackObjectID, io);
+    (0, exports.getChanksUnderAttackAndCalculateDamage)(direction, attackObjectID, io);
+};
+exports.attackObjectMainMechanism = attackObjectMainMechanism;
+const setAttackObjectStatus = (attackObjectID, io) => {
+    gameObject_1.game.users[attackObjectID].imgName = "gamerAttackImage";
+    const startAttackTimestamp = Date.now();
+    gameObject_1.game.attackStatusObj[attackObjectID] = {
+        time: startAttackTimestamp,
+        isCooldown: true,
+        isActive: true,
+    };
+    io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverStartAttack", {
+        attackObjectID: attackObjectID,
+    });
+    let stopAttackInterval;
+    stopAttackInterval = setInterval(() => {
+        if (Date.now() - startAttackTimestamp > 500) {
+            gameObject_1.game.attackStatusObj[attackObjectID].isActive = false;
+            gameObject_1.game.users[attackObjectID].imgName = `${gameObject_1.game.users[attackObjectID].objectType}WalkImage`;
+            clearInterval(stopAttackInterval);
+        }
+    }, 100);
+    let cooldownInterval;
+    cooldownInterval = setInterval(() => {
+        if (Date.now() - startAttackTimestamp > 1000) {
+            gameObject_1.game.attackStatusObj[attackObjectID].isCooldown = false;
+            // io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
+            //   // roomID: clientData.roomID,
+            //   // socketID: attackObjectID,
+            //   // attackStatus: game.users[attackObjectID].attackStatus,
+            //   // isCooldown: false,
+            // });
+            // console.log("Stop interval");
+            // increaseFrameNumber();
+            // io.of("/").to(clientData.roomID).emit("serverResetCooldown", {
+            //   attackStatusObj: game.attackStatusObj,
+            // });
+            clearInterval(cooldownInterval);
+        }
+    }, 100);
+};
+exports.setAttackObjectStatus = setAttackObjectStatus;
+const getChanksUnderAttackAndCalculateDamage = (direction, attackObjectID, io) => {
     const topLeftXChank = Math.floor(gameObject_1.game.users[attackObjectID].square.currentCoord.topLeft.x / 8);
     const topLeftYChank = Math.floor(gameObject_1.game.users[attackObjectID].square.currentCoord.topLeft.y / 8);
     const bottomLeftXChank = Math.floor(gameObject_1.game.users[attackObjectID].square.currentCoord.bottomLeft.x / 8);
@@ -77,9 +128,12 @@ const getChanksUnderAttack = (direction, attackObjectID, io) => {
             getDeletedObjectCurrentChanks(underAttackObjectID);
             gameObject_1.game.users[underAttackObjectID].deathAnimationStatus = true;
             gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}DeathImage`;
+            io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverNPCDeathAnimationStatus", {
+                underAttackObjectID: underAttackObjectID,
+            });
             setTimeout(() => {
                 delete gameObject_1.game.users[underAttackObjectID];
-            }, 1200);
+            }, 600);
             setTimeout(() => {
                 chanksUnderAttack.map((chank) => {
                     gameObject_1.game.gameField[chank.row][chank.col].chankUnderAttack = false;
@@ -111,4 +165,4 @@ const getChanksUnderAttack = (direction, attackObjectID, io) => {
         });
     }, 600);
 };
-exports.getChanksUnderAttack = getChanksUnderAttack;
+exports.getChanksUnderAttackAndCalculateDamage = getChanksUnderAttackAndCalculateDamage;

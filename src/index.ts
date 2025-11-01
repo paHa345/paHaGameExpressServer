@@ -26,7 +26,7 @@ import { String } from "aws-sdk/clients/apigateway";
 import { NPCOrGamerObjectsData } from "../types";
 import { setClientCoordinates } from "../MMORPGDungeonEngine/MoveObjects/moveObjectsMain";
 import { createGameField } from "../MMORPGDungeonEngine/CreateGameField/createGameFieldMain";
-import { getChanksUnderAttack } from "../MMORPGDungeonEngine/AttackObjects/attackObjectsMain";
+import { attackObjectMainMechanism } from "../MMORPGDungeonEngine/AttackObjects/attackObjectsMain";
 
 dotenv.config();
 
@@ -228,6 +228,7 @@ io.on("connection", (socket) => {
       gameFieldData: game.gameField,
       frameObject: game.frameObj,
       statsObj: game.statObj,
+      mapSize: game.mapSize,
     });
   });
 
@@ -271,68 +272,7 @@ io.on("connection", (socket) => {
     clearInterval(moveClientSquare);
   });
   socket.on("clientStartAttack", (clientData: { roomID: string }) => {
-    if (game.attackStatusObj[socket.id]?.isCooldown) {
-      return;
-    }
-    if (game.attackStatusObj[socket.id]?.isActive) {
-      return;
-    }
-
-    getChanksUnderAttack(game.users[socket.id].moveDirection, socket.id, io);
-
-    game.users[socket.id].imgName = "gamerAttackImage";
-
-    const startAttackTimestamp = Date.now();
-    game.attackStatusObj[socket?.id] = {
-      time: startAttackTimestamp,
-      isCooldown: true,
-      isActive: true,
-    };
-
-    // io.of("/").to(clientData.roomID).emit("serverStartAttack", {
-    //   roomID: clientData.roomID,
-    //   socketID: socket.id,
-    //   attackStatusObj: game.attackStatusObj,
-    // });
-
-    let stopAttackInterval: any;
-
-    stopAttackInterval = setInterval(() => {
-      if (Date.now() - startAttackTimestamp > 500) {
-        game.attackStatusObj[socket?.id].isActive = false;
-        game.users[socket?.id].imgName = `${game.users[socket?.id].objectType}WalkImage`;
-
-        // console.log("Stop interval");
-        // increaseFrameNumber();
-
-        // io.of("/").to(clientData.roomID).emit("serverStopAttack", {
-        //   attackStatusObj: game.attackStatusObj,
-        // });
-        clearInterval(stopAttackInterval);
-      }
-    }, 100);
-
-    let cooldownInterval: any;
-
-    cooldownInterval = setInterval(() => {
-      if (Date.now() - startAttackTimestamp > 1000) {
-        game.attackStatusObj[socket.id].isCooldown = false;
-        // io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
-        //   // roomID: clientData.roomID,
-        //   // socketID: socket.id,
-        //   // attackStatus: game.users[socket.id].attackStatus,
-        //   // isCooldown: false,
-        // });
-        // console.log("Stop interval");
-        // increaseFrameNumber();
-
-        // io.of("/").to(clientData.roomID).emit("serverResetCooldown", {
-        //   attackStatusObj: game.attackStatusObj,
-        // });
-
-        clearInterval(cooldownInterval);
-      }
-    }, 100);
+    attackObjectMainMechanism(socket.id, game.users[socket.id]?.moveDirection, io);
   });
 
   socket.on("resetCraftOrgServer", (data) => {

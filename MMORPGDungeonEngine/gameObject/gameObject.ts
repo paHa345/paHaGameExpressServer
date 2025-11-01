@@ -16,6 +16,7 @@ export interface IGameUserMain<T> {
 export interface IGameMain {
   gameIsstarted: boolean;
   goodPlayer?: string;
+  mapSize: number;
   gameField: {
     [row: number]: {
       [col: number]: {
@@ -32,6 +33,11 @@ export interface IGameMain {
           topRight: { x: number; y: number };
           bottomLeft: { x: number; y: number };
           bottomRight: { x: number; y: number };
+        };
+        textureObj?: {
+          imageName?: string;
+          XSpriteCoord?: number;
+          YSpriteCoord?: number;
         };
       };
     };
@@ -132,6 +138,7 @@ export const game: IGameMain = {
   statObj: { NPC: {}, gamers: {} },
   gameIsstarted: false,
   users: {},
+  mapSize: 70,
   gameField: {},
   attackStatusObj: {},
   frameObj: {
