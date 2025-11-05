@@ -60,7 +60,7 @@ setInterval(() => {
       // frameObj: game.frameObj,
       attackStatus: game.attackStatusObj,
       users: game.users,
-      // gameField: game.gameField,
+      gameField: game.gameField,
     });
   }
 }, 33);
@@ -80,29 +80,32 @@ const directions = [
   UserMoveDirections.left,
   UserMoveDirections.stop,
 ];
-const moveNPC = () => {
-  let directionPointer = 0;
-  let time = Date.now();
+// const moveNPC = () => {
+//   let directionPointer = 0;
+//   let time = Date.now();
 
-  moveNPCInterval = setInterval(() => {
-    if (Date.now() - time > 5000) {
-      directionPointer === 4 ? (directionPointer = 0) : (directionPointer = directionPointer + 1);
-      time = Date.now();
-    }
-    if (game.users["ORC#1"]?.deathAnimationStatus) {
-      return;
-    }
-    if (!game.users["ORC#1"]?.getDamageStatus || !game.users["ORC#1"]?.deathAnimationStatus) {
-      setClientCoordinates("orc3", "ORC#1", {
-        direction: directions[directionPointer],
-        roomID: "asdasd",
-        shiftUserPixels: 1,
-      });
-    }
-  }, 33);
-};
+//   moveNPCInterval = setInterval(() => {
+//     if (Date.now() - time > 5000) {
+//       const getRandomNumber = (min: number, max: number) => {
+//         return Math.floor(Math.random() * (max - min + 1)) + min;
+//       };
+//       directionPointer = getRandomNumber(0, 4);
+//       time = Date.now();
+//     }
+//     if (game.users["ORC#1"]?.deathAnimationStatus) {
+//       return;
+//     }
+//     if (!game.users["ORC#1"]?.getDamageStatus || !game.users["ORC#1"]?.deathAnimationStatus) {
+//       setClientCoordinates("orc3", "ORC#1", {
+//         direction: directions[directionPointer],
+//         roomID: "asdasd",
+//         shiftUserPixels: 1,
+//       });
+//     }
+//   }, 33);
+// };
 
-moveNPC();
+// moveNPC();
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);
@@ -272,7 +275,13 @@ io.on("connection", (socket) => {
     clearInterval(moveClientSquare);
   });
   socket.on("clientStartAttack", (clientData: { roomID: string }) => {
-    attackObjectMainMechanism(socket.id, game.users[socket.id]?.moveDirection, io);
+    attackObjectMainMechanism(
+      socket.id,
+      game.users[socket.id]?.moveDirection,
+      "gamer",
+      "gamer",
+      io
+    );
   });
 
   socket.on("resetCraftOrgServer", (data) => {

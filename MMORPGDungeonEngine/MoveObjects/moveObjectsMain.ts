@@ -241,3 +241,42 @@ export const setClientCoordinates = (
 
   // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
 };
+
+let moveNPCInterval: any;
+
+const directions = [
+  UserMoveDirections.right,
+  UserMoveDirections.down,
+  UserMoveDirections.up,
+  UserMoveDirections.left,
+  UserMoveDirections.stop,
+];
+
+export const moveNPC = (NPCID: string, NPCType: string) => {
+  let directionPointer = 0;
+  let time = Date.now();
+
+  const moveNPCInterval = setInterval(() => {
+    if (Date.now() - time > 5000) {
+      const getRandomNumber = (min: number, max: number) => {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      };
+      directionPointer = getRandomNumber(0, 4);
+      time = Date.now();
+    }
+    if (game.users[NPCID]?.deathAnimationStatus) {
+      return;
+    }
+    if (!game.users[NPCID]) {
+      clearInterval(moveNPCInterval);
+      return;
+    }
+    if (!game.users[NPCID]?.getDamageStatus || !game.users[NPCID]?.deathAnimationStatus) {
+      setClientCoordinates(NPCType, NPCID, {
+        direction: directions[directionPointer],
+        roomID: "asdasd",
+        shiftUserPixels: 1,
+      });
+    }
+  }, 33);
+};

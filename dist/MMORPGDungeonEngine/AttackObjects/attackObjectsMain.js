@@ -5,7 +5,7 @@ const gameObject_1 = require("../gameObject/gameObject");
 const types_1 = require("../../types");
 const moveObjectsMain_1 = require("../MoveObjects/moveObjectsMain");
 const statObjectsMain_1 = require("../StatObjects/statObjectsMain");
-const attackObjectMainMechanism = (attackObjectID, direction, io) => {
+const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus, attackObjectType, io) => {
     var _a, _b;
     if ((_a = gameObject_1.game.attackStatusObj[attackObjectID]) === null || _a === void 0 ? void 0 : _a.isCooldown) {
         return;
@@ -13,12 +13,12 @@ const attackObjectMainMechanism = (attackObjectID, direction, io) => {
     if ((_b = gameObject_1.game.attackStatusObj[attackObjectID]) === null || _b === void 0 ? void 0 : _b.isActive) {
         return;
     }
-    (0, exports.setAttackObjectStatus)(attackObjectID, io);
+    (0, exports.setAttackObjectStatus)(attackObjectID, attackObjectStatus, attackObjectType, io);
     (0, exports.getChanksUnderAttackAndCalculateDamage)(direction, attackObjectID, io);
 };
 exports.attackObjectMainMechanism = attackObjectMainMechanism;
-const setAttackObjectStatus = (attackObjectID, io) => {
-    gameObject_1.game.users[attackObjectID].imgName = "gamerAttackImage";
+const setAttackObjectStatus = (attackObjectID, attackObjectStatus, attackObjectType, io) => {
+    gameObject_1.game.users[attackObjectID].imgName = `${attackObjectType}AttackImage`;
     const startAttackTimestamp = Date.now();
     gameObject_1.game.attackStatusObj[attackObjectID] = {
         time: startAttackTimestamp,
@@ -133,7 +133,7 @@ const getChanksUnderAttackAndCalculateDamage = (direction, attackObjectID, io) =
             });
             setTimeout(() => {
                 delete gameObject_1.game.users[underAttackObjectID];
-            }, 600);
+            }, 1200);
             setTimeout(() => {
                 chanksUnderAttack.map((chank) => {
                     gameObject_1.game.gameField[chank.row][chank.col].chankUnderAttack = false;

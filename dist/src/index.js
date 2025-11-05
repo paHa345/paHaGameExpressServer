@@ -55,7 +55,7 @@ setInterval(() => {
             // frameObj: game.frameObj,
             attackStatus: gameObject_1.game.attackStatusObj,
             users: gameObject_1.game.users,
-            // gameField: game.gameField,
+            gameField: gameObject_1.game.gameField,
         });
     }
 }, 33);
@@ -72,28 +72,30 @@ const directions = [
     gameObject_1.UserMoveDirections.left,
     gameObject_1.UserMoveDirections.stop,
 ];
-const moveNPC = () => {
-    let directionPointer = 0;
-    let time = Date.now();
-    moveNPCInterval = setInterval(() => {
-        var _a, _b, _c;
-        if (Date.now() - time > 5000) {
-            directionPointer === 4 ? (directionPointer = 0) : (directionPointer = directionPointer + 1);
-            time = Date.now();
-        }
-        if ((_a = gameObject_1.game.users["ORC#1"]) === null || _a === void 0 ? void 0 : _a.deathAnimationStatus) {
-            return;
-        }
-        if (!((_b = gameObject_1.game.users["ORC#1"]) === null || _b === void 0 ? void 0 : _b.getDamageStatus) || !((_c = gameObject_1.game.users["ORC#1"]) === null || _c === void 0 ? void 0 : _c.deathAnimationStatus)) {
-            (0, moveObjectsMain_1.setClientCoordinates)("orc3", "ORC#1", {
-                direction: directions[directionPointer],
-                roomID: "asdasd",
-                shiftUserPixels: 1,
-            });
-        }
-    }, 33);
-};
-moveNPC();
+// const moveNPC = () => {
+//   let directionPointer = 0;
+//   let time = Date.now();
+//   moveNPCInterval = setInterval(() => {
+//     if (Date.now() - time > 5000) {
+//       const getRandomNumber = (min: number, max: number) => {
+//         return Math.floor(Math.random() * (max - min + 1)) + min;
+//       };
+//       directionPointer = getRandomNumber(0, 4);
+//       time = Date.now();
+//     }
+//     if (game.users["ORC#1"]?.deathAnimationStatus) {
+//       return;
+//     }
+//     if (!game.users["ORC#1"]?.getDamageStatus || !game.users["ORC#1"]?.deathAnimationStatus) {
+//       setClientCoordinates("orc3", "ORC#1", {
+//         direction: directions[directionPointer],
+//         roomID: "asdasd",
+//         shiftUserPixels: 1,
+//       });
+//     }
+//   }, 33);
+// };
+// moveNPC();
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
     socket.on("send-message", (message) => {
@@ -211,7 +213,7 @@ io.on("connection", (socket) => {
     });
     socket.on("clientStartAttack", (clientData) => {
         var _a;
-        (0, attackObjectsMain_1.attackObjectMainMechanism)(socket.id, (_a = gameObject_1.game.users[socket.id]) === null || _a === void 0 ? void 0 : _a.moveDirection, io);
+        (0, attackObjectsMain_1.attackObjectMainMechanism)(socket.id, (_a = gameObject_1.game.users[socket.id]) === null || _a === void 0 ? void 0 : _a.moveDirection, "gamer", "gamer", io);
     });
     socket.on("resetCraftOrgServer", (data) => {
         console.log(data);

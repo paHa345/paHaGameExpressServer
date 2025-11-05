@@ -4,7 +4,7 @@ exports.addGamerOrNPC = void 0;
 const types_1 = require("../../types");
 const gameObject_1 = require("../gameObject/gameObject");
 const moveObjectsMain_1 = require("../MoveObjects/moveObjectsMain");
-const addGamerOrNPC = (addedElType, objectType, addedElID, hp, armour, damage) => {
+const addGamerOrNPC = (addedElType, objectType, addedElID, hp, armour, damage, XCoord, YCoord) => {
     const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(gameObject_1.game.users).length;
     if (addedElType === "gamer") {
         gameObject_1.game.statObj.gamers[addedElID] = {
@@ -40,38 +40,52 @@ const addGamerOrNPC = (addedElType, objectType, addedElID, hp, armour, damage) =
         square: {
             prevCoord: {
                 topLeft: {
-                    x: 8 + numberOfGamers * 40,
-                    y: 8,
+                    x: XCoord ? XCoord : 8 + numberOfGamers * 40,
+                    y: YCoord ? YCoord : 8,
                 },
                 topRight: {
-                    x: 8 + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-                    y: 8,
+                    x: XCoord
+                        ? XCoord + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8
+                        : 8 + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
+                    y: YCoord ? YCoord : 8,
                 },
                 bottomLeft: {
-                    x: 8 + numberOfGamers * 40,
-                    y: 8 + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8,
+                    x: XCoord ? XCoord : 8 + numberOfGamers * 40,
+                    y: YCoord
+                        ? YCoord + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8
+                        : 8 + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8,
                 },
                 bottomRight: {
-                    x: 8 + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-                    y: 8 + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8,
+                    x: XCoord
+                        ? XCoord + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8
+                        : 8 + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
+                    y: YCoord ? YCoord : 8 + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8,
                 },
             },
             currentCoord: {
                 topLeft: {
-                    x: 8 + numberOfGamers * 40,
-                    y: 8,
+                    x: XCoord ? XCoord : 8 + numberOfGamers * 40,
+                    y: YCoord ? YCoord : 8,
                 },
                 topRight: {
-                    x: 8 + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-                    y: 8,
+                    x: XCoord
+                        ? XCoord + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8
+                        : 8 + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
+                    y: YCoord ? YCoord : 8,
                 },
                 bottomLeft: {
-                    x: 8 + numberOfGamers * 40,
-                    y: 8 + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8,
+                    x: XCoord ? XCoord : 8 + numberOfGamers * 40,
+                    y: YCoord
+                        ? YCoord + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8
+                        : 8 + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8,
                 },
                 bottomRight: {
-                    x: 8 + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-                    y: 8 + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8,
+                    x: XCoord
+                        ? XCoord + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8
+                        : 8 + types_1.NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
+                    y: YCoord
+                        ? YCoord + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8
+                        : 8 + types_1.NPCOrGamerObjectsData[objectType].heightChanks * 8,
                 },
             },
         },

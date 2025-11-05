@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setClientCoordinates = exports.setUserCurrentChanks = void 0;
+exports.moveNPC = exports.setClientCoordinates = exports.setUserCurrentChanks = void 0;
 const types_1 = require("../../types");
 const gameObject_1 = require("../gameObject/gameObject");
 const setUserCurrentChanks = (chanksQuantity, socketID, direction) => {
@@ -179,3 +179,40 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
     // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
 };
 exports.setClientCoordinates = setClientCoordinates;
+let moveNPCInterval;
+const directions = [
+    gameObject_1.UserMoveDirections.right,
+    gameObject_1.UserMoveDirections.down,
+    gameObject_1.UserMoveDirections.up,
+    gameObject_1.UserMoveDirections.left,
+    gameObject_1.UserMoveDirections.stop,
+];
+const moveNPC = (NPCID, NPCType) => {
+    let directionPointer = 0;
+    let time = Date.now();
+    const moveNPCInterval = setInterval(() => {
+        var _a, _b, _c;
+        if (Date.now() - time > 5000) {
+            const getRandomNumber = (min, max) => {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            };
+            directionPointer = getRandomNumber(0, 4);
+            time = Date.now();
+        }
+        if ((_a = gameObject_1.game.users[NPCID]) === null || _a === void 0 ? void 0 : _a.deathAnimationStatus) {
+            return;
+        }
+        if (!gameObject_1.game.users[NPCID]) {
+            clearInterval(moveNPCInterval);
+            return;
+        }
+        if (!((_b = gameObject_1.game.users[NPCID]) === null || _b === void 0 ? void 0 : _b.getDamageStatus) || !((_c = gameObject_1.game.users[NPCID]) === null || _c === void 0 ? void 0 : _c.deathAnimationStatus)) {
+            (0, exports.setClientCoordinates)(NPCType, NPCID, {
+                direction: directions[directionPointer],
+                roomID: "asdasd",
+                shiftUserPixels: 1,
+            });
+        }
+    }, 33);
+};
+exports.moveNPC = moveNPC;

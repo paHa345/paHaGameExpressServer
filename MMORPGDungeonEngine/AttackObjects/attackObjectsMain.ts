@@ -7,6 +7,8 @@ import { reduceNPCHP } from "../StatObjects/statObjectsMain";
 export const attackObjectMainMechanism = (
   attackObjectID: string,
   direction: UserMoveDirections,
+  attackObjectStatus: "gamer" | "NPC",
+  attackObjectType: string,
 
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
@@ -17,15 +19,17 @@ export const attackObjectMainMechanism = (
     return;
   }
 
-  setAttackObjectStatus(attackObjectID, io);
+  setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
   getChanksUnderAttackAndCalculateDamage(direction, attackObjectID, io);
 };
 
 export const setAttackObjectStatus = (
   attackObjectID: string,
+  attackObjectStatus: "gamer" | "NPC",
+  attackObjectType: string,
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
-  game.users[attackObjectID].imgName = "gamerAttackImage";
+  game.users[attackObjectID].imgName = `${attackObjectType}AttackImage`;
 
   const startAttackTimestamp = Date.now();
   game.attackStatusObj[attackObjectID] = {
@@ -213,7 +217,7 @@ export const getChanksUnderAttackAndCalculateDamage = (
 
       setTimeout(() => {
         delete game.users[underAttackObjectID];
-      }, 600);
+      }, 1200);
 
       setTimeout(() => {
         chanksUnderAttack.map((chank) => {

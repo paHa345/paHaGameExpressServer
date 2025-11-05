@@ -8,7 +8,9 @@ export const addGamerOrNPC = (
   addedElID: string,
   hp: number,
   armour: number,
-  damage: number
+  damage: number,
+  XCoord?: number,
+  YCoord?: number
 ) => {
   const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(game.users).length;
 
@@ -46,39 +48,53 @@ export const addGamerOrNPC = (
     square: {
       prevCoord: {
         topLeft: {
-          x: 8 + numberOfGamers * 40,
-          y: 8,
+          x: XCoord ? XCoord : 8 + numberOfGamers * 40,
+          y: YCoord ? YCoord : 8,
         },
         topRight: {
-          x: 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-          y: 8,
+          x: XCoord
+            ? XCoord + NPCOrGamerObjectsData[objectType].widthChanks * 8
+            : 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
+          y: YCoord ? YCoord : 8,
         },
         bottomLeft: {
-          x: 8 + numberOfGamers * 40,
-          y: 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
+          x: XCoord ? XCoord : 8 + numberOfGamers * 40,
+          y: YCoord
+            ? YCoord + NPCOrGamerObjectsData[objectType].heightChanks * 8
+            : 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
         },
         bottomRight: {
-          x: 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-          y: 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
+          x: XCoord
+            ? XCoord + NPCOrGamerObjectsData[objectType].widthChanks * 8
+            : 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
+          y: YCoord ? YCoord : 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
         },
       },
 
       currentCoord: {
         topLeft: {
-          x: 8 + numberOfGamers * 40,
-          y: 8,
+          x: XCoord ? XCoord : 8 + numberOfGamers * 40,
+          y: YCoord ? YCoord : 8,
         },
         topRight: {
-          x: 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-          y: 8,
+          x: XCoord
+            ? XCoord + NPCOrGamerObjectsData[objectType].widthChanks * 8
+            : 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
+          y: YCoord ? YCoord : 8,
         },
         bottomLeft: {
-          x: 8 + numberOfGamers * 40,
-          y: 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
+          x: XCoord ? XCoord : 8 + numberOfGamers * 40,
+          y: YCoord
+            ? YCoord + NPCOrGamerObjectsData[objectType].heightChanks * 8
+            : 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
         },
         bottomRight: {
-          x: 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-          y: 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
+          x: XCoord
+            ? XCoord + NPCOrGamerObjectsData[objectType].widthChanks * 8
+            : 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
+          y: YCoord
+            ? YCoord + NPCOrGamerObjectsData[objectType].heightChanks * 8
+            : 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
         },
       },
     },
