@@ -65,47 +65,12 @@ setInterval(() => {
   }
 }, 33);
 
-// setInterval(() => {
-//   if (game.gameIsstarted) {
-//     increaseFrameNumber();
-//   }
-// }, 150);
-
-let moveNPCInterval: any;
-
-const directions = [
-  UserMoveDirections.right,
-  UserMoveDirections.down,
-  UserMoveDirections.up,
-  UserMoveDirections.left,
-  UserMoveDirections.stop,
-];
-// const moveNPC = () => {
-//   let directionPointer = 0;
-//   let time = Date.now();
-
-//   moveNPCInterval = setInterval(() => {
-//     if (Date.now() - time > 5000) {
-//       const getRandomNumber = (min: number, max: number) => {
-//         return Math.floor(Math.random() * (max - min + 1)) + min;
-//       };
-//       directionPointer = getRandomNumber(0, 4);
-//       time = Date.now();
-//     }
-//     if (game.users["ORC#1"]?.deathAnimationStatus) {
-//       return;
-//     }
-//     if (!game.users["ORC#1"]?.getDamageStatus || !game.users["ORC#1"]?.deathAnimationStatus) {
-//       setClientCoordinates("orc3", "ORC#1", {
-//         direction: directions[directionPointer],
-//         roomID: "asdasd",
-//         shiftUserPixels: 1,
-//       });
-//     }
-//   }, 33);
-// };
-
-// moveNPC();
+setInterval(() => {
+  if (!game.users["ORC#1"]) {
+    return;
+  }
+  attackObjectMainMechanism("ORC#1", UserMoveDirections.left, "NPC", "orc3", io);
+}, 3000);
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);

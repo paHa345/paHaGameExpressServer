@@ -187,7 +187,7 @@ export const setClientCoordinates = (
     }
     if (clientData.direction === UserMoveDirections.right) {
       game.users[objectID].square.currentCoord.topRight.x + clientData.shiftUserPixels >
-        (game.mapSize - 1) * 8 ||
+        (game.mapSize - 2) * 8 ||
       game.gameField[Math.floor((game.users[objectID].square.currentCoord.topRight.y + 5) / 8)][
         Math.floor(game.users[objectID].square.currentCoord.topRight.x / 8)
       ]?.notMove ||

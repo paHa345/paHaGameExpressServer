@@ -19,8 +19,29 @@ export const attackObjectMainMechanism = (
     return;
   }
 
-  setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
-  getChanksUnderAttackAndCalculateDamage(direction, attackObjectID, io);
+  //тут разделение на мехиники атаки NPC или игрока
+
+  if (attackObjectStatus === "gamer") {
+    setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
+    const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
+      game.users[attackObjectID].moveDirection,
+      attackObjectID,
+      io
+    );
+
+    if (chanksAndObjectsUnderAttack?.objectUnderAttack) {
+      calculateDamage(
+        game.users[attackObjectID].moveDirection,
+        attackObjectID,
+        io,
+        chanksAndObjectsUnderAttack?.objectUnderAttack
+      );
+    }
+  }
+
+  if (attackObjectStatus === "NPC") {
+    console.log("NPC Attack");
+  }
 };
 
 export const setAttackObjectStatus = (
@@ -29,6 +50,52 @@ export const setAttackObjectStatus = (
   attackObjectType: string,
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
+  // if (attackObjectStatus === "NPC") {
+  //   // вычисляем чанки под атакой, отправляем их на коиент
+  //   // а через 1000 мс проходит атака
+
+  //   const chanksUnderAttack = getChanksAndObjectsUnderAttack(
+  //     game.users[attackObjectID].moveDirection,
+  //     attackObjectID,
+  //     io
+  //   );
+  //   io.of("/")
+  //     .to("68a82c599d9ad19c1b4ec4d2")
+  //     .emit("serverNPCAttackChanks", chanksUnderAttack?.chanksUnderAttack);
+
+  //   setTimeout(() => {
+  //     game.users[attackObjectID].imgName = `${attackObjectType}AttackImage`;
+  //     const startAttackTimestamp = Date.now();
+  //     game.attackStatusObj[attackObjectID] = {
+  //       time: startAttackTimestamp,
+  //       isCooldown: true,
+  //       isActive: true,
+  //     };
+
+  //     io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverStartAttack", {
+  //       attackObjectID: attackObjectID,
+  //     });
+
+  //     let stopAttackInterval: any;
+
+  //     stopAttackInterval = setInterval(() => {
+  //       if (Date.now() - startAttackTimestamp > 500) {
+  //         game.attackStatusObj[attackObjectID].isActive = false;
+  //         game.users[attackObjectID].imgName = `${game.users[attackObjectID].objectType}WalkImage`;
+  //         clearInterval(stopAttackInterval);
+  //       }
+  //     }, 100);
+
+  //     let cooldownInterval: any;
+
+  //     cooldownInterval = setInterval(() => {
+  //       if (Date.now() - startAttackTimestamp > 1000) {
+  //         game.attackStatusObj[attackObjectID].isCooldown = false;
+  //         clearInterval(cooldownInterval);
+  //       }
+  //     }, 100);
+  //   }, 1000);
+  // }
   game.users[attackObjectID].imgName = `${attackObjectType}AttackImage`;
 
   const startAttackTimestamp = Date.now();
@@ -75,7 +142,7 @@ export const setAttackObjectStatus = (
   }, 100);
 };
 
-export const getChanksUnderAttackAndCalculateDamage = (
+export const getChanksAndObjectsUnderAttack = (
   direction: UserMoveDirections,
   attackObjectID: string,
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
@@ -166,6 +233,26 @@ export const getChanksUnderAttackAndCalculateDamage = (
     }
   }
 
+  setTimeout(() => {
+    chanksUnderAttack.map((chank) => {
+      game.gameField[chank.row][chank.col].chankUnderAttack = false;
+    });
+  }, 600);
+
+  return {
+    chanksUnderAttack: chanksUnderAttack,
+    objectUnderAttack: objectUnderAttack,
+  };
+};
+
+export const calculateDamage = (
+  direction: UserMoveDirections,
+  attackObjectID: string,
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+  objectUnderAttack: {
+    [underAttackObjectID: string]: number;
+  }
+) => {
   for (const underAttackObjectID in objectUnderAttack) {
     if (!game.users[underAttackObjectID]) return;
 
@@ -219,11 +306,11 @@ export const getChanksUnderAttackAndCalculateDamage = (
         delete game.users[underAttackObjectID];
       }, 1200);
 
-      setTimeout(() => {
-        chanksUnderAttack.map((chank) => {
-          game.gameField[chank.row][chank.col].chankUnderAttack = false;
-        });
-      }, 600);
+      // setTimeout(() => {
+      //   chanksUnderAttack.map((chank) => {
+      //     game.gameField[chank.row][chank.col].chankUnderAttack = false;
+      //   });
+      // }, 600);
 
       return;
     }
@@ -253,10 +340,4 @@ export const getChanksUnderAttackAndCalculateDamage = (
       ].imgName = `${game.users[underAttackObjectID].objectType}WalkImage`;
     }, 900);
   }
-
-  setTimeout(() => {
-    chanksUnderAttack.map((chank) => {
-      game.gameField[chank.row][chank.col].chankUnderAttack = false;
-    });
-  }, 600);
 };

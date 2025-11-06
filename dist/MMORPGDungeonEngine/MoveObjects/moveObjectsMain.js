@@ -148,7 +148,7 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
         }
         if (clientData.direction === gameObject_1.UserMoveDirections.right) {
             gameObject_1.game.users[objectID].square.currentCoord.topRight.x + clientData.shiftUserPixels >
-                (gameObject_1.game.mapSize - 1) * 8 ||
+                (gameObject_1.game.mapSize - 2) * 8 ||
                 ((_j = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[objectID].square.currentCoord.topRight.y + 5) / 8)][Math.floor(gameObject_1.game.users[objectID].square.currentCoord.topRight.x / 8)]) === null || _j === void 0 ? void 0 : _j.notMove) ||
                 ((_k = gameObject_1.game.gameField[Math.floor((gameObject_1.game.users[objectID].square.currentCoord.bottomRight.y - 5) / 8)][Math.floor(gameObject_1.game.users[objectID].square.currentCoord.bottomRight.x / 8)]) === null || _k === void 0 ? void 0 : _k.notMove) ||
                 ((_l = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[objectID].square.currentCoord.topRight.y / 8)][Math.floor((gameObject_1.game.users[objectID].square.currentCoord.topRight.x + 8) / 8)]) === null || _l === void 0 ? void 0 : _l.objectDataChank.isObjectChank) ||
