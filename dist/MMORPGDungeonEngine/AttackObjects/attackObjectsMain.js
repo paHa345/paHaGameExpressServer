@@ -23,6 +23,10 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
     }
     if (attackObjectStatus === "NPC") {
         console.log("NPC Attack");
+        // сначала определяем  чанки, по которым будут проходить удары
+        // отправляем их на клиент
+        // NPC останавливается
+        // и через 1000 мс выполняется атака
     }
 };
 exports.attackObjectMainMechanism = attackObjectMainMechanism;
@@ -180,6 +184,7 @@ const calculateDamage = (direction, attackObjectID, io, objectUnderAttack) => {
                             gameObject_1.game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank = {
                                 objectID: undefined,
                                 isObjectChank: false,
+                                isGamerChank: null,
                             };
                         }
                     }

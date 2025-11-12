@@ -102,6 +102,10 @@ export const addGamerOrNPC = (
     userRole: numberOfGamers > 0 ? "creeper" : "steve",
   };
 
+  if (addedElType === "NPC") {
+    game.users[addedElID].NPCViewDirection = UserMoveDirections.up;
+  }
+
   setUserCurrentChanks(
     {
       width: NPCOrGamerObjectsData[objectType].widthChanks,

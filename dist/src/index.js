@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.io = void 0;
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const MongoConnect_1 = require("../libs/MongoConnect");
@@ -42,7 +43,7 @@ const corsOptions = {
 app.use(express_1.default.json());
 app.use((0, cors_1.default)(corsOptions));
 // app.get("/GTSAttempts/:attemptID", async (req: Request, res: Response) => {
-const io = new socket_io_1.Server(server, {
+exports.io = new socket_io_1.Server(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
@@ -51,7 +52,7 @@ const io = new socket_io_1.Server(server, {
 });
 setInterval(() => {
     if (gameObject_1.game.gameIsstarted) {
-        io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("sendDataFromServer", {
+        exports.io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("sendDataFromServer", {
             // frameObj: game.frameObj,
             attackStatus: gameObject_1.game.attackStatusObj,
             users: gameObject_1.game.users,
@@ -63,17 +64,17 @@ setInterval(() => {
     if (!gameObject_1.game.users["ORC#1"]) {
         return;
     }
-    (0, attackObjectsMain_1.attackObjectMainMechanism)("ORC#1", gameObject_1.UserMoveDirections.left, "NPC", "orc3", io);
+    (0, attackObjectsMain_1.attackObjectMainMechanism)("ORC#1", gameObject_1.UserMoveDirections.left, "NPC", "orc3", exports.io);
 }, 3000);
-io.on("connection", (socket) => {
+exports.io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
     socket.on("send-message", (message) => {
         console.log(`Message: ${message} from user ${socket.id}`);
-        io.emit("send-message", `Message: ${message} from user ${socket.id}`);
+        exports.io.emit("send-message", `Message: ${message} from user ${socket.id}`);
     });
     socket.on("GTSGameRoomMessage", ({ message, currentJoinedRoomID, telegramUser, type, }) => {
         // console.log(io.of("/").adapter.rooms.get("68a82c599d9ad19c1b4ec4d2")?.size);
-        io.to(currentJoinedRoomID).emit("roomGTSGameMessage", {
+        exports.io.to(currentJoinedRoomID).emit("roomGTSGameMessage", {
             message: message,
             telegramUserID: telegramUser.id,
             telegramUserName: telegramUser.username,
@@ -97,7 +98,7 @@ io.on("connection", (socket) => {
         });
         const users = [];
         try {
-            const roomUsers = yield io.in(roomID).fetchSockets();
+            const roomUsers = yield exports.io.in(roomID).fetchSockets();
             for (const socket of roomUsers) {
                 users.push(socket.data.userdata);
             }
@@ -105,7 +106,7 @@ io.on("connection", (socket) => {
         catch (error) {
             console.log(error);
         }
-        io.of("/").to(roomID).emit("addUserInRoom", users);
+        exports.io.of("/").to(roomID).emit("addUserInRoom", users);
     }));
     socket.on("leave_room", (_a) => __awaiter(void 0, [_a], void 0, function* ({ roomID, telegramUser, type }) {
         socket.leave(roomID);
@@ -116,7 +117,7 @@ io.on("connection", (socket) => {
         });
         const users = [];
         try {
-            const roomUsers = yield io.in(roomID).fetchSockets();
+            const roomUsers = yield exports.io.in(roomID).fetchSockets();
             for (const socket of roomUsers) {
                 users.push(socket.data.userdata);
             }
@@ -124,10 +125,10 @@ io.on("connection", (socket) => {
         catch (error) {
             console.log(error);
         }
-        io.of("/").to(roomID).emit("deleteUserFromRoom", users);
+        exports.io.of("/").to(roomID).emit("deleteUserFromRoom", users);
     }));
     socket.on("getSocketID", () => {
-        io.to(socket.id).emit("socketID", socket.id);
+        exports.io.to(socket.id).emit("socketID", socket.id);
     });
     socket.on("startGame", (roomID) => {
         console.log("start game");
@@ -137,7 +138,7 @@ io.on("connection", (socket) => {
         }
         //создаём игровое поле
         (0, createGameFieldMain_1.createGameField)(socket === null || socket === void 0 ? void 0 : socket.id);
-        io.of("/").to(roomID).emit("startGameInRoom", {
+        exports.io.of("/").to(roomID).emit("startGameInRoom", {
             usersData: gameObject_1.game.users,
             gameFieldData: gameObject_1.game.gameField,
             frameObject: gameObject_1.game.frameObj,
@@ -182,7 +183,7 @@ io.on("connection", (socket) => {
     });
     socket.on("clientStartAttack", (clientData) => {
         var _a;
-        (0, attackObjectsMain_1.attackObjectMainMechanism)(socket.id, (_a = gameObject_1.game.users[socket.id]) === null || _a === void 0 ? void 0 : _a.moveDirection, "gamer", "gamer", io);
+        (0, attackObjectsMain_1.attackObjectMainMechanism)(socket.id, (_a = gameObject_1.game.users[socket.id]) === null || _a === void 0 ? void 0 : _a.moveDirection, "gamer", "gamer", exports.io);
     });
     socket.on("resetCraftOrgServer", (data) => {
         console.log(data);

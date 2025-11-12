@@ -1,6 +1,8 @@
+import { io } from "../../src";
 import { addGamerOrNPC } from "../AddObjects/addObjectsMain";
 import { game } from "../gameObject/gameObject";
-import { moveNPC } from "../MoveObjects/moveObjectsMain";
+import { moveNPCMain } from "../MoveObjects/moveObjectsMain";
+io;
 
 export const createGameField = (socketID: string) => {
   if (!game.gameField[0]) {
@@ -49,14 +51,15 @@ export const createGameField = (socketID: string) => {
     createStoneTexture(18, 18, 0, 64);
     createStoneTexture(18, 22, 0, 64);
 
-    addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20, 200, 200);
-    addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
+    addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20, 160, 240);
+    // addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
     addGamerOrNPC("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
     addGamerOrNPC("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
-    moveNPC("ORC#1", "orc3");
-    moveNPC("ORC#2", "orc3");
-    moveNPC("ORC#3", "orc3");
-    moveNPC("ORC#4", "orc3");
+    moveNPCMain(io);
+    // moveNPC("ORC#1", "orc3");
+    // moveNPC("ORC#2", "orc3");
+    // moveNPC("ORC#3", "orc3");
+    // moveNPC("ORC#4", "orc3");
     // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
     // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
   }

@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createGameField = void 0;
+const src_1 = require("../../src");
 const addObjectsMain_1 = require("../AddObjects/addObjectsMain");
 const gameObject_1 = require("../gameObject/gameObject");
 const moveObjectsMain_1 = require("../MoveObjects/moveObjectsMain");
+src_1.io;
 const createGameField = (socketID) => {
     if (!gameObject_1.game.gameField[0]) {
         for (let i = 0; i < gameObject_1.game.mapSize; i++) {
@@ -41,14 +43,15 @@ const createGameField = (socketID) => {
         createStoneTexture(18, 14, 0, 64);
         createStoneTexture(18, 18, 0, 64);
         createStoneTexture(18, 22, 0, 64);
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#1", 100, 0.1, 20, 200, 200);
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
+        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#1", 100, 0.1, 20, 160, 240);
+        // addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
         (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
         (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
-        (0, moveObjectsMain_1.moveNPC)("ORC#1", "orc3");
-        (0, moveObjectsMain_1.moveNPC)("ORC#2", "orc3");
-        (0, moveObjectsMain_1.moveNPC)("ORC#3", "orc3");
-        (0, moveObjectsMain_1.moveNPC)("ORC#4", "orc3");
+        (0, moveObjectsMain_1.moveNPCMain)(src_1.io);
+        // moveNPC("ORC#1", "orc3");
+        // moveNPC("ORC#2", "orc3");
+        // moveNPC("ORC#3", "orc3");
+        // moveNPC("ORC#4", "orc3");
         // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
         // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
     }

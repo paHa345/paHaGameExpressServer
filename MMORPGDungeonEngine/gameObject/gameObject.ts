@@ -24,6 +24,7 @@ export interface IGameMain {
         objectDataChank: {
           objectID?: string;
           isObjectChank: boolean;
+          isGamerChank: boolean | null;
         };
         type?: string;
         notMove: boolean;
@@ -131,6 +132,7 @@ export interface IGameMain {
     userRole: string;
     attackStatus: { time?: number; isCooldown: boolean };
     moveDirection: UserMoveDirections;
+    NPCViewDirection?: UserMoveDirections;
   }>;
 }
 

@@ -92,6 +92,9 @@ const addGamerOrNPC = (addedElType, objectType, addedElID, hp, armour, damage, X
         moveDirection: gameObject_1.UserMoveDirections.stop,
         userRole: numberOfGamers > 0 ? "creeper" : "steve",
     };
+    if (addedElType === "NPC") {
+        gameObject_1.game.users[addedElID].NPCViewDirection = gameObject_1.UserMoveDirections.up;
+    }
     (0, moveObjectsMain_1.setUserCurrentChanks)({
         width: types_1.NPCOrGamerObjectsData[objectType].widthChanks,
         height: types_1.NPCOrGamerObjectsData[objectType].heightChanks,

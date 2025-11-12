@@ -46,7 +46,7 @@ app.use(express.json());
 
 app.use(cors(corsOptions));
 // app.get("/GTSAttempts/:attemptID", async (req: Request, res: Response) => {
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
