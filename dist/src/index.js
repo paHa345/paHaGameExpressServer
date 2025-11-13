@@ -60,12 +60,12 @@ setInterval(() => {
         });
     }
 }, 33);
-setInterval(() => {
-    if (!gameObject_1.game.users["ORC#1"]) {
-        return;
-    }
-    (0, attackObjectsMain_1.attackObjectMainMechanism)("ORC#1", gameObject_1.UserMoveDirections.left, "NPC", "orc3", exports.io);
-}, 3000);
+// setInterval(() => {
+//   if (!game.users["ORC#1"]) {
+//     return;
+//   }
+//   attackObjectMainMechanism("ORC#1", UserMoveDirections.left, "NPC", "orc3", io);
+// }, 3000);
 exports.io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
     socket.on("send-message", (message) => {

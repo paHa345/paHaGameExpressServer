@@ -16,6 +16,7 @@ exports.game = {
     mapSize: 70,
     gameField: {},
     attackStatusObj: {},
+    NPCUnderAttackChanksObj: {},
     frameObj: {
         mainFrame: 0,
         objects: {},

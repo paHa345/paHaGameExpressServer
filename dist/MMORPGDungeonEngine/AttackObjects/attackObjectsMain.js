@@ -1,10 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calculateDamage = exports.getChanksAndObjectsUnderAttack = exports.setAttackObjectStatus = exports.attackObjectMainMechanism = void 0;
+exports.calculateDamage = exports.getChanksAndObjectsUnderAttack = exports.setAttackObjectStatus = exports.attackObjectMainMechanism = exports.getObjectEdgeChanks = void 0;
 const gameObject_1 = require("../gameObject/gameObject");
 const types_1 = require("../../types");
 const moveObjectsMain_1 = require("../MoveObjects/moveObjectsMain");
 const statObjectsMain_1 = require("../StatObjects/statObjectsMain");
+const getObjectEdgeChanks = (objectID) => {
+    const topLeftXChank = Math.floor(gameObject_1.game.users[objectID].square.currentCoord.topLeft.x / 8);
+    const topLeftYChank = Math.floor(gameObject_1.game.users[objectID].square.currentCoord.topLeft.y / 8);
+    const bottomLeftXChank = Math.floor(gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.x / 8);
+    const bottomLeftYChank = Math.floor(gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y / 8);
+    const topRightXChank = Math.floor(gameObject_1.game.users[objectID].square.currentCoord.topRight.x / 8);
+    const topRightYChank = Math.floor(gameObject_1.game.users[objectID].square.currentCoord.topRight.y / 8);
+    return {
+        topLeftXChank: topLeftXChank,
+        topLeftYChank: topLeftYChank,
+        bottomLeftXChank: bottomLeftXChank,
+        bottomLeftYChank: bottomLeftYChank,
+        topRightXChank: topRightXChank,
+        topRightYChank: topRightYChank,
+    };
+};
+exports.getObjectEdgeChanks = getObjectEdgeChanks;
 const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus, attackObjectType, io) => {
     var _a, _b;
     if ((_a = gameObject_1.game.attackStatusObj[attackObjectID]) === null || _a === void 0 ? void 0 : _a.isCooldown) {
@@ -27,6 +44,29 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
         // отправляем их на клиент
         // NPC останавливается
         // и через 1000 мс выполняется атака
+        //рассчитаем чанки, по которым пройдёт удар
+        const NPCGetChanksUnderAttack = () => {
+            const objectEdgeChanks = (0, exports.getObjectEdgeChanks)(attackObjectID);
+            console.log(objectEdgeChanks.bottomLeftXChank);
+            // console.log(attackObjectID);
+            console.log(gameObject_1.game.users[attackObjectID].moveDirection);
+            if (gameObject_1.game.users[attackObjectID].moveDirection === gameObject_1.UserMoveDirections.up ||
+                gameObject_1.game.users[attackObjectID].moveDirection === gameObject_1.UserMoveDirections.stop) {
+                console.log("NPC атакует вверх");
+                gameObject_1.game.NPCUnderAttackChanksObj[attackObjectID] = {
+                    underAttackArea: {
+                        baseChankX: objectEdgeChanks.topLeftXChank,
+                        baseChankY: objectEdgeChanks.topLeftYChank,
+                        heightChanksNum: 2,
+                        widthChanksNum: types_1.NPCOrGamerObjectsData[gameObject_1.game.users[attackObjectID].objectType].widthChanks,
+                    },
+                };
+                io.of("/")
+                    .to("68a82c599d9ad19c1b4ec4d2")
+                    .emit("NPCChanksUnderAttack", gameObject_1.game.NPCUnderAttackChanksObj);
+            }
+        };
+        NPCGetChanksUnderAttack();
     }
 };
 exports.attackObjectMainMechanism = attackObjectMainMechanism;

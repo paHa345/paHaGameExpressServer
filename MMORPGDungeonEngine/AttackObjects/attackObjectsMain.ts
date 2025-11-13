@@ -4,6 +4,24 @@ import { NPCOrGamerObjectsData } from "../../types";
 import { setClientCoordinates } from "../MoveObjects/moveObjectsMain";
 import { reduceNPCHP } from "../StatObjects/statObjectsMain";
 
+export const getObjectEdgeChanks = (objectID: string) => {
+  const topLeftXChank = Math.floor(game.users[objectID].square.currentCoord.topLeft.x / 8);
+  const topLeftYChank = Math.floor(game.users[objectID].square.currentCoord.topLeft.y / 8);
+  const bottomLeftXChank = Math.floor(game.users[objectID].square.currentCoord.bottomLeft.x / 8);
+  const bottomLeftYChank = Math.floor(game.users[objectID].square.currentCoord.bottomLeft.y / 8);
+  const topRightXChank = Math.floor(game.users[objectID].square.currentCoord.topRight.x / 8);
+  const topRightYChank = Math.floor(game.users[objectID].square.currentCoord.topRight.y / 8);
+
+  return {
+    topLeftXChank: topLeftXChank,
+    topLeftYChank: topLeftYChank,
+    bottomLeftXChank: bottomLeftXChank,
+    bottomLeftYChank: bottomLeftYChank,
+    topRightXChank: topRightXChank,
+    topRightYChank: topRightYChank,
+  };
+};
+
 export const attackObjectMainMechanism = (
   attackObjectID: string,
   direction: UserMoveDirections,
@@ -45,6 +63,38 @@ export const attackObjectMainMechanism = (
     // отправляем их на клиент
     // NPC останавливается
     // и через 1000 мс выполняется атака
+
+    //рассчитаем чанки, по которым пройдёт удар
+
+    const NPCGetChanksUnderAttack = () => {
+      const objectEdgeChanks = getObjectEdgeChanks(attackObjectID);
+
+      console.log(objectEdgeChanks.bottomLeftXChank);
+      // console.log(attackObjectID);
+      console.log(game.users[attackObjectID].moveDirection);
+      if (
+        game.users[attackObjectID].moveDirection === UserMoveDirections.up ||
+        game.users[attackObjectID].moveDirection === UserMoveDirections.stop
+      ) {
+        console.log("NPC атакует вверх");
+
+        game.NPCUnderAttackChanksObj[attackObjectID] = {
+          underAttackArea: {
+            baseChankX: objectEdgeChanks.topLeftXChank,
+            baseChankY: objectEdgeChanks.topLeftYChank,
+            heightChanksNum: 2,
+            widthChanksNum:
+              NPCOrGamerObjectsData[game.users[attackObjectID].objectType].widthChanks,
+          },
+        };
+
+        io.of("/")
+          .to("68a82c599d9ad19c1b4ec4d2")
+          .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
+      }
+    };
+
+    NPCGetChanksUnderAttack();
   }
 };
 

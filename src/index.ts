@@ -65,12 +65,12 @@ setInterval(() => {
   }
 }, 33);
 
-setInterval(() => {
-  if (!game.users["ORC#1"]) {
-    return;
-  }
-  attackObjectMainMechanism("ORC#1", UserMoveDirections.left, "NPC", "orc3", io);
-}, 3000);
+// setInterval(() => {
+//   if (!game.users["ORC#1"]) {
+//     return;
+//   }
+//   attackObjectMainMechanism("ORC#1", UserMoveDirections.left, "NPC", "orc3", io);
+// }, 3000);
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`);

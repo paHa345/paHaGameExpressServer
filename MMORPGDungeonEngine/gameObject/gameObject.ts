@@ -78,6 +78,16 @@ export interface IGameMain {
       };
     };
   };
+  NPCUnderAttackChanksObj: {
+    [NPCID: string]: {
+      underAttackArea: {
+        baseChankX: number;
+        baseChankY: number;
+        heightChanksNum: number;
+        widthChanksNum: number;
+      };
+    };
+  };
   users: IGameUserMain<{
     type: "gamer" | "NPC";
     objectType: string;
@@ -143,6 +153,7 @@ export const game: IGameMain = {
   mapSize: 70,
   gameField: {},
   attackStatusObj: {},
+  NPCUnderAttackChanksObj: {},
   frameObj: {
     mainFrame: 0,
     objects: {},
