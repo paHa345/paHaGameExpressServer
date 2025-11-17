@@ -271,20 +271,8 @@ export const moveNPCMain = (
     UserMoveDirections.stop,
   ];
 
-  const NPCObj: {
-    timeMoveDirection: number;
-    timeViewCheck: number;
-    NPCID: string;
-    directionPointer: number;
-    NPCCondition: {
-      type: "observation" | "aggression";
-      moveDirercion: number;
-      viewDirection: number;
-    };
-  }[] = [];
-
   for (const objectID in game.users) {
-    NPCObj.push({
+    game.NPCDataObj[objectID] = {
       timeMoveDirection: Date.now(),
       timeViewCheck: Date.now(),
       NPCID: objectID,
@@ -294,55 +282,69 @@ export const moveNPCMain = (
         moveDirercion: 0,
         viewDirection: 0,
       },
-    });
+      NPCPrepareToAttackStatus: false,
+    };
   }
 
   moveNPCInterval = setInterval(() => {
-    for (let i = 0; i < NPCObj.length; i++) {
-      if (!game.users[NPCObj[i].NPCID]) {
-        NPCObj.splice(i, 1);
+    for (const NPCID in game.NPCDataObj) {
+      if (!game.users[NPCID]) {
+        delete game.NPCDataObj[NPCID];
         return;
       }
 
-      if (Date.now() - NPCObj[i].timeViewCheck > 250) {
-        NPCViewMain(NPCObj[i], NPCObj[i].NPCID, io);
-        NPCObj[i].timeViewCheck = Date.now();
+      if (game.NPCDataObj[NPCID].NPCPrepareToAttackStatus) {
+        return;
       }
 
-      if (Date.now() - NPCObj[i].timeMoveDirection > 5000) {
+      if (Date.now() - game.NPCDataObj[NPCID].timeViewCheck > 250) {
+        NPCViewMain(game.NPCDataObj[NPCID], game.NPCDataObj[NPCID].NPCID, io);
+        game.NPCDataObj[NPCID].timeViewCheck = Date.now();
+      }
+
+      if (Date.now() - game.NPCDataObj[NPCID].timeMoveDirection > 5000) {
         const getRandomNumber = (min: number, max: number) => {
           return Math.floor(Math.random() * (max - min + 1)) + min;
         };
-        NPCObj[i].directionPointer = getRandomNumber(0, 4);
-        NPCObj[i].timeMoveDirection = Date.now();
+        game.NPCDataObj[NPCID].directionPointer = getRandomNumber(0, 4);
+        game.NPCDataObj[NPCID].timeMoveDirection = Date.now();
       }
-      if (game.users[NPCObj[i].NPCID]?.deathAnimationStatus) {
+      if (game.users[game.NPCDataObj[NPCID].NPCID]?.deathAnimationStatus) {
         return;
       }
 
       if (
-        NPCObj[i].NPCCondition.type === "observation" &&
-        (!game.users[NPCObj[i].NPCID]?.getDamageStatus ||
-          !game.users[NPCObj[i].NPCID]?.deathAnimationStatus)
+        game.NPCDataObj[NPCID].NPCCondition.type === "observation" &&
+        (!game.users[game.NPCDataObj[NPCID].NPCID]?.getDamageStatus ||
+          !game.users[game.NPCDataObj[NPCID].NPCID]?.deathAnimationStatus)
       ) {
-        game.users[NPCObj[i].NPCID].NPCViewDirection = directions[NPCObj[i].directionPointer];
-        setClientCoordinates(game.users[NPCObj[i].NPCID].objectType, NPCObj[i].NPCID, {
-          direction: directions[NPCObj[i].directionPointer],
-          roomID: "asdasd",
-          shiftUserPixels: 1,
-        });
+        game.users[game.NPCDataObj[NPCID].NPCID].NPCViewDirection =
+          directions[game.NPCDataObj[NPCID].directionPointer];
+        setClientCoordinates(
+          game.users[game.NPCDataObj[NPCID].NPCID].objectType,
+          game.NPCDataObj[NPCID].NPCID,
+          {
+            direction: directions[game.NPCDataObj[NPCID].directionPointer],
+            roomID: "asdasd",
+            shiftUserPixels: 1,
+          }
+        );
       }
 
       if (
-        NPCObj[i].NPCCondition.type === "aggression" &&
-        (!game.users[NPCObj[i].NPCID]?.getDamageStatus ||
-          !game.users[NPCObj[i].NPCID]?.deathAnimationStatus)
+        game.NPCDataObj[NPCID].NPCCondition.type === "aggression" &&
+        (!game.users[game.NPCDataObj[NPCID].NPCID]?.getDamageStatus ||
+          !game.users[game.NPCDataObj[NPCID].NPCID]?.deathAnimationStatus)
       ) {
-        setClientCoordinates(game.users[NPCObj[i].NPCID].objectType, NPCObj[i].NPCID, {
-          direction: directions[NPCObj[i].directionPointer],
-          roomID: "asdasd",
-          shiftUserPixels: 1,
-        });
+        setClientCoordinates(
+          game.users[game.NPCDataObj[NPCID].NPCID].objectType,
+          game.NPCDataObj[NPCID].NPCID,
+          {
+            direction: directions[game.NPCDataObj[NPCID].directionPointer],
+            roomID: "asdasd",
+            shiftUserPixels: 1,
+          }
+        );
       }
     }
   }, 33);

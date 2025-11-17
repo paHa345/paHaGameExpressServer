@@ -44,9 +44,11 @@ const NPCViewMain = (NPCObj, NPCID, io) => {
             if (topLeftYChank - 1 - i < 0)
                 break;
             if (gameObject_1.game.gameField[topLeftYChank - 1 - i][baseNPCLevel].objectDataChank.isGamerChank === true &&
-                i === 0) {
-                console.log("Игрок в зоне атаки. Атакую");
+                i === 0 &&
+                !NPCObj.NPCPrepareToAttackStatus) {
+                console.log("Игрок в зоне атаки. Сейчас я его ударю");
                 NPCObj.NPCCondition.type = "aggression";
+                NPCObj.NPCPrepareToAttackStatus = true;
                 (0, attackObjectsMain_1.attackObjectMainMechanism)(NPCID, gameObject_1.game.users[NPCID].NPCViewDirection, "NPC", "orc3", io);
                 return;
             }

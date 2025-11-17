@@ -14,6 +14,7 @@ export const NPCViewMain = (
       moveDirercion: number;
       viewDirection: number;
     };
+    NPCPrepareToAttackStatus: boolean;
   },
   NPCID: string,
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
@@ -68,14 +69,17 @@ export const NPCViewMain = (
       if (topLeftYChank - 1 - i < 0) break;
       if (
         game.gameField[topLeftYChank - 1 - i][baseNPCLevel].objectDataChank.isGamerChank === true &&
-        i === 0
+        i === 0 &&
+        !NPCObj.NPCPrepareToAttackStatus
       ) {
-        console.log("Игрок в зоне атаки. Атакую");
+        console.log("Игрок в зоне атаки. Сейчас я его ударю");
         NPCObj.NPCCondition.type = "aggression";
+        NPCObj.NPCPrepareToAttackStatus = true;
         attackObjectMainMechanism(NPCID, game.users[NPCID].NPCViewDirection, "NPC", "orc3", io);
 
         return;
       }
+
       if (
         game.gameField[topLeftYChank - 1 - i][baseNPCLevel].objectDataChank.isGamerChank === true &&
         i > 0

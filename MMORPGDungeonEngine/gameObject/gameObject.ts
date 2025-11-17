@@ -78,6 +78,21 @@ export interface IGameMain {
       };
     };
   };
+
+  NPCDataObj: {
+    [NPCID: string]: {
+      timeMoveDirection: number;
+      timeViewCheck: number;
+      NPCID: string;
+      directionPointer: number;
+      NPCCondition: {
+        type: "observation" | "aggression";
+        moveDirercion: number;
+        viewDirection: number;
+      };
+      NPCPrepareToAttackStatus: boolean;
+    };
+  };
   NPCUnderAttackChanksObj: {
     [NPCID: string]: {
       underAttackArea: {
@@ -154,6 +169,7 @@ export const game: IGameMain = {
   gameField: {},
   attackStatusObj: {},
   NPCUnderAttackChanksObj: {},
+  NPCDataObj: {},
   frameObj: {
     mainFrame: 0,
     objects: {},

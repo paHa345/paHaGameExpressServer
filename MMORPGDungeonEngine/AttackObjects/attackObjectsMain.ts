@@ -38,12 +38,15 @@ export const attackObjectMainMechanism = (
   }
 
   //тут разделение на мехиники атаки NPC или игрока
+  const objectEdgeChanks = getObjectEdgeChanks(attackObjectID);
 
   if (attackObjectStatus === "gamer") {
     setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
     const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
       game.users[attackObjectID].moveDirection,
       attackObjectID,
+      1,
+      objectEdgeChanks,
       io
     );
 
@@ -58,43 +61,81 @@ export const attackObjectMainMechanism = (
   }
 
   if (attackObjectStatus === "NPC") {
-    console.log("NPC Attack");
     // сначала определяем  чанки, по которым будут проходить удары
     // отправляем их на клиент
     // NPC останавливается
-    // и через 1000 мс выполняется атака
+    // и через 2000 мс выполняется атака
 
     //рассчитаем чанки, по которым пройдёт удар
 
-    const NPCGetChanksUnderAttack = () => {
-      const objectEdgeChanks = getObjectEdgeChanks(attackObjectID);
+    const NPCAttack = () => {
+      const NPCGetChanksUnderAttack = (objectEdgeChanks: {
+        topLeftXChank: number;
+        topLeftYChank: number;
+        bottomLeftXChank: number;
+        bottomLeftYChank: number;
+        topRightXChank: number;
+        topRightYChank: number;
+      }) => {
+        console.log(objectEdgeChanks.bottomLeftXChank);
+        console.log(game.users[attackObjectID].moveDirection);
+        if (
+          game.users[attackObjectID].NPCViewDirection === UserMoveDirections.up ||
+          game.users[attackObjectID].NPCViewDirection === UserMoveDirections.stop
+        ) {
+          game.NPCUnderAttackChanksObj[attackObjectID] = {
+            underAttackArea: {
+              baseChankX: objectEdgeChanks.topLeftXChank,
+              baseChankY: objectEdgeChanks.topLeftYChank - 3,
+              heightChanksNum: 3,
+              widthChanksNum:
+                NPCOrGamerObjectsData[game.users[attackObjectID].objectType].widthChanks,
+            },
+          };
 
-      console.log(objectEdgeChanks.bottomLeftXChank);
-      // console.log(attackObjectID);
-      console.log(game.users[attackObjectID].moveDirection);
-      if (
-        game.users[attackObjectID].moveDirection === UserMoveDirections.up ||
-        game.users[attackObjectID].moveDirection === UserMoveDirections.stop
-      ) {
-        console.log("NPC атакует вверх");
+          io.of("/")
+            .to("68a82c599d9ad19c1b4ec4d2")
+            .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
+        }
+      };
 
-        game.NPCUnderAttackChanksObj[attackObjectID] = {
-          underAttackArea: {
-            baseChankX: objectEdgeChanks.topLeftXChank,
-            baseChankY: objectEdgeChanks.topLeftYChank,
-            heightChanksNum: 2,
-            widthChanksNum:
-              NPCOrGamerObjectsData[game.users[attackObjectID].objectType].widthChanks,
-          },
-        };
+      const NPCGetObjectsUnderAttack = (objectEdgeChanks: {
+        topLeftXChank: number;
+        topLeftYChank: number;
+        bottomLeftXChank: number;
+        bottomLeftYChank: number;
+        topRightXChank: number;
+        topRightYChank: number;
+      }) => {
+        if (!game.users[attackObjectID]) return;
+        console.log("Удар мечом");
+        // определяем все чанки под атакой, смотрим объекты
+        // которые находятся в этих чанках
+        console.log(attackObjectID);
+        if (
+          game.users[attackObjectID].NPCViewDirection === UserMoveDirections.up ||
+          game.users[attackObjectID].NPCViewDirection === UserMoveDirections.stop
+        ) {
+          // for (let i = 0; i < array.length; i++) {
+          //   for (let j = 0; j < array.length; j++) {
+          //   }
+          // }
+        }
+      };
 
+      NPCGetChanksUnderAttack(objectEdgeChanks);
+      setTimeout(() => {
+        delete game.NPCUnderAttackChanksObj[attackObjectID];
+        if (game.NPCDataObj[attackObjectID]) {
+          game.NPCDataObj[attackObjectID].NPCPrepareToAttackStatus = false;
+        }
         io.of("/")
           .to("68a82c599d9ad19c1b4ec4d2")
           .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
-      }
+        NPCGetObjectsUnderAttack(objectEdgeChanks);
+      }, 5000);
     };
-
-    NPCGetChanksUnderAttack();
+    NPCAttack();
   }
 };
 
@@ -104,52 +145,6 @@ export const setAttackObjectStatus = (
   attackObjectType: string,
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
-  // if (attackObjectStatus === "NPC") {
-  //   // вычисляем чанки под атакой, отправляем их на коиент
-  //   // а через 1000 мс проходит атака
-
-  //   const chanksUnderAttack = getChanksAndObjectsUnderAttack(
-  //     game.users[attackObjectID].moveDirection,
-  //     attackObjectID,
-  //     io
-  //   );
-  //   io.of("/")
-  //     .to("68a82c599d9ad19c1b4ec4d2")
-  //     .emit("serverNPCAttackChanks", chanksUnderAttack?.chanksUnderAttack);
-
-  //   setTimeout(() => {
-  //     game.users[attackObjectID].imgName = `${attackObjectType}AttackImage`;
-  //     const startAttackTimestamp = Date.now();
-  //     game.attackStatusObj[attackObjectID] = {
-  //       time: startAttackTimestamp,
-  //       isCooldown: true,
-  //       isActive: true,
-  //     };
-
-  //     io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverStartAttack", {
-  //       attackObjectID: attackObjectID,
-  //     });
-
-  //     let stopAttackInterval: any;
-
-  //     stopAttackInterval = setInterval(() => {
-  //       if (Date.now() - startAttackTimestamp > 500) {
-  //         game.attackStatusObj[attackObjectID].isActive = false;
-  //         game.users[attackObjectID].imgName = `${game.users[attackObjectID].objectType}WalkImage`;
-  //         clearInterval(stopAttackInterval);
-  //       }
-  //     }, 100);
-
-  //     let cooldownInterval: any;
-
-  //     cooldownInterval = setInterval(() => {
-  //       if (Date.now() - startAttackTimestamp > 1000) {
-  //         game.attackStatusObj[attackObjectID].isCooldown = false;
-  //         clearInterval(cooldownInterval);
-  //       }
-  //     }, 100);
-  //   }, 1000);
-  // }
   game.users[attackObjectID].imgName = `${attackObjectType}AttackImage`;
 
   const startAttackTimestamp = Date.now();
@@ -199,19 +194,17 @@ export const setAttackObjectStatus = (
 export const getChanksAndObjectsUnderAttack = (
   direction: UserMoveDirections,
   attackObjectID: string,
+  attackAreaDeep: number,
+  objectEdgeChanks: {
+    topLeftXChank: number;
+    topLeftYChank: number;
+    bottomLeftXChank: number;
+    bottomLeftYChank: number;
+    topRightXChank: number;
+    topRightYChank: number;
+  },
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
-  const topLeftXChank = Math.floor(game.users[attackObjectID].square.currentCoord.topLeft.x / 8);
-  const topLeftYChank = Math.floor(game.users[attackObjectID].square.currentCoord.topLeft.y / 8);
-  const bottomLeftXChank = Math.floor(
-    game.users[attackObjectID].square.currentCoord.bottomLeft.x / 8
-  );
-  const bottomLeftYChank = Math.floor(
-    game.users[attackObjectID].square.currentCoord.bottomLeft.y / 8
-  );
-  const topRightXChank = Math.floor(game.users[attackObjectID].square.currentCoord.topRight.x / 8);
-  const topRightYChank = Math.floor(game.users[attackObjectID].square.currentCoord.topRight.y / 8);
-
   const objectUnderAttack: { [underAttackObjectID: string]: number } = {};
 
   const chanksUnderAttack: { row: number; col: number }[] = [];
@@ -233,11 +226,14 @@ export const getChanksAndObjectsUnderAttack = (
       i <= NPCOrGamerObjectsData[game.users[attackObjectID].objectType].widthChanks;
       i++
     ) {
-      game.gameField[topLeftYChank - 1][topLeftXChank + i].chankUnderAttack = true;
+      game.gameField[objectEdgeChanks.topLeftYChank - 1][
+        objectEdgeChanks.topLeftXChank + i
+      ].chankUnderAttack = true;
       addUnderAttackObjectsAndChunksArr(
-        game.gameField[topLeftYChank - 1][topLeftXChank + i].objectDataChank.objectID,
-        topLeftYChank - 1,
-        topLeftXChank + i
+        game.gameField[objectEdgeChanks.topLeftYChank - 1][objectEdgeChanks.topLeftXChank + i]
+          .objectDataChank.objectID,
+        objectEdgeChanks.topLeftYChank - 1,
+        objectEdgeChanks.topLeftXChank + i
       );
     }
   }
@@ -247,16 +243,19 @@ export const getChanksAndObjectsUnderAttack = (
       i <= NPCOrGamerObjectsData[game.users[attackObjectID].objectType].widthChanks;
       i++
     ) {
-      game.gameField[bottomLeftYChank][bottomLeftXChank + i].chankUnderAttack = true;
+      game.gameField[objectEdgeChanks.bottomLeftYChank][
+        objectEdgeChanks.bottomLeftXChank + i
+      ].chankUnderAttack = true;
       addUnderAttackObjectsAndChunksArr(
-        game.gameField[bottomLeftYChank][bottomLeftXChank + i].objectDataChank.objectID,
-        bottomLeftYChank,
-        bottomLeftXChank + i
+        game.gameField[objectEdgeChanks.bottomLeftYChank][objectEdgeChanks.bottomLeftXChank + i]
+          .objectDataChank.objectID,
+        objectEdgeChanks.bottomLeftYChank,
+        objectEdgeChanks.bottomLeftXChank + i
       );
     }
   }
   if (direction === UserMoveDirections.left) {
-    if (topLeftXChank - 1 < 0) {
+    if (objectEdgeChanks.topLeftXChank - 1 < 0) {
       return;
     }
     for (
@@ -264,11 +263,14 @@ export const getChanksAndObjectsUnderAttack = (
       i < NPCOrGamerObjectsData[game.users[attackObjectID].objectType].heightChanks;
       i++
     ) {
-      game.gameField[topLeftYChank + i][topLeftXChank - 1].chankUnderAttack = true;
+      game.gameField[objectEdgeChanks.topLeftYChank + i][
+        objectEdgeChanks.topLeftXChank - 1
+      ].chankUnderAttack = true;
       addUnderAttackObjectsAndChunksArr(
-        game.gameField[topLeftYChank + i][topLeftXChank - 1].objectDataChank.objectID,
-        topLeftYChank + i,
-        topLeftXChank - 1
+        game.gameField[objectEdgeChanks.topLeftYChank + i][objectEdgeChanks.topLeftXChank - 1]
+          .objectDataChank.objectID,
+        objectEdgeChanks.topLeftYChank + i,
+        objectEdgeChanks.topLeftXChank - 1
       );
     }
   }
@@ -278,11 +280,14 @@ export const getChanksAndObjectsUnderAttack = (
       i < NPCOrGamerObjectsData[game.users[attackObjectID].objectType].heightChanks;
       i++
     ) {
-      game.gameField[topRightYChank + i][topRightXChank + 1].chankUnderAttack = true;
+      game.gameField[objectEdgeChanks.topRightYChank + i][
+        objectEdgeChanks.topRightXChank + 1
+      ].chankUnderAttack = true;
       addUnderAttackObjectsAndChunksArr(
-        game.gameField[topRightYChank + i][topRightXChank + 1].objectDataChank.objectID,
-        topRightYChank + i,
-        topRightXChank + 1
+        game.gameField[objectEdgeChanks.topRightYChank + i][objectEdgeChanks.topRightXChank + 1]
+          .objectDataChank.objectID,
+        objectEdgeChanks.topRightYChank + i,
+        objectEdgeChanks.topRightXChank + 1
       );
     }
   }
