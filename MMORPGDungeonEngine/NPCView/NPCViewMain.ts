@@ -32,36 +32,6 @@ export const NPCViewMain = (
     game.users[NPCID].NPCViewDirection === UserMoveDirections.up ||
     game.users[NPCID].NPCViewDirection === UserMoveDirections.stop
   ) {
-    const setGamerInMAinViewAxis = (
-      directionToAttack: number,
-      viewAxis: "X" | "Y",
-      directionViewAxis: "increment" | "decrement"
-    ) => {
-      for (let i = 0; i < 4; i++) {
-        if (topLeftYChank - 1 - i < 0) break;
-        if (
-          game.gameField[topLeftYChank - 1 - i][baseNPCLevel].objectDataChank.isGamerChank ===
-            true &&
-          i === 0
-        ) {
-          console.log("Игрок в зоне атаки. Атакую");
-          NPCObj.NPCCondition.type = "aggression";
-
-          return;
-        }
-        if (
-          game.gameField[topLeftYChank - 1 - i][baseNPCLevel].objectDataChank.isGamerChank ===
-            true &&
-          i > 0
-        ) {
-          NPCObj.NPCCondition.type = "aggression";
-          NPCObj.directionPointer = 2;
-
-          return;
-        }
-      }
-    };
-
     baseNPCLevel = topLeftXChank + 1;
 
     //смотрим основную ось, есть ли на ней игрок
@@ -74,7 +44,7 @@ export const NPCViewMain = (
       ) {
         console.log("Игрок в зоне атаки. Сейчас я его ударю");
         NPCObj.NPCCondition.type = "aggression";
-        NPCObj.NPCPrepareToAttackStatus = true;
+        // NPCObj.NPCPrepareToAttackStatus = true;
         attackObjectMainMechanism(NPCID, game.users[NPCID].NPCViewDirection, "NPC", "orc3", io);
 
         return;

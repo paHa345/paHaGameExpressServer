@@ -79,6 +79,8 @@ export const attackObjectMainMechanism = (
       }) => {
         console.log(objectEdgeChanks.bottomLeftXChank);
         console.log(game.users[attackObjectID].moveDirection);
+        game.NPCDataObj[attackObjectID].NPCPrepareToAttackStatus = true;
+
         if (
           game.users[attackObjectID].NPCViewDirection === UserMoveDirections.up ||
           game.users[attackObjectID].NPCViewDirection === UserMoveDirections.stop
@@ -97,29 +99,50 @@ export const attackObjectMainMechanism = (
             .to("68a82c599d9ad19c1b4ec4d2")
             .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
         }
-      };
+        if (game.users[attackObjectID].NPCViewDirection === UserMoveDirections.down) {
+          game.NPCUnderAttackChanksObj[attackObjectID] = {
+            underAttackArea: {
+              baseChankX: objectEdgeChanks.bottomLeftXChank,
+              baseChankY: objectEdgeChanks.bottomLeftYChank,
+              heightChanksNum: 3,
+              widthChanksNum:
+                NPCOrGamerObjectsData[game.users[attackObjectID].objectType].widthChanks,
+            },
+          };
 
-      const NPCGetObjectsUnderAttack = (objectEdgeChanks: {
-        topLeftXChank: number;
-        topLeftYChank: number;
-        bottomLeftXChank: number;
-        bottomLeftYChank: number;
-        topRightXChank: number;
-        topRightYChank: number;
-      }) => {
-        if (!game.users[attackObjectID]) return;
-        console.log("Удар мечом");
-        // определяем все чанки под атакой, смотрим объекты
-        // которые находятся в этих чанках
-        console.log(attackObjectID);
-        if (
-          game.users[attackObjectID].NPCViewDirection === UserMoveDirections.up ||
-          game.users[attackObjectID].NPCViewDirection === UserMoveDirections.stop
-        ) {
-          // for (let i = 0; i < array.length; i++) {
-          //   for (let j = 0; j < array.length; j++) {
-          //   }
-          // }
+          io.of("/")
+            .to("68a82c599d9ad19c1b4ec4d2")
+            .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
+        }
+        if (game.users[attackObjectID].NPCViewDirection === UserMoveDirections.left) {
+          game.NPCUnderAttackChanksObj[attackObjectID] = {
+            underAttackArea: {
+              baseChankX: objectEdgeChanks.topLeftXChank - 3,
+              baseChankY: objectEdgeChanks.topLeftYChank,
+              heightChanksNum:
+                NPCOrGamerObjectsData[game.users[attackObjectID].objectType].heightChanks,
+              widthChanksNum: 3,
+            },
+          };
+
+          io.of("/")
+            .to("68a82c599d9ad19c1b4ec4d2")
+            .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
+        }
+        if (game.users[attackObjectID].NPCViewDirection === UserMoveDirections.right) {
+          game.NPCUnderAttackChanksObj[attackObjectID] = {
+            underAttackArea: {
+              baseChankX: objectEdgeChanks.topRightXChank,
+              baseChankY: objectEdgeChanks.topRightYChank,
+              heightChanksNum:
+                NPCOrGamerObjectsData[game.users[attackObjectID].objectType].heightChanks,
+              widthChanksNum: 3,
+            },
+          };
+
+          io.of("/")
+            .to("68a82c599d9ad19c1b4ec4d2")
+            .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
         }
       };
 
@@ -132,9 +155,25 @@ export const attackObjectMainMechanism = (
         io.of("/")
           .to("68a82c599d9ad19c1b4ec4d2")
           .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
-        NPCGetObjectsUnderAttack(objectEdgeChanks);
-      }, 5000);
+        const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
+          game.users[attackObjectID].moveDirection,
+          attackObjectID,
+          4,
+          objectEdgeChanks,
+          io
+        );
+
+        // if (chanksAndObjectsUnderAttack?.objectUnderAttack) {
+        //   calculateDamage(
+        //     game.users[attackObjectID].moveDirection,
+        //     attackObjectID,
+        //     io,
+        //     chanksAndObjectsUnderAttack?.objectUnderAttack
+        //   );
+        // }
+      }, 3000);
     };
+
     NPCAttack();
   }
 };
@@ -226,15 +265,18 @@ export const getChanksAndObjectsUnderAttack = (
       i <= NPCOrGamerObjectsData[game.users[attackObjectID].objectType].widthChanks;
       i++
     ) {
-      game.gameField[objectEdgeChanks.topLeftYChank - 1][
-        objectEdgeChanks.topLeftXChank + i
-      ].chankUnderAttack = true;
-      addUnderAttackObjectsAndChunksArr(
-        game.gameField[objectEdgeChanks.topLeftYChank - 1][objectEdgeChanks.topLeftXChank + i]
-          .objectDataChank.objectID,
-        objectEdgeChanks.topLeftYChank - 1,
-        objectEdgeChanks.topLeftXChank + i
-      );
+      for (let j = 0; j < attackAreaDeep; j++) {
+        if (objectEdgeChanks.topLeftYChank - 1 - j < 0) continue;
+        game.gameField[objectEdgeChanks.topLeftYChank - 1 - j][
+          objectEdgeChanks.topLeftXChank + i
+        ].chankUnderAttack = true;
+        addUnderAttackObjectsAndChunksArr(
+          game.gameField[objectEdgeChanks.topLeftYChank - 1 - j][objectEdgeChanks.topLeftXChank + i]
+            .objectDataChank.objectID,
+          objectEdgeChanks.topLeftYChank - 1 - j,
+          objectEdgeChanks.topLeftXChank + i
+        );
+      }
     }
   }
   if (direction === UserMoveDirections.down) {
@@ -243,15 +285,20 @@ export const getChanksAndObjectsUnderAttack = (
       i <= NPCOrGamerObjectsData[game.users[attackObjectID].objectType].widthChanks;
       i++
     ) {
-      game.gameField[objectEdgeChanks.bottomLeftYChank][
-        objectEdgeChanks.bottomLeftXChank + i
-      ].chankUnderAttack = true;
-      addUnderAttackObjectsAndChunksArr(
-        game.gameField[objectEdgeChanks.bottomLeftYChank][objectEdgeChanks.bottomLeftXChank + i]
-          .objectDataChank.objectID,
-        objectEdgeChanks.bottomLeftYChank,
-        objectEdgeChanks.bottomLeftXChank + i
-      );
+      for (let j = 0; j < attackAreaDeep; j++) {
+        if (objectEdgeChanks.bottomLeftYChank + j > game.mapSize - 1) continue;
+
+        game.gameField[objectEdgeChanks.bottomLeftYChank + j][
+          objectEdgeChanks.bottomLeftXChank + i
+        ].chankUnderAttack = true;
+        addUnderAttackObjectsAndChunksArr(
+          game.gameField[objectEdgeChanks.bottomLeftYChank + j][
+            objectEdgeChanks.bottomLeftXChank + i
+          ].objectDataChank.objectID,
+          objectEdgeChanks.bottomLeftYChank + j,
+          objectEdgeChanks.bottomLeftXChank + i
+        );
+      }
     }
   }
   if (direction === UserMoveDirections.left) {
@@ -263,15 +310,18 @@ export const getChanksAndObjectsUnderAttack = (
       i < NPCOrGamerObjectsData[game.users[attackObjectID].objectType].heightChanks;
       i++
     ) {
-      game.gameField[objectEdgeChanks.topLeftYChank + i][
-        objectEdgeChanks.topLeftXChank - 1
-      ].chankUnderAttack = true;
-      addUnderAttackObjectsAndChunksArr(
-        game.gameField[objectEdgeChanks.topLeftYChank + i][objectEdgeChanks.topLeftXChank - 1]
-          .objectDataChank.objectID,
-        objectEdgeChanks.topLeftYChank + i,
-        objectEdgeChanks.topLeftXChank - 1
-      );
+      for (let j = 0; j < attackAreaDeep; j++) {
+        if (objectEdgeChanks.topLeftXChank - 1 - j < 0) continue;
+        game.gameField[objectEdgeChanks.topLeftYChank + i][
+          objectEdgeChanks.topLeftXChank - 1 - j
+        ].chankUnderAttack = true;
+        addUnderAttackObjectsAndChunksArr(
+          game.gameField[objectEdgeChanks.topLeftYChank + i][objectEdgeChanks.topLeftXChank - 1 - j]
+            .objectDataChank.objectID,
+          objectEdgeChanks.topLeftYChank + i,
+          objectEdgeChanks.topLeftXChank - 1 - j
+        );
+      }
     }
   }
   if (direction === UserMoveDirections.right) {
@@ -280,15 +330,20 @@ export const getChanksAndObjectsUnderAttack = (
       i < NPCOrGamerObjectsData[game.users[attackObjectID].objectType].heightChanks;
       i++
     ) {
-      game.gameField[objectEdgeChanks.topRightYChank + i][
-        objectEdgeChanks.topRightXChank + 1
-      ].chankUnderAttack = true;
-      addUnderAttackObjectsAndChunksArr(
-        game.gameField[objectEdgeChanks.topRightYChank + i][objectEdgeChanks.topRightXChank + 1]
-          .objectDataChank.objectID,
-        objectEdgeChanks.topRightYChank + i,
-        objectEdgeChanks.topRightXChank + 1
-      );
+      for (let j = 0; j < attackAreaDeep; j++) {
+        if (objectEdgeChanks.topRightXChank + 1 + j > game.mapSize - 1) continue;
+
+        game.gameField[objectEdgeChanks.topRightYChank + i][
+          objectEdgeChanks.topRightXChank + 1 + j
+        ].chankUnderAttack = true;
+        addUnderAttackObjectsAndChunksArr(
+          game.gameField[objectEdgeChanks.topRightYChank + i][
+            objectEdgeChanks.topRightXChank + 1 + j
+          ].objectDataChank.objectID,
+          objectEdgeChanks.topRightYChank + i,
+          objectEdgeChanks.topRightXChank + 1 + j
+        );
+      }
     }
   }
 
@@ -312,6 +367,7 @@ export const calculateDamage = (
     [underAttackObjectID: string]: number;
   }
 ) => {
+  console.log("Damage");
   for (const underAttackObjectID in objectUnderAttack) {
     if (!game.users[underAttackObjectID]) return;
 

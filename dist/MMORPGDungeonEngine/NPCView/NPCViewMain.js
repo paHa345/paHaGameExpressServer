@@ -18,26 +18,6 @@ const NPCViewMain = (NPCObj, NPCID, io) => {
     let baseNPCLevel;
     if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.up ||
         gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.stop) {
-        const setGamerInMAinViewAxis = (directionToAttack, viewAxis, directionViewAxis) => {
-            for (let i = 0; i < 4; i++) {
-                if (topLeftYChank - 1 - i < 0)
-                    break;
-                if (gameObject_1.game.gameField[topLeftYChank - 1 - i][baseNPCLevel].objectDataChank.isGamerChank ===
-                    true &&
-                    i === 0) {
-                    console.log("Игрок в зоне атаки. Атакую");
-                    NPCObj.NPCCondition.type = "aggression";
-                    return;
-                }
-                if (gameObject_1.game.gameField[topLeftYChank - 1 - i][baseNPCLevel].objectDataChank.isGamerChank ===
-                    true &&
-                    i > 0) {
-                    NPCObj.NPCCondition.type = "aggression";
-                    NPCObj.directionPointer = 2;
-                    return;
-                }
-            }
-        };
         baseNPCLevel = topLeftXChank + 1;
         //смотрим основную ось, есть ли на ней игрок
         for (let i = 0; i < 4; i++) {
@@ -48,7 +28,7 @@ const NPCViewMain = (NPCObj, NPCID, io) => {
                 !NPCObj.NPCPrepareToAttackStatus) {
                 console.log("Игрок в зоне атаки. Сейчас я его ударю");
                 NPCObj.NPCCondition.type = "aggression";
-                NPCObj.NPCPrepareToAttackStatus = true;
+                // NPCObj.NPCPrepareToAttackStatus = true;
                 (0, attackObjectsMain_1.attackObjectMainMechanism)(NPCID, gameObject_1.game.users[NPCID].NPCViewDirection, "NPC", "orc3", io);
                 return;
             }
