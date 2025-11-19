@@ -155,6 +155,7 @@ export const attackObjectMainMechanism = (
         io.of("/")
           .to("68a82c599d9ad19c1b4ec4d2")
           .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
+        if (!game.users[attackObjectID]) return;
         const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
           game.users[attackObjectID].moveDirection,
           attackObjectID,

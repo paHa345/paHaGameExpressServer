@@ -113,6 +113,8 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
                 io.of("/")
                     .to("68a82c599d9ad19c1b4ec4d2")
                     .emit("NPCChanksUnderAttack", gameObject_1.game.NPCUnderAttackChanksObj);
+                if (!gameObject_1.game.users[attackObjectID])
+                    return;
                 const chanksAndObjectsUnderAttack = (0, exports.getChanksAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 4, objectEdgeChanks, io);
                 // if (chanksAndObjectsUnderAttack?.objectUnderAttack) {
                 //   calculateDamage(
