@@ -218,7 +218,7 @@ const moveNPCMain = (io) => {
         };
     }
     moveNPCInterval = setInterval(() => {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         for (const NPCID in gameObject_1.game.NPCDataObj) {
             if (!gameObject_1.game.users[NPCID]) {
                 delete gameObject_1.game.NPCDataObj[NPCID];
@@ -227,6 +227,8 @@ const moveNPCMain = (io) => {
             if (gameObject_1.game.NPCDataObj[NPCID].NPCPrepareToAttackStatus) {
                 return;
             }
+            if ((_a = gameObject_1.game.attackStatusObj[NPCID]) === null || _a === void 0 ? void 0 : _a.isActive)
+                return;
             if (Date.now() - gameObject_1.game.NPCDataObj[NPCID].timeViewCheck > 250) {
                 (0, NPCViewMain_1.NPCViewMain)(gameObject_1.game.NPCDataObj[NPCID], gameObject_1.game.NPCDataObj[NPCID].NPCID, io);
                 gameObject_1.game.NPCDataObj[NPCID].timeViewCheck = Date.now();
@@ -238,12 +240,12 @@ const moveNPCMain = (io) => {
                 gameObject_1.game.NPCDataObj[NPCID].directionPointer = getRandomNumber(0, 4);
                 gameObject_1.game.NPCDataObj[NPCID].timeMoveDirection = Date.now();
             }
-            if ((_a = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _a === void 0 ? void 0 : _a.deathAnimationStatus) {
+            if ((_b = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _b === void 0 ? void 0 : _b.deathAnimationStatus) {
                 return;
             }
             if (gameObject_1.game.NPCDataObj[NPCID].NPCCondition.type === "observation" &&
-                (!((_b = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _b === void 0 ? void 0 : _b.getDamageStatus) ||
-                    !((_c = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _c === void 0 ? void 0 : _c.deathAnimationStatus))) {
+                (!((_c = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _c === void 0 ? void 0 : _c.getDamageStatus) ||
+                    !((_d = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _d === void 0 ? void 0 : _d.deathAnimationStatus))) {
                 gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID].NPCViewDirection =
                     directions[gameObject_1.game.NPCDataObj[NPCID].directionPointer];
                 (0, exports.setClientCoordinates)(gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID].objectType, gameObject_1.game.NPCDataObj[NPCID].NPCID, {
@@ -253,8 +255,8 @@ const moveNPCMain = (io) => {
                 });
             }
             if (gameObject_1.game.NPCDataObj[NPCID].NPCCondition.type === "aggression" &&
-                (!((_d = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _d === void 0 ? void 0 : _d.getDamageStatus) ||
-                    !((_e = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _e === void 0 ? void 0 : _e.deathAnimationStatus))) {
+                (!((_e = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _e === void 0 ? void 0 : _e.getDamageStatus) ||
+                    !((_f = gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID]) === null || _f === void 0 ? void 0 : _f.deathAnimationStatus))) {
                 (0, exports.setClientCoordinates)(gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].NPCID].objectType, gameObject_1.game.NPCDataObj[NPCID].NPCID, {
                     direction: directions[gameObject_1.game.NPCDataObj[NPCID].directionPointer],
                     roomID: "asdasd",

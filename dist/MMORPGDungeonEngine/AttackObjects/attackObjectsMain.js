@@ -116,14 +116,10 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
                 if (!gameObject_1.game.users[attackObjectID])
                     return;
                 const chanksAndObjectsUnderAttack = (0, exports.getChanksAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 4, objectEdgeChanks, io);
-                // if (chanksAndObjectsUnderAttack?.objectUnderAttack) {
-                //   calculateDamage(
-                //     game.users[attackObjectID].moveDirection,
-                //     attackObjectID,
-                //     io,
-                //     chanksAndObjectsUnderAttack?.objectUnderAttack
-                //   );
-                // }
+                (0, exports.setAttackObjectStatus)(attackObjectID, attackObjectStatus, attackObjectType, io);
+                if (chanksAndObjectsUnderAttack === null || chanksAndObjectsUnderAttack === void 0 ? void 0 : chanksAndObjectsUnderAttack.objectUnderAttack) {
+                    (0, exports.calculateDamage)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, io, chanksAndObjectsUnderAttack === null || chanksAndObjectsUnderAttack === void 0 ? void 0 : chanksAndObjectsUnderAttack.objectUnderAttack);
+                }
             }, 3000);
         };
         NPCAttack();
@@ -153,17 +149,6 @@ const setAttackObjectStatus = (attackObjectID, attackObjectStatus, attackObjectT
     cooldownInterval = setInterval(() => {
         if (Date.now() - startAttackTimestamp > 1000) {
             gameObject_1.game.attackStatusObj[attackObjectID].isCooldown = false;
-            // io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
-            //   // roomID: clientData.roomID,
-            //   // socketID: attackObjectID,
-            //   // attackStatus: game.users[attackObjectID].attackStatus,
-            //   // isCooldown: false,
-            // });
-            // console.log("Stop interval");
-            // increaseFrameNumber();
-            // io.of("/").to(clientData.roomID).emit("serverResetCooldown", {
-            //   attackStatusObj: game.attackStatusObj,
-            // });
             clearInterval(cooldownInterval);
         }
     }, 100);
@@ -239,64 +224,86 @@ const calculateDamage = (direction, attackObjectID, io, objectUnderAttack) => {
     for (const underAttackObjectID in objectUnderAttack) {
         if (!gameObject_1.game.users[underAttackObjectID])
             return;
-        if (gameObject_1.game.statObj.NPC[underAttackObjectID] === undefined)
-            return;
-        // отнимаем hp у лбъекта, по которому проходит урон
-        (0, statObjectsMain_1.reduceNPCHP)(underAttackObjectID, attackObjectID);
-        // если у объекта по которому проходит урон, не осталось hp, то запускается анимация
-        //  и объект удаляется и очищаются занимаемые чанки
-        if (gameObject_1.game.statObj.NPC[underAttackObjectID].currentHP <= 0) {
-            // находим чанки и очищаем их
-            const getDeletedObjectCurrentChanks = (underAttackObjectID) => {
-                const topLeftXChank = Math.floor(gameObject_1.game.users[underAttackObjectID].square.currentCoord.topLeft.x / 8);
-                const topLeftYChank = Math.floor(gameObject_1.game.users[underAttackObjectID].square.currentCoord.topLeft.y / 8);
-                const deletedObjectType = gameObject_1.game.users[underAttackObjectID].objectType;
-                for (let i = 0; i <= types_1.NPCOrGamerObjectsData[deletedObjectType].widthChanks; i++) {
-                    for (let j = 0; j <= types_1.NPCOrGamerObjectsData[deletedObjectType].heightChanks; j++) {
-                        if (gameObject_1.game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank.objectID ===
-                            underAttackObjectID) {
-                            gameObject_1.game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank = {
-                                objectID: undefined,
-                                isObjectChank: false,
-                                isGamerChank: null,
-                            };
+        if (gameObject_1.game.users[underAttackObjectID].type === "NPC") {
+            if (gameObject_1.game.statObj.NPC[underAttackObjectID] === undefined)
+                return;
+            // отнимаем hp у лбъекта, по которому проходит урон
+            (0, statObjectsMain_1.reduceNPCHP)(underAttackObjectID, attackObjectID);
+            // если у объекта по которому проходит урон, не осталось hp, то запускается анимация
+            //  и объект удаляется и очищаются занимаемые чанки
+            if (gameObject_1.game.statObj.NPC[underAttackObjectID].currentHP <= 0) {
+                // находим чанки и очищаем их
+                const getDeletedObjectCurrentChanks = (underAttackObjectID) => {
+                    const topLeftXChank = Math.floor(gameObject_1.game.users[underAttackObjectID].square.currentCoord.topLeft.x / 8);
+                    const topLeftYChank = Math.floor(gameObject_1.game.users[underAttackObjectID].square.currentCoord.topLeft.y / 8);
+                    const deletedObjectType = gameObject_1.game.users[underAttackObjectID].objectType;
+                    for (let i = 0; i <= types_1.NPCOrGamerObjectsData[deletedObjectType].widthChanks; i++) {
+                        for (let j = 0; j <= types_1.NPCOrGamerObjectsData[deletedObjectType].heightChanks; j++) {
+                            if (gameObject_1.game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank.objectID ===
+                                underAttackObjectID) {
+                                gameObject_1.game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank = {
+                                    objectID: undefined,
+                                    isObjectChank: false,
+                                    isGamerChank: null,
+                                };
+                            }
                         }
                     }
-                }
-            };
-            getDeletedObjectCurrentChanks(underAttackObjectID);
-            gameObject_1.game.users[underAttackObjectID].deathAnimationStatus = true;
-            gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}DeathImage`;
-            io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverNPCDeathAnimationStatus", {
-                underAttackObjectID: underAttackObjectID,
+                };
+                getDeletedObjectCurrentChanks(underAttackObjectID);
+                gameObject_1.game.users[underAttackObjectID].deathAnimationStatus = true;
+                gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}DeathImage`;
+                io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverNPCDeathAnimationStatus", {
+                    underAttackObjectID: underAttackObjectID,
+                });
+                setTimeout(() => {
+                    delete gameObject_1.game.users[underAttackObjectID];
+                }, 1200);
+                // setTimeout(() => {
+                //   chanksUnderAttack.map((chank) => {
+                //     game.gameField[chank.row][chank.col].chankUnderAttack = false;
+                //   });
+                // }, 600);
+                return;
+            }
+            // отправляем всем клиентам данные о hp объекта,
+            // по которому прошёл урон
+            io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverUnderAttackObjectStat", {
+                underAttackObjID: underAttackObjectID,
+                underAttackObjectType: gameObject_1.game.users[underAttackObjectID].type,
+                underAttackObjStat: gameObject_1.game.statObj.NPC[underAttackObjectID],
             });
+            (0, moveObjectsMain_1.setClientCoordinates)(gameObject_1.game.users[underAttackObjectID].objectType, underAttackObjectID, {
+                direction: direction,
+                roomID: "asdasd",
+                shiftUserPixels: 4,
+            });
+            gameObject_1.game.users[underAttackObjectID].getDamageStatus = true;
+            gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}GetDamageImage`;
             setTimeout(() => {
-                delete gameObject_1.game.users[underAttackObjectID];
-            }, 1200);
-            // setTimeout(() => {
-            //   chanksUnderAttack.map((chank) => {
-            //     game.gameField[chank.row][chank.col].chankUnderAttack = false;
-            //   });
-            // }, 600);
-            return;
+                gameObject_1.game.users[underAttackObjectID].getDamageStatus = false;
+                gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}WalkImage`;
+            }, 900);
         }
-        // отправляем всем клиентам данные о hp объекта,
-        // по которому прошёл урон
-        io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverUnderAttackObjectStat", {
-            underAttackObjID: underAttackObjectID,
-            underAttackObjStat: gameObject_1.game.statObj.NPC[underAttackObjectID],
-        });
-        (0, moveObjectsMain_1.setClientCoordinates)(gameObject_1.game.users[underAttackObjectID].objectType, underAttackObjectID, {
-            direction: direction,
-            roomID: "asdasd",
-            shiftUserPixels: 4,
-        });
-        gameObject_1.game.users[underAttackObjectID].getDamageStatus = true;
-        gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}GetDamageImage`;
-        setTimeout(() => {
-            gameObject_1.game.users[underAttackObjectID].getDamageStatus = false;
-            gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}WalkImage`;
-        }, 900);
+        if (gameObject_1.game.users[underAttackObjectID].type === "gamer") {
+            (0, statObjectsMain_1.reduceGamerHP)(underAttackObjectID, attackObjectID);
+            io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverUnderAttackObjectStat", {
+                underAttackObjID: underAttackObjectID,
+                underAttackObjectType: gameObject_1.game.users[underAttackObjectID].type,
+                underAttackObjStat: gameObject_1.game.statObj.gamers[underAttackObjectID],
+            });
+            (0, moveObjectsMain_1.setClientCoordinates)(gameObject_1.game.users[underAttackObjectID].objectType, underAttackObjectID, {
+                direction: direction,
+                roomID: "asdasd",
+                shiftUserPixels: 4,
+            });
+            gameObject_1.game.users[underAttackObjectID].getDamageStatus = true;
+            gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}GetDamageImage`;
+            setTimeout(() => {
+                gameObject_1.game.users[underAttackObjectID].getDamageStatus = false;
+                gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}WalkImage`;
+            }, 900);
+        }
     }
 };
 exports.calculateDamage = calculateDamage;

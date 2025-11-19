@@ -297,6 +297,8 @@ export const moveNPCMain = (
         return;
       }
 
+      if (game.attackStatusObj[NPCID]?.isActive) return;
+
       if (Date.now() - game.NPCDataObj[NPCID].timeViewCheck > 250) {
         NPCViewMain(game.NPCDataObj[NPCID], game.NPCDataObj[NPCID].NPCID, io);
         game.NPCDataObj[NPCID].timeViewCheck = Date.now();

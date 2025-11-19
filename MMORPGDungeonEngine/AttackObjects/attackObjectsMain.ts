@@ -2,7 +2,7 @@ import { DefaultEventsMap, Server } from "socket.io";
 import { game, UserMoveDirections } from "../gameObject/gameObject";
 import { NPCOrGamerObjectsData } from "../../types";
 import { setClientCoordinates } from "../MoveObjects/moveObjectsMain";
-import { reduceNPCHP } from "../StatObjects/statObjectsMain";
+import { reduceGamerHP, reduceNPCHP } from "../StatObjects/statObjectsMain";
 
 export const getObjectEdgeChanks = (objectID: string) => {
   const topLeftXChank = Math.floor(game.users[objectID].square.currentCoord.topLeft.x / 8);
@@ -164,14 +164,16 @@ export const attackObjectMainMechanism = (
           io
         );
 
-        // if (chanksAndObjectsUnderAttack?.objectUnderAttack) {
-        //   calculateDamage(
-        //     game.users[attackObjectID].moveDirection,
-        //     attackObjectID,
-        //     io,
-        //     chanksAndObjectsUnderAttack?.objectUnderAttack
-        //   );
-        // }
+        setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
+
+        if (chanksAndObjectsUnderAttack?.objectUnderAttack) {
+          calculateDamage(
+            game.users[attackObjectID].moveDirection,
+            attackObjectID,
+            io,
+            chanksAndObjectsUnderAttack?.objectUnderAttack
+          );
+        }
       }, 3000);
     };
 
@@ -213,19 +215,6 @@ export const setAttackObjectStatus = (
   cooldownInterval = setInterval(() => {
     if (Date.now() - startAttackTimestamp > 1000) {
       game.attackStatusObj[attackObjectID].isCooldown = false;
-      // io.of("/").to(clientData.roomID).emit("serverStopAttackCooldown", {
-      //   // roomID: clientData.roomID,
-      //   // socketID: attackObjectID,
-      //   // attackStatus: game.users[attackObjectID].attackStatus,
-      //   // isCooldown: false,
-      // });
-      // console.log("Stop interval");
-      // increaseFrameNumber();
-
-      // io.of("/").to(clientData.roomID).emit("serverResetCooldown", {
-      //   attackStatusObj: game.attackStatusObj,
-      // });
-
       clearInterval(cooldownInterval);
     }
   }, 100);
@@ -372,89 +361,117 @@ export const calculateDamage = (
   for (const underAttackObjectID in objectUnderAttack) {
     if (!game.users[underAttackObjectID]) return;
 
-    if (game.statObj.NPC[underAttackObjectID] === undefined) return;
+    if (game.users[underAttackObjectID].type === "NPC") {
+      if (game.statObj.NPC[underAttackObjectID] === undefined) return;
 
-    // отнимаем hp у лбъекта, по которому проходит урон
+      // отнимаем hp у лбъекта, по которому проходит урон
 
-    reduceNPCHP(underAttackObjectID, attackObjectID);
+      reduceNPCHP(underAttackObjectID, attackObjectID);
 
-    // если у объекта по которому проходит урон, не осталось hp, то запускается анимация
-    //  и объект удаляется и очищаются занимаемые чанки
-    if (game.statObj.NPC[underAttackObjectID].currentHP <= 0) {
-      // находим чанки и очищаем их
-      const getDeletedObjectCurrentChanks = (underAttackObjectID: string) => {
-        const topLeftXChank = Math.floor(
-          game.users[underAttackObjectID].square.currentCoord.topLeft.x / 8
-        );
-        const topLeftYChank = Math.floor(
-          game.users[underAttackObjectID].square.currentCoord.topLeft.y / 8
-        );
+      // если у объекта по которому проходит урон, не осталось hp, то запускается анимация
+      //  и объект удаляется и очищаются занимаемые чанки
+      if (game.statObj.NPC[underAttackObjectID].currentHP <= 0) {
+        // находим чанки и очищаем их
+        const getDeletedObjectCurrentChanks = (underAttackObjectID: string) => {
+          const topLeftXChank = Math.floor(
+            game.users[underAttackObjectID].square.currentCoord.topLeft.x / 8
+          );
+          const topLeftYChank = Math.floor(
+            game.users[underAttackObjectID].square.currentCoord.topLeft.y / 8
+          );
 
-        const deletedObjectType = game.users[underAttackObjectID].objectType;
+          const deletedObjectType = game.users[underAttackObjectID].objectType;
 
-        for (let i = 0; i <= NPCOrGamerObjectsData[deletedObjectType].widthChanks; i++) {
-          for (let j = 0; j <= NPCOrGamerObjectsData[deletedObjectType].heightChanks; j++) {
-            if (
-              game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank.objectID ===
-              underAttackObjectID
-            ) {
-              game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank = {
-                objectID: undefined,
-                isObjectChank: false,
-                isGamerChank: null,
-              };
+          for (let i = 0; i <= NPCOrGamerObjectsData[deletedObjectType].widthChanks; i++) {
+            for (let j = 0; j <= NPCOrGamerObjectsData[deletedObjectType].heightChanks; j++) {
+              if (
+                game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank.objectID ===
+                underAttackObjectID
+              ) {
+                game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank = {
+                  objectID: undefined,
+                  isObjectChank: false,
+                  isGamerChank: null,
+                };
+              }
             }
           }
-        }
-      };
+        };
 
-      getDeletedObjectCurrentChanks(underAttackObjectID);
+        getDeletedObjectCurrentChanks(underAttackObjectID);
 
-      game.users[underAttackObjectID].deathAnimationStatus = true;
-      game.users[
-        underAttackObjectID
-      ].imgName = `${game.users[underAttackObjectID].objectType}DeathImage`;
+        game.users[underAttackObjectID].deathAnimationStatus = true;
+        game.users[
+          underAttackObjectID
+        ].imgName = `${game.users[underAttackObjectID].objectType}DeathImage`;
 
-      io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverNPCDeathAnimationStatus", {
-        underAttackObjectID: underAttackObjectID,
+        io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverNPCDeathAnimationStatus", {
+          underAttackObjectID: underAttackObjectID,
+        });
+
+        setTimeout(() => {
+          delete game.users[underAttackObjectID];
+        }, 1200);
+
+        // setTimeout(() => {
+        //   chanksUnderAttack.map((chank) => {
+        //     game.gameField[chank.row][chank.col].chankUnderAttack = false;
+        //   });
+        // }, 600);
+
+        return;
+      }
+
+      // отправляем всем клиентам данные о hp объекта,
+      // по которому прошёл урон
+
+      io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverUnderAttackObjectStat", {
+        underAttackObjID: underAttackObjectID,
+        underAttackObjectType: game.users[underAttackObjectID].type,
+        underAttackObjStat: game.statObj.NPC[underAttackObjectID],
       });
 
-      setTimeout(() => {
-        delete game.users[underAttackObjectID];
-      }, 1200);
-
-      // setTimeout(() => {
-      //   chanksUnderAttack.map((chank) => {
-      //     game.gameField[chank.row][chank.col].chankUnderAttack = false;
-      //   });
-      // }, 600);
-
-      return;
-    }
-
-    // отправляем всем клиентам данные о hp объекта,
-    // по которому прошёл урон
-
-    io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverUnderAttackObjectStat", {
-      underAttackObjID: underAttackObjectID,
-      underAttackObjStat: game.statObj.NPC[underAttackObjectID],
-    });
-
-    setClientCoordinates(game.users[underAttackObjectID].objectType, underAttackObjectID, {
-      direction: direction,
-      roomID: "asdasd",
-      shiftUserPixels: 4,
-    });
-    game.users[underAttackObjectID].getDamageStatus = true;
-    game.users[
-      underAttackObjectID
-    ].imgName = `${game.users[underAttackObjectID].objectType}GetDamageImage`;
-
-    setTimeout(() => {
-      game.users[underAttackObjectID].getDamageStatus = false;
+      setClientCoordinates(game.users[underAttackObjectID].objectType, underAttackObjectID, {
+        direction: direction,
+        roomID: "asdasd",
+        shiftUserPixels: 4,
+      });
+      game.users[underAttackObjectID].getDamageStatus = true;
       game.users[
         underAttackObjectID
-      ].imgName = `${game.users[underAttackObjectID].objectType}WalkImage`;
-    }, 900);
+      ].imgName = `${game.users[underAttackObjectID].objectType}GetDamageImage`;
+
+      setTimeout(() => {
+        game.users[underAttackObjectID].getDamageStatus = false;
+        game.users[
+          underAttackObjectID
+        ].imgName = `${game.users[underAttackObjectID].objectType}WalkImage`;
+      }, 900);
+    }
+    if (game.users[underAttackObjectID].type === "gamer") {
+      reduceGamerHP(underAttackObjectID, attackObjectID);
+      io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverUnderAttackObjectStat", {
+        underAttackObjID: underAttackObjectID,
+        underAttackObjectType: game.users[underAttackObjectID].type,
+        underAttackObjStat: game.statObj.gamers[underAttackObjectID],
+      });
+
+      setClientCoordinates(game.users[underAttackObjectID].objectType, underAttackObjectID, {
+        direction: direction,
+        roomID: "asdasd",
+        shiftUserPixels: 4,
+      });
+      game.users[underAttackObjectID].getDamageStatus = true;
+      game.users[
+        underAttackObjectID
+      ].imgName = `${game.users[underAttackObjectID].objectType}GetDamageImage`;
+
+      setTimeout(() => {
+        game.users[underAttackObjectID].getDamageStatus = false;
+        game.users[
+          underAttackObjectID
+        ].imgName = `${game.users[underAttackObjectID].objectType}WalkImage`;
+      }, 900);
+    }
   }
 };
