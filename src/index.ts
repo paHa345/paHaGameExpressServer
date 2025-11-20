@@ -228,7 +228,7 @@ io.on("connection", (socket) => {
         timePrev = timeCurrent;
         timeCurrent = Date.now();
       }
-      const shiftUserPixels = Math.floor((timeCurrent - timePrev) / 20);
+      const shiftUserPixels = Math.floor((timeCurrent - timePrev) / 10);
       setClientCoordinates("gamer", socket.id, { ...clientData, shiftUserPixels });
     }, 33);
   });

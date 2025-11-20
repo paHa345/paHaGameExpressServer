@@ -47,8 +47,6 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
         //рассчитаем чанки, по которым пройдёт удар
         const NPCAttack = () => {
             const NPCGetChanksUnderAttack = (objectEdgeChanks) => {
-                console.log(objectEdgeChanks.bottomLeftXChank);
-                console.log(gameObject_1.game.users[attackObjectID].moveDirection);
                 gameObject_1.game.NPCDataObj[attackObjectID].NPCPrepareToAttackStatus = true;
                 if (gameObject_1.game.users[attackObjectID].NPCViewDirection === gameObject_1.UserMoveDirections.up ||
                     gameObject_1.game.users[attackObjectID].NPCViewDirection === gameObject_1.UserMoveDirections.stop) {
@@ -220,13 +218,13 @@ const getChanksAndObjectsUnderAttack = (direction, attackObjectID, attackAreaDee
 };
 exports.getChanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack;
 const calculateDamage = (direction, attackObjectID, io, objectUnderAttack) => {
-    console.log("Damage");
     for (const underAttackObjectID in objectUnderAttack) {
         if (!gameObject_1.game.users[underAttackObjectID])
             return;
         if (gameObject_1.game.users[underAttackObjectID].type === "NPC") {
             if (gameObject_1.game.statObj.NPC[underAttackObjectID] === undefined)
                 return;
+            console.log(gameObject_1.game.NPCDataObj[underAttackObjectID].NPCPrepareToAttackStatus);
             // отнимаем hp у лбъекта, по которому проходит урон
             (0, statObjectsMain_1.reduceNPCHP)(underAttackObjectID, attackObjectID);
             // если у объекта по которому проходит урон, не осталось hp, то запускается анимация
@@ -302,7 +300,7 @@ const calculateDamage = (direction, attackObjectID, io, objectUnderAttack) => {
             setTimeout(() => {
                 gameObject_1.game.users[underAttackObjectID].getDamageStatus = false;
                 gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}WalkImage`;
-            }, 900);
+            }, 750);
         }
     }
 };

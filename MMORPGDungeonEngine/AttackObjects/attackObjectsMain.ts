@@ -77,8 +77,6 @@ export const attackObjectMainMechanism = (
         topRightXChank: number;
         topRightYChank: number;
       }) => {
-        console.log(objectEdgeChanks.bottomLeftXChank);
-        console.log(game.users[attackObjectID].moveDirection);
         game.NPCDataObj[attackObjectID].NPCPrepareToAttackStatus = true;
 
         if (
@@ -357,12 +355,13 @@ export const calculateDamage = (
     [underAttackObjectID: string]: number;
   }
 ) => {
-  console.log("Damage");
   for (const underAttackObjectID in objectUnderAttack) {
     if (!game.users[underAttackObjectID]) return;
 
     if (game.users[underAttackObjectID].type === "NPC") {
       if (game.statObj.NPC[underAttackObjectID] === undefined) return;
+
+      console.log(game.NPCDataObj[underAttackObjectID].NPCPrepareToAttackStatus);
 
       // отнимаем hp у лбъекта, по которому проходит урон
 
@@ -471,7 +470,7 @@ export const calculateDamage = (
         game.users[
           underAttackObjectID
         ].imgName = `${game.users[underAttackObjectID].objectType}WalkImage`;
-      }, 900);
+      }, 750);
     }
   }
 };
