@@ -84,14 +84,14 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
     if (gameObject_1.game.users[objectID]) {
         gameObject_1.game.users[objectID].square.prevCoord = JSON.parse(JSON.stringify(gameObject_1.game.users[objectID].square.currentCoord));
     }
-    if (gameObject_1.game.users[objectID] && gameObject_1.game.attackStatusObj[objectID]) {
-        gameObject_1.game.users[objectID].getDamageStatus
-            ? (gameObject_1.game.users[objectID].imgName = `${objectType}GetDamageImage`)
-            : (gameObject_1.game.users[objectID].imgName = `${objectType}WalkImage`);
-        gameObject_1.game.attackStatusObj[objectID].isActive
-            ? (gameObject_1.game.users[objectID].imgName = `${objectType}AttackImage`)
-            : (gameObject_1.game.users[objectID].imgName = `${objectType}WalkImage`);
-    }
+    // if (game.users[objectID] && game.attackStatusObj[objectID]) {
+    //   game.users[objectID].getDamageStatus
+    //     ? (game.users[objectID].imgName = `${objectType}GetDamageImage`)
+    //     : (game.users[objectID].imgName = `${objectType}WalkImage`);
+    //   game.attackStatusObj[objectID].isActive
+    //     ? (game.users[objectID].imgName = `${objectType}AttackImage`)
+    //     : (game.users[objectID].imgName = `${objectType}WalkImage`);
+    // }
     const setMoveCoord = () => {
         if (clientData.direction === gameObject_1.UserMoveDirections.down) {
             gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y =

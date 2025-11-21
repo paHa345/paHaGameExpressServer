@@ -103,14 +103,15 @@ export const setClientCoordinates = (
       JSON.stringify(game.users[objectID].square.currentCoord)
     );
   }
-  if (game.users[objectID] && game.attackStatusObj[objectID]) {
-    game.users[objectID].getDamageStatus
-      ? (game.users[objectID].imgName = `${objectType}GetDamageImage`)
-      : (game.users[objectID].imgName = `${objectType}WalkImage`);
-    game.attackStatusObj[objectID].isActive
-      ? (game.users[objectID].imgName = `${objectType}AttackImage`)
-      : (game.users[objectID].imgName = `${objectType}WalkImage`);
-  }
+  // if (game.users[objectID] && game.attackStatusObj[objectID]) {
+
+  //   game.users[objectID].getDamageStatus
+  //     ? (game.users[objectID].imgName = `${objectType}GetDamageImage`)
+  //     : (game.users[objectID].imgName = `${objectType}WalkImage`);
+  //   game.attackStatusObj[objectID].isActive
+  //     ? (game.users[objectID].imgName = `${objectType}AttackImage`)
+  //     : (game.users[objectID].imgName = `${objectType}WalkImage`);
+  // }
 
   const setMoveCoord = () => {
     if (clientData.direction === UserMoveDirections.down) {
