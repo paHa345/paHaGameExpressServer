@@ -28,6 +28,7 @@ export interface IGameMain {
         };
         type?: string;
         notMove: boolean;
+
         chankUnderAttack: boolean;
         coord?: {
           topLeft: { x: number; y: number };
@@ -39,6 +40,10 @@ export interface IGameMain {
           imageName?: string;
           XSpriteCoord?: number;
           YSpriteCoord?: number;
+          sourceX?: number;
+          sourceY?: number;
+          heigthChanks?: number;
+          widthChanks?: number;
         };
       };
     };
