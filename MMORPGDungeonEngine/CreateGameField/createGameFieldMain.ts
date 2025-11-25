@@ -19,18 +19,21 @@ export const createGameField = (socketID: string) => {
       game.gameField[i] = gameFieldCreatedObjRow;
     }
 
-    const createStoneTexture = (
+    const createBackgroundObjectTextureHomogenous = (
       XChank: number,
       YChank: number,
       XSpriteCoord: number,
       YSpriteCoord: number,
-      sourceX?: number,
-      sourceY?: number,
-      heightChanks?: number,
-      widthChanks?: number
+      sourceX: number,
+      sourceY: number,
+      heightChanks: number,
+      widthChanks: number,
+      objectType: string,
+      imageName: string,
+      impenetrableStatus: boolean
     ) => {
       game.gameField[XChank][YChank].textureObj = {};
-      game.gameField[XChank][YChank].textureObj.imageName = "rocksAndStones";
+      game.gameField[XChank][YChank].textureObj.imageName = imageName;
       game.gameField[XChank][YChank].textureObj.XSpriteCoord = XSpriteCoord;
       game.gameField[XChank][YChank].textureObj.YSpriteCoord = YSpriteCoord;
       game.gameField[XChank][YChank].textureObj.sourceX = sourceX;
@@ -38,51 +41,12 @@ export const createGameField = (socketID: string) => {
       game.gameField[XChank][YChank].textureObj.heigthChanks = heightChanks;
       game.gameField[XChank][YChank].textureObj.widthChanks = widthChanks;
 
-      for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-          game.gameField[XChank + i][YChank + j].type = "stone";
+      for (let i = 0; i < widthChanks; i++) {
+        for (let j = 0; j < heightChanks; j++) {
+          game.gameField[XChank + i][YChank + j].type = objectType;
 
-          game.gameField[XChank + i][YChank + j].notMove = true;
-          game.gameField[XChank + i][YChank + j].coord = {
-            topLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) },
-            topRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) },
-            bottomLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) + 8 },
-            bottomRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) + 8 },
-          };
-        }
-      }
-    };
-    createStoneTexture(10, 10, 0, 0, 64, 64, 4, 4);
-    createStoneTexture(14, 10, 0, 0, 64, 64, 4, 4);
-    createStoneTexture(18, 10, 64, 0, 64, 64, 4, 4);
-    createStoneTexture(18, 14, 0, 64, 64, 64, 4, 4);
-    createStoneTexture(18, 18, 0, 64, 64, 64, 4, 4);
-    createStoneTexture(18, 22, 0, 64, 64, 64, 4, 4);
+          game.gameField[XChank + i][YChank + j].notMove = impenetrableStatus;
 
-    const createRoadTileTexture = (
-      XChank: number,
-      YChank: number,
-      XSpriteCoord: number,
-      YSpriteCoord: number,
-      sourceX?: number,
-      sourceY?: number,
-      heightChanks?: number,
-      widthChanks?: number
-    ) => {
-      game.gameField[XChank][YChank].textureObj = {};
-      game.gameField[XChank][YChank].textureObj.imageName = "roadTile";
-      game.gameField[XChank][YChank].textureObj.XSpriteCoord = XSpriteCoord;
-      game.gameField[XChank][YChank].textureObj.YSpriteCoord = YSpriteCoord;
-      game.gameField[XChank][YChank].textureObj.sourceX = sourceX;
-      game.gameField[XChank][YChank].textureObj.sourceY = sourceY;
-      game.gameField[XChank][YChank].textureObj.heigthChanks = heightChanks;
-      game.gameField[XChank][YChank].textureObj.widthChanks = widthChanks;
-
-      for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-          game.gameField[XChank + i][YChank + j].type = "road";
-
-          game.gameField[XChank + i][YChank + j].notMove = false;
           game.gameField[XChank + i][YChank + j].coord = {
             topLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) },
             topRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) },
@@ -93,33 +57,282 @@ export const createGameField = (socketID: string) => {
       }
     };
 
-    createRoadTileTexture(30, 30, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(30, 34, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(30, 38, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(30, 42, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(30, 46, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(30, 50, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(31, 54, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(32, 58, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(34, 62, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(36, 66, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(40, 66, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(44, 66, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(48, 66, 8, 135, 24, 24, 4, 4);
-    createRoadTileTexture(52, 66, 8, 135, 24, 24, 4, 4);
+    createBackgroundObjectTextureHomogenous(
+      10,
+      10,
+      0,
+      0,
+      64,
+      64,
+      4,
+      4,
+      "stone",
+      "rocksAndStones",
+      true
+    );
+    createBackgroundObjectTextureHomogenous(
+      14,
+      10,
+      0,
+      0,
+      64,
+      64,
+      4,
+      4,
+      "stone",
+      "rocksAndStones",
+      true
+    );
+    createBackgroundObjectTextureHomogenous(
+      18,
+      10,
+      64,
+      0,
+      64,
+      64,
+      4,
+      4,
+      "stone",
+      "rocksAndStones",
+      true
+    );
+    createBackgroundObjectTextureHomogenous(
+      18,
+      14,
+      0,
+      64,
+      64,
+      64,
+      4,
+      4,
+      "stone",
+      "rocksAndStones",
+      true
+    );
+    createBackgroundObjectTextureHomogenous(
+      18,
+      18,
+      0,
+      64,
+      64,
+      64,
+      4,
+      4,
+      "stone",
+      "rocksAndStones",
+      true
+    );
+    createBackgroundObjectTextureHomogenous(
+      18,
+      22,
+      0,
+      64,
+      64,
+      64,
+      4,
+      4,
+      "stone",
+      "rocksAndStones",
+      true
+    );
 
-    const createTreeTexture = (
+    createBackgroundObjectTextureHomogenous(
+      30,
+      30,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      30,
+      34,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      30,
+      38,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      30,
+      42,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      30,
+      46,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      30,
+      50,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      31,
+      54,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      32,
+      58,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      34,
+      62,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      36,
+      66,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      40,
+      66,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      44,
+      66,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      48,
+      66,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+    createBackgroundObjectTextureHomogenous(
+      52,
+      66,
+      8,
+      135,
+      24,
+      24,
+      4,
+      4,
+      "road",
+      "roadTile",
+      false
+    );
+
+    const createBackgroundObjectTreeTexture = (
       XChank: number,
       YChank: number,
       XSpriteCoord: number,
       YSpriteCoord: number,
-      sourceX?: number,
-      sourceY?: number,
-      heightChanks?: number,
-      widthChanks?: number
+      sourceX: number,
+      sourceY: number,
+      heightChanks: number,
+      widthChanks: number,
+      objectType: string,
+      imageName: string
     ) => {
       game.gameField[XChank][YChank].textureObj = {};
-      game.gameField[XChank][YChank].textureObj.imageName = "trees";
+      game.gameField[XChank][YChank].textureObj.imageName = imageName;
       game.gameField[XChank][YChank].textureObj.XSpriteCoord = XSpriteCoord;
       game.gameField[XChank][YChank].textureObj.YSpriteCoord = YSpriteCoord;
       game.gameField[XChank][YChank].textureObj.sourceX = sourceX;
@@ -127,23 +340,50 @@ export const createGameField = (socketID: string) => {
       game.gameField[XChank][YChank].textureObj.heigthChanks = heightChanks;
       game.gameField[XChank][YChank].textureObj.widthChanks = widthChanks;
 
-      for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 10; j++) {
-          game.gameField[XChank + i][YChank + j].type = "tree";
+      if (objectType === "tree") {
+        for (let i = 0; i < widthChanks; i++) {
+          for (let j = 0; j < heightChanks; j++) {
+            game.gameField[XChank + i][YChank + j].type = objectType;
 
-          game.gameField[XChank + i][YChank + j].notMove = true;
-          game.gameField[XChank + i][YChank + j].coord = {
-            topLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) },
-            topRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) },
-            bottomLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) + 8 },
-            bottomRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) + 8 },
-          };
+            if (j >= 1 && j <= 5 && i >= 6) {
+              game.gameField[XChank + i][YChank + j].notMove = true;
+            }
+            game.gameField[XChank + i][YChank + j].coord = {
+              topLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) },
+              topRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) },
+              bottomLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) + 8 },
+              bottomRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) + 8 },
+            };
+          }
         }
+
+        return;
+      }
+
+      if (objectType === "playersHouse") {
+        for (let i = 0; i < widthChanks; i++) {
+          for (let j = 0; j < heightChanks; j++) {
+            game.gameField[XChank + i][YChank + j].type = objectType;
+
+            if (i >= 8) {
+              game.gameField[XChank + i][YChank + j].notMove = true;
+            }
+            game.gameField[XChank + i][YChank + j].coord = {
+              topLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) },
+              topRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) },
+              bottomLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) + 8 },
+              bottomRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) + 8 },
+            };
+          }
+        }
+
+        return;
       }
     };
 
-    createTreeTexture(40, 30, 191, 0, 64, 80, 8, 10);
-    createTreeTexture(40, 10, 191, 0, 64, 80, 8, 10);
+    createBackgroundObjectTreeTexture(40, 30, 191, 0, 64, 80, 8, 10, "tree", "trees");
+    createBackgroundObjectTreeTexture(40, 10, 191, 0, 64, 80, 8, 10, "tree", "trees");
+    createBackgroundObjectTreeTexture(40, 80, 12, 0, 132, 128, 17, 16, "playersHouse", "exterior");
 
     addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20, 160, 240);
     addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);

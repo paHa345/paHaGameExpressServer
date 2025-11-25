@@ -13,7 +13,7 @@ exports.game = {
     statObj: { NPC: {}, gamers: {} },
     gameIsstarted: false,
     users: {},
-    mapSize: 70,
+    mapSize: 140,
     gameField: {},
     attackStatusObj: {},
     NPCUnderAttackChanksObj: {},

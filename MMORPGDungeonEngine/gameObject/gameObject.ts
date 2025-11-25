@@ -170,7 +170,7 @@ export const game: IGameMain = {
   statObj: { NPC: {}, gamers: {} },
   gameIsstarted: false,
   users: {},
-  mapSize: 70,
+  mapSize: 140,
   gameField: {},
   attackStatusObj: {},
   NPCUnderAttackChanksObj: {},
