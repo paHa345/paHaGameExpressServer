@@ -61,6 +61,8 @@ const createGameField = (socketID) => {
         createBackgroundObjectTextureHomogenous(44, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
         createBackgroundObjectTextureHomogenous(48, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
         createBackgroundObjectTextureHomogenous(52, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
+        createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
+        createBackgroundObjectTextureHomogenous(45, 100, 101, 517, 25, 25, 3, 3, "mushroom", "exterior", true);
         const createBackgroundObjectTreeTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceX, sourceY, heightChanks, widthChanks, objectType, imageName) => {
             gameObject_1.game.gameField[XChank][YChank].textureObj = {};
             gameObject_1.game.gameField[XChank][YChank].textureObj.imageName = imageName;
@@ -108,10 +110,10 @@ const createGameField = (socketID) => {
         createBackgroundObjectTreeTexture(40, 30, 191, 0, 64, 80, 8, 10, "tree", "trees");
         createBackgroundObjectTreeTexture(40, 10, 191, 0, 64, 80, 8, 10, "tree", "trees");
         createBackgroundObjectTreeTexture(40, 80, 12, 0, 132, 128, 17, 16, "playersHouse", "exterior");
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#1", 100, 0.1, 20, 160, 240);
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
+        // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20, 160, 240);
+        // addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
+        // addGamerOrNPC("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
+        // addGamerOrNPC("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
         (0, moveObjectsMain_1.moveNPCMain)(src_1.io);
         // moveNPC("ORC#1", "orc3");
         // moveNPC("ORC#2", "orc3");

@@ -44,7 +44,6 @@ export const NPCViewMain = (
       ) {
         console.log("Игрок в зоне атаки. Сейчас я его ударю");
         NPCObj.NPCCondition.type = "aggression";
-        // NPCObj.NPCPrepareToAttackStatus = true;
         attackObjectMainMechanism(NPCID, game.users[NPCID].NPCViewDirection, "NPC", "orc3", io);
 
         return;

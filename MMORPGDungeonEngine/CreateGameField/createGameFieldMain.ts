@@ -319,6 +319,21 @@ export const createGameField = (socketID: string) => {
       false
     );
 
+    createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
+    createBackgroundObjectTextureHomogenous(
+      45,
+      100,
+      101,
+      517,
+      25,
+      25,
+      3,
+      3,
+      "mushroom",
+      "exterior",
+      true
+    );
+
     const createBackgroundObjectTreeTexture = (
       XChank: number,
       YChank: number,
@@ -385,10 +400,10 @@ export const createGameField = (socketID: string) => {
     createBackgroundObjectTreeTexture(40, 10, 191, 0, 64, 80, 8, 10, "tree", "trees");
     createBackgroundObjectTreeTexture(40, 80, 12, 0, 132, 128, 17, 16, "playersHouse", "exterior");
 
-    addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20, 160, 240);
-    addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
-    addGamerOrNPC("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
-    addGamerOrNPC("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
+    // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20, 160, 240);
+    // addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
+    // addGamerOrNPC("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
+    // addGamerOrNPC("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
     moveNPCMain(io);
     // moveNPC("ORC#1", "orc3");
     // moveNPC("ORC#2", "orc3");

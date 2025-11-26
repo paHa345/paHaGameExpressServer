@@ -47,9 +47,13 @@ exports.NPCOrGamerObjectsData = {
     gamer: {
         heightChanks: 5,
         widthChanks: 3,
+        heightPixels: 40,
+        widthPixels: 24,
     },
     orc3: {
         heightChanks: 6,
         widthChanks: 4,
+        heightPixels: 48,
+        widthPixels: 32,
     },
 };

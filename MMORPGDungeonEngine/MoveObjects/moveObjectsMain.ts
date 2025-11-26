@@ -103,15 +103,6 @@ export const setClientCoordinates = (
       JSON.stringify(game.users[objectID].square.currentCoord)
     );
   }
-  // if (game.users[objectID] && game.attackStatusObj[objectID]) {
-
-  //   game.users[objectID].getDamageStatus
-  //     ? (game.users[objectID].imgName = `${objectType}GetDamageImage`)
-  //     : (game.users[objectID].imgName = `${objectType}WalkImage`);
-  //   game.attackStatusObj[objectID].isActive
-  //     ? (game.users[objectID].imgName = `${objectType}AttackImage`)
-  //     : (game.users[objectID].imgName = `${objectType}WalkImage`);
-  // }
 
   const setMoveCoord = () => {
     if (clientData.direction === UserMoveDirections.down) {
@@ -166,6 +157,76 @@ export const setClientCoordinates = (
     game.users[objectID].moveDirection = clientData.direction;
     if (clientData.direction === UserMoveDirections.down) {
       // смотрим чанки, на которые хотим встать
+
+      // const widthPX =
+      //   game.users[objectID].square.currentCoord.bottomRight.x -
+      //   game.users[objectID].square.currentCoord.bottomLeft.x;
+
+      const objectInChankStartPixel =
+        game.users[objectID].square.currentCoord.bottomLeft.x % 8 === 0 ? true : false;
+
+      console.log(objectInChankStartPixel);
+
+      for (
+        let i = game.users[objectID].square.currentCoord.bottomLeft.x + 8;
+        i <= game.users[objectID].square.currentCoord.bottomRight.x;
+        i = i + 8
+      ) {
+        if (
+          objectInChankStartPixel &&
+          i === game.users[objectID].square.currentCoord.bottomRight.x
+        ) {
+          continue;
+        }
+
+        // console.log(
+        //   game.gameField[
+        //     Math.floor(
+        //       (game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels) /
+        //         8
+        //     )
+        //   ][Math.floor(i / 8)].notMove
+        // );
+
+        // console.log(
+        //   game.gameField[
+        //     Math.floor(
+        //       (game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels) /
+        //         8
+        //     )
+        //   ][Math.floor((i - 8) / 8)].notMove
+        // );
+
+        // chanks[Math.floor(i / 8)] = {
+        //   x: Math.floor(i / 8),
+        //   y: Math.floor(
+        //     (game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels) / 8
+        //   ),
+        //   notMoveStatus:
+        //     game.gameField[
+        //       Math.floor(
+        //         (game.users[objectID].square.currentCoord.bottomLeft.y +
+        //           clientData.shiftUserPixels) /
+        //           8
+        //       )
+        //     ][Math.floor(i / 8)].notMove,
+        // };
+        // chanks[Math.floor((i - 8) / 8)] = {
+        //   x: Math.floor((i - 8) / 8),
+        //   y: Math.floor(
+        //     (game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels) / 8
+        //   ),
+        //   notMoveStatus:
+        //     game.gameField[
+        //       Math.floor(
+        //         (game.users[objectID].square.currentCoord.bottomLeft.y +
+        //           clientData.shiftUserPixels) /
+        //           8
+        //       )
+        //     ][Math.floor((i - 8) / 8)].notMove,
+        // };
+        // смотрим чанки
+      }
 
       game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels >
         (game.mapSize - 1) * 8 ||

@@ -84,14 +84,6 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
     if (gameObject_1.game.users[objectID]) {
         gameObject_1.game.users[objectID].square.prevCoord = JSON.parse(JSON.stringify(gameObject_1.game.users[objectID].square.currentCoord));
     }
-    // if (game.users[objectID] && game.attackStatusObj[objectID]) {
-    //   game.users[objectID].getDamageStatus
-    //     ? (game.users[objectID].imgName = `${objectType}GetDamageImage`)
-    //     : (game.users[objectID].imgName = `${objectType}WalkImage`);
-    //   game.attackStatusObj[objectID].isActive
-    //     ? (game.users[objectID].imgName = `${objectType}AttackImage`)
-    //     : (game.users[objectID].imgName = `${objectType}WalkImage`);
-    // }
     const setMoveCoord = () => {
         if (clientData.direction === gameObject_1.UserMoveDirections.down) {
             gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y =
@@ -141,6 +133,62 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
         gameObject_1.game.users[objectID].moveDirection = clientData.direction;
         if (clientData.direction === gameObject_1.UserMoveDirections.down) {
             // смотрим чанки, на которые хотим встать
+            // const widthPX =
+            //   game.users[objectID].square.currentCoord.bottomRight.x -
+            //   game.users[objectID].square.currentCoord.bottomLeft.x;
+            const objectInChankStartPixel = gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.x % 8 === 0 ? true : false;
+            console.log(objectInChankStartPixel);
+            for (let i = gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.x + 8; i <= gameObject_1.game.users[objectID].square.currentCoord.bottomRight.x; i = i + 8) {
+                if (objectInChankStartPixel &&
+                    i === gameObject_1.game.users[objectID].square.currentCoord.bottomRight.x) {
+                    continue;
+                }
+                // console.log(
+                //   game.gameField[
+                //     Math.floor(
+                //       (game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels) /
+                //         8
+                //     )
+                //   ][Math.floor(i / 8)].notMove
+                // );
+                // console.log(
+                //   game.gameField[
+                //     Math.floor(
+                //       (game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels) /
+                //         8
+                //     )
+                //   ][Math.floor((i - 8) / 8)].notMove
+                // );
+                // chanks[Math.floor(i / 8)] = {
+                //   x: Math.floor(i / 8),
+                //   y: Math.floor(
+                //     (game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels) / 8
+                //   ),
+                //   notMoveStatus:
+                //     game.gameField[
+                //       Math.floor(
+                //         (game.users[objectID].square.currentCoord.bottomLeft.y +
+                //           clientData.shiftUserPixels) /
+                //           8
+                //       )
+                //     ][Math.floor(i / 8)].notMove,
+                // };
+                // chanks[Math.floor((i - 8) / 8)] = {
+                //   x: Math.floor((i - 8) / 8),
+                //   y: Math.floor(
+                //     (game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels) / 8
+                //   ),
+                //   notMoveStatus:
+                //     game.gameField[
+                //       Math.floor(
+                //         (game.users[objectID].square.currentCoord.bottomLeft.y +
+                //           clientData.shiftUserPixels) /
+                //           8
+                //       )
+                //     ][Math.floor((i - 8) / 8)].notMove,
+                // };
+                // смотрим чанки
+            }
             gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y + clientData.shiftUserPixels >
                 (gameObject_1.game.mapSize - 1) * 8 ||
                 ((_a = gameObject_1.game.gameField[Math.floor(gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y / 8)][Math.floor((gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.x + 5) / 8)]) === null || _a === void 0 ? void 0 : _a.notMove) ||
