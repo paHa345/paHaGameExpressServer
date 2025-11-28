@@ -19,6 +19,18 @@ export const createGameField = (socketID: string) => {
       game.gameField[i] = gameFieldCreatedObjRow;
     }
 
+    const createGameFieldSectors = () => {
+      for (let i = 0; i < game.mapSize / 20; i++) {
+        for (let j = 0; j < game.mapSize / 20; j++) {
+          game.sectors[`${i}${j}`] = {
+            objectsID: {},
+          };
+        }
+      }
+    };
+
+    createGameFieldSectors();
+
     const createBackgroundObjectTextureHomogenous = (
       XChank: number,
       YChank: number,
@@ -400,10 +412,10 @@ export const createGameField = (socketID: string) => {
     createBackgroundObjectTreeTexture(40, 10, 191, 0, 64, 80, 8, 10, "tree", "trees");
     createBackgroundObjectTreeTexture(40, 80, 12, 0, 132, 128, 17, 16, "playersHouse", "exterior");
 
-    // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20, 160, 240);
-    // addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
-    // addGamerOrNPC("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
-    // addGamerOrNPC("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
+    addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20, 160, 240);
+    addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
+    addGamerOrNPC("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
+    addGamerOrNPC("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
     moveNPCMain(io);
     // moveNPC("ORC#1", "orc3");
     // moveNPC("ORC#2", "orc3");
@@ -412,7 +424,7 @@ export const createGameField = (socketID: string) => {
     // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
     // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
   }
-  addGamerOrNPC("gamer", "gamer", socketID, 100, 0.2, 10);
+  addGamerOrNPC("gamer", "gamer", socketID, 100, 0.2, 10, 150, 150);
 
   game.gameIsstarted = true;
 };

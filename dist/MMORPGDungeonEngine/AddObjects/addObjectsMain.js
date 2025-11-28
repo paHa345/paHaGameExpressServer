@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.addGamerOrNPC = void 0;
 const types_1 = require("../../types");
 const gameObject_1 = require("../gameObject/gameObject");
-const moveObjectsMain_1 = require("../MoveObjects/moveObjectsMain");
+const moveObjectsFunctions_1 = require("../MoveObjects/moveObjectsFunctions");
+// import { setUserCurrentChanks } from "../MoveObjects/moveObjectsMain";
 const addGamerOrNPC = (addedElType, objectType, addedElID, hp, armour, damage, XCoord, YCoord) => {
     const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(gameObject_1.game.users).length;
     if (addedElType === "gamer") {
@@ -95,10 +96,24 @@ const addGamerOrNPC = (addedElType, objectType, addedElID, hp, armour, damage, X
     if (addedElType === "NPC") {
         gameObject_1.game.users[addedElID].NPCViewDirection = gameObject_1.UserMoveDirections.up;
     }
-    (0, moveObjectsMain_1.setUserCurrentChanks)({
-        width: types_1.NPCOrGamerObjectsData[objectType].widthChanks,
-        height: types_1.NPCOrGamerObjectsData[objectType].heightChanks,
-    }, addedElID);
+    // setUserCurrentChanks(
+    //   {
+    //     width: NPCOrGamerObjectsData[objectType].widthChanks,
+    //     height: NPCOrGamerObjectsData[objectType].heightChanks,
+    //   },
+    //   addedElID
+    // );
+    // const bottomLeftXCoord = game.users[addedElID].square.currentCoord.bottomLeft.x;
+    // const bottomRightXCoord = game.users[addedElID].square.currentCoord.bottomRight.x;
+    // const topLeftXCoord = game.users[addedElID].square.currentCoord.topLeft.x;
+    // const topRightXCoord = game.users[addedElID].square.currentCoord.topRight.x;
+    // const bottomLeftYCoord = game.users[addedElID].square.currentCoord.bottomLeft.y;
+    // const topLeftYCoord = game.users[addedElID].square.currentCoord.topLeft.y;
+    // const topRightYCoord = game.users[addedElID].square.currentCoord.topRight.y;
+    // const bottomRightYCoord = game.users[addedElID].square.currentCoord.bottomRight.y;
+    // для каждой точки определяем в каком секторе она находится
+    const objectCoords = (0, moveObjectsFunctions_1.getObjectCoords)(addedElID);
+    (0, moveObjectsFunctions_1.setObjectInSectors)(objectCoords, addedElID);
     gameObject_1.game.frameObj.objects[addedElID] = { idFrame: 0 };
 };
 exports.addGamerOrNPC = addGamerOrNPC;

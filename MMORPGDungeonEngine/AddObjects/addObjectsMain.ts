@@ -1,6 +1,7 @@
 import { NPCOrGamerObjectsData } from "../../types";
 import { game, UserMoveDirections } from "../gameObject/gameObject";
-import { setUserCurrentChanks } from "../MoveObjects/moveObjectsMain";
+import { getObjectCoords, setObjectInSectors } from "../MoveObjects/moveObjectsFunctions";
+// import { setUserCurrentChanks } from "../MoveObjects/moveObjectsMain";
 
 export const addGamerOrNPC = (
   addedElType: "gamer" | "NPC",
@@ -106,13 +107,28 @@ export const addGamerOrNPC = (
     game.users[addedElID].NPCViewDirection = UserMoveDirections.up;
   }
 
-  setUserCurrentChanks(
-    {
-      width: NPCOrGamerObjectsData[objectType].widthChanks,
-      height: NPCOrGamerObjectsData[objectType].heightChanks,
-    },
-    addedElID
-  );
+  // setUserCurrentChanks(
+  //   {
+  //     width: NPCOrGamerObjectsData[objectType].widthChanks,
+  //     height: NPCOrGamerObjectsData[objectType].heightChanks,
+  //   },
+  //   addedElID
+  // );
+
+  // const bottomLeftXCoord = game.users[addedElID].square.currentCoord.bottomLeft.x;
+  // const bottomRightXCoord = game.users[addedElID].square.currentCoord.bottomRight.x;
+  // const topLeftXCoord = game.users[addedElID].square.currentCoord.topLeft.x;
+  // const topRightXCoord = game.users[addedElID].square.currentCoord.topRight.x;
+  // const bottomLeftYCoord = game.users[addedElID].square.currentCoord.bottomLeft.y;
+  // const topLeftYCoord = game.users[addedElID].square.currentCoord.topLeft.y;
+  // const topRightYCoord = game.users[addedElID].square.currentCoord.topRight.y;
+  // const bottomRightYCoord = game.users[addedElID].square.currentCoord.bottomRight.y;
+
+  // для каждой точки определяем в каком секторе она находится
+
+  const objectCoords = getObjectCoords(addedElID);
+
+  setObjectInSectors(objectCoords, addedElID);
 
   game.frameObj.objects[addedElID] = { idFrame: 0 };
 };

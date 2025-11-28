@@ -17,6 +17,15 @@ export interface IGameMain {
   gameIsstarted: boolean;
   goodPlayer?: string;
   mapSize: number;
+  sectors: {
+    [sectorID: string]: {
+      objectsID: {
+        [id: string]: {
+          objectType: string;
+        };
+      };
+    };
+  };
   gameField: {
     [row: number]: {
       [col: number]: {
@@ -167,6 +176,7 @@ export interface IGameMain {
 }
 
 export const game: IGameMain = {
+  sectors: {},
   statObj: { NPC: {}, gamers: {} },
   gameIsstarted: false,
   users: {},

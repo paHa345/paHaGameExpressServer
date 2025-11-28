@@ -10,6 +10,7 @@ var UserMoveDirections;
     UserMoveDirections["stop"] = "stop";
 })(UserMoveDirections || (exports.UserMoveDirections = UserMoveDirections = {}));
 exports.game = {
+    sectors: {},
     statObj: { NPC: {}, gamers: {} },
     gameIsstarted: false,
     users: {},
