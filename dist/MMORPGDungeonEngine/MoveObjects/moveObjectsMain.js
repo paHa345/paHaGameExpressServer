@@ -84,6 +84,7 @@ const moveObjectsFunctions_1 = require("./moveObjectsFunctions");
 //   }
 // };
 const setClientCoordinates = (objectType, objectID, clientData) => {
+    const start = Date.now();
     if (gameObject_1.game.users[objectID]) {
         gameObject_1.game.users[objectID].square.prevCoord = JSON.parse(JSON.stringify(gameObject_1.game.users[objectID].square.currentCoord));
     }
@@ -97,6 +98,10 @@ const setClientCoordinates = (objectType, objectID, clientData) => {
     //   clientData.direction
     // );
     // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
+    const finish = Date.now();
+    if (gameObject_1.game.users[objectID].type === "gamer") {
+        console.log(finish - start);
+    }
 };
 exports.setClientCoordinates = setClientCoordinates;
 let moveNPCInterval;

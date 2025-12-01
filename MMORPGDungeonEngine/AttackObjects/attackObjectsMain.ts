@@ -47,6 +47,8 @@ export const attackObjectMainMechanism = (
   const objectEdgeChanks = getObjectEdgeChanks(attackObjectID);
 
   if (attackObjectStatus === "gamer") {
+    console.log(game.sectors);
+
     setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
     const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
       game.users[attackObjectID].moveDirection,

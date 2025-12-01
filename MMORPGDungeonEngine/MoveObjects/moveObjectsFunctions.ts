@@ -1,3 +1,4 @@
+import { current } from "@reduxjs/toolkit";
 import { game, UserMoveDirections } from "../gameObject/gameObject";
 
 export const getObjectCoords = (objectID: string) => {
@@ -118,7 +119,7 @@ export const setObjectInSectors = (
   };
 };
 
-export const deleteObjectsFromSectors = (
+export const setAndDeleteObjectsFromSectors = (
   prevCoords: {
     bottomLeftXCoord: number;
     bottomRightXCoord: number;
@@ -141,87 +142,210 @@ export const deleteObjectsFromSectors = (
   },
   objectID: string
 ) => {
-  const isChangeSectors = [];
+  if (game.users[objectID].moveDirection === UserMoveDirections.right) {
+    // смотрим правые точки X координаты
 
-  if (
-    `${Math.floor(prevCoords.topLeftYCoord / (20 * 8))}${Math.floor(
-      prevCoords.topLeftXCoord / (20 * 8)
-    )}` !==
-    `${Math.floor(coordsAfterMove.topLeftYCoord / (20 * 8))}${Math.floor(
-      coordsAfterMove.topLeftXCoord / (20 * 8)
-    )}`
-  ) {
-    isChangeSectors.push(
-      `${Math.floor(prevCoords.topLeftYCoord / (20 * 8))}${Math.floor(
-        prevCoords.topLeftXCoord / (20 * 8)
-      )}`
-    );
+    if (
+      `${Math.floor(prevCoords.topRightXCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.topRightXCoord / (20 * 8))}`
+    ) {
+      game.sectors[
+        `${Math.floor(coordsAfterMove.topRightYCoord / (20 * 8))}${Math.floor(
+          coordsAfterMove.topRightXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID] = { objectType: `${objectID}` };
+    }
+
+    if (
+      `${Math.floor(prevCoords.bottomRightXCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.bottomRightXCoord / (20 * 8))}`
+    ) {
+      game.sectors[
+        `${Math.floor(coordsAfterMove.bottomRightYCoord / (20 * 8))}${Math.floor(
+          coordsAfterMove.bottomRightXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID] = { objectType: `${objectID}` };
+    }
+
+    // смотрим левые точки X координаты
+
+    if (
+      `${Math.floor(prevCoords.topLeftXCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.topLeftXCoord / (20 * 8))}`
+    ) {
+      delete game.sectors[
+        `${Math.floor(prevCoords.topLeftYCoord / (20 * 8))}${Math.floor(
+          prevCoords.topLeftXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID];
+    }
+
+    if (
+      `${Math.floor(prevCoords.bottomLeftXCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.bottomLeftXCoord / (20 * 8))}`
+    ) {
+      delete game.sectors[
+        `${Math.floor(prevCoords.bottomLeftYCoord / (20 * 8))}${Math.floor(
+          prevCoords.bottomLeftXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID];
+    }
+
+    return;
   }
 
-  if (
-    `${Math.floor(prevCoords.topRightYCoord / (20 * 8))}${Math.floor(
-      prevCoords.topRightXCoord / (20 * 8)
-    )}` !==
-    `${Math.floor(coordsAfterMove.topRightYCoord / (20 * 8))}${Math.floor(
-      coordsAfterMove.topRightXCoord / (20 * 8)
-    )}`
-  ) {
-    isChangeSectors.push(
-      `${Math.floor(prevCoords.topRightYCoord / (20 * 8))}${Math.floor(
-        prevCoords.topRightXCoord / (20 * 8)
-      )}`
-    );
+  if (game.users[objectID].moveDirection === UserMoveDirections.left) {
+    // смотрим левые точки X координаты
+
+    if (
+      `${Math.floor(prevCoords.topLeftXCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.topLeftXCoord / (20 * 8))}`
+    ) {
+      game.sectors[
+        `${Math.floor(coordsAfterMove.topLeftYCoord / (20 * 8))}${Math.floor(
+          coordsAfterMove.topLeftXCoord / (20 * 8)
+        )}`
+      ].objectsID[`${objectID}`] = { objectType: `${objectID}` };
+    }
+
+    if (
+      `${Math.floor(prevCoords.bottomLeftXCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.bottomLeftXCoord / (20 * 8))}`
+    ) {
+      game.sectors[
+        `${Math.floor(coordsAfterMove.bottomLeftYCoord / (20 * 8))}${Math.floor(
+          coordsAfterMove.bottomLeftXCoord / (20 * 8)
+        )}`
+      ].objectsID[`${objectID}`] = { objectType: `${objectID}` };
+    }
+    // смотрим правые точки X координаты
+
+    if (
+      `${Math.floor(prevCoords.topRightXCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.topRightXCoord / (20 * 8))}`
+    ) {
+      delete game.sectors[
+        `${Math.floor(prevCoords.topRightYCoord / (20 * 8))}${Math.floor(
+          prevCoords.topRightXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID];
+    }
+
+    if (
+      `${Math.floor(prevCoords.bottomRightXCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.bottomRightXCoord / (20 * 8))}`
+    ) {
+      delete game.sectors[
+        `${Math.floor(prevCoords.bottomRightYCoord / (20 * 8))}${Math.floor(
+          prevCoords.bottomRightXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID];
+    }
+
+    return;
   }
 
-  if (
-    `${Math.floor(prevCoords.bottomLeftYCoord / (20 * 8))}${Math.floor(
-      prevCoords.bottomLeftXCoord / (20 * 8)
-    )}` !==
-    `${Math.floor(coordsAfterMove.bottomLeftYCoord / (20 * 8))}${Math.floor(
-      coordsAfterMove.bottomLeftXCoord / (20 * 8)
-    )}`
-  ) {
-    isChangeSectors.push(
-      `${Math.floor(prevCoords.bottomLeftYCoord / (20 * 8))}${Math.floor(
-        prevCoords.bottomLeftXCoord / (20 * 8)
-      )}`
-    );
+  if (game.users[objectID].moveDirection === UserMoveDirections.up) {
+    // смотрим верхние точки Y координаты
+
+    if (
+      `${Math.floor(prevCoords.topLeftYCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.topLeftYCoord / (20 * 8))}`
+    ) {
+      game.sectors[
+        `${Math.floor(coordsAfterMove.topLeftYCoord / (20 * 8))}${Math.floor(
+          coordsAfterMove.topLeftXCoord / (20 * 8)
+        )}`
+      ].objectsID[`${objectID}`] = { objectType: `${objectID}` };
+    }
+
+    if (
+      `${Math.floor(prevCoords.topRightYCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.topRightYCoord / (20 * 8))}`
+    ) {
+      game.sectors[
+        `${Math.floor(coordsAfterMove.topRightYCoord / (20 * 8))}${Math.floor(
+          coordsAfterMove.topRightXCoord / (20 * 8)
+        )}`
+      ].objectsID[`${objectID}`] = { objectType: `${objectID}` };
+    }
+    // смотрим нижние точки Y координаты
+
+    if (
+      `${Math.floor(prevCoords.bottomLeftYCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.bottomLeftYCoord / (20 * 8))}`
+    ) {
+      delete game.sectors[
+        `${Math.floor(prevCoords.bottomLeftYCoord / (20 * 8))}${Math.floor(
+          prevCoords.bottomLeftXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID];
+    }
+
+    if (
+      `${Math.floor(prevCoords.bottomRightYCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.bottomRightYCoord / (20 * 8))}`
+    ) {
+      delete game.sectors[
+        `${Math.floor(prevCoords.bottomRightYCoord / (20 * 8))}${Math.floor(
+          prevCoords.bottomRightXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID];
+    }
+
+    return;
   }
 
-  if (
-    `${Math.floor(prevCoords.bottomRightYCoord / (20 * 8))}${Math.floor(
-      prevCoords.bottomRightXCoord / (20 * 8)
-    )}` !==
-    `${Math.floor(coordsAfterMove.bottomRightYCoord / (20 * 8))}${Math.floor(
-      coordsAfterMove.bottomRightXCoord / (20 * 8)
-    )}`
-  ) {
-    isChangeSectors.push(
-      `${Math.floor(prevCoords.bottomRightYCoord / (20 * 8))}${Math.floor(
-        prevCoords.bottomRightXCoord / (20 * 8)
-      )}`
-    );
-  }
+  if (game.users[objectID].moveDirection === UserMoveDirections.down) {
+    // смотрим нижние точки Y координаты
+    if (
+      `${Math.floor(prevCoords.bottomLeftYCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.bottomLeftYCoord / (20 * 8))}`
+    ) {
+      game.sectors[
+        `${Math.floor(coordsAfterMove.bottomLeftYCoord / (20 * 8))}${Math.floor(
+          coordsAfterMove.bottomLeftXCoord / (20 * 8)
+        )}`
+      ].objectsID[`${objectID}`] = { objectType: `${objectID}` };
+    }
 
-  if (game.users[objectID].type === "gamer") {
-    // console.log(prevCoords);
-    console.log(isChangeSectors);
-  }
+    if (
+      `${Math.floor(prevCoords.bottomRightYCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.bottomRightYCoord / (20 * 8))}`
+    ) {
+      game.sectors[
+        `${Math.floor(coordsAfterMove.bottomRightYCoord / (20 * 8))}${Math.floor(
+          coordsAfterMove.bottomRightXCoord / (20 * 8)
+        )}`
+      ].objectsID[`${objectID}`] = { objectType: `${objectID}` };
+    }
 
-  // const sectorsBeforeMove = {
-  //     topLeft:`${Math.floor(prevCoords.topLeftYCoord / (20 * 8))}${Math.floor(
-  //   prevCoords.topLeftXCoord / (20 * 8)
-  // )}`,
-  //     topRight: `${Math.floor(prevCoords.topRightYCoord / (20 * 8))}${Math.floor(
-  //   prevCoords.topRightXCoord / (20 * 8)
-  // )}`,
-  //     bottomLeft: `${Math.floor(prevCoords.bottomLeftYCoord / (20 * 8))}${Math.floor(
-  //   prevCoords.bottomLeftXCoord / (20 * 8)
-  // )}`,
-  //       bottomRight: `${Math.floor(prevCoords.bottomRightYCoord / (20 * 8))}${Math.floor(
-  //     prevCoords.bottomRightXCoord / (20 * 8)
-  //   )}`
-  //   // }
+    // смотрим верхние точки Y координаты
+
+    if (
+      `${Math.floor(prevCoords.topLeftYCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.topLeftYCoord / (20 * 8))}`
+    ) {
+      delete game.sectors[
+        `${Math.floor(prevCoords.topLeftYCoord / (20 * 8))}${Math.floor(
+          prevCoords.topLeftXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID];
+    }
+
+    if (
+      `${Math.floor(prevCoords.topRightYCoord / (20 * 8))}` !==
+      `${Math.floor(coordsAfterMove.topRightYCoord / (20 * 8))}`
+    ) {
+      delete game.sectors[
+        `${Math.floor(prevCoords.topRightYCoord / (20 * 8))}${Math.floor(
+          prevCoords.topRightXCoord / (20 * 8)
+        )}`
+      ].objectsID[objectID];
+    }
+
+    return;
+  }
 };
 
 export const setCurrentCoord = function (
@@ -359,11 +483,9 @@ export const setCurrentCoord = function (
   // которые покинул объект
 
   //   смотрим старыет(objectCoords) и новые (objectCoordsAfterMove) координаты
-
-  deleteObjectsFromSectors(objectCoords, objectCoordsAfterMove, objectID);
-
   // после изменения координат, записываем объект в соответствующие сектора
-  setObjectInSectors(objectCoordsAfterMove, objectID);
+
+  setAndDeleteObjectsFromSectors(objectCoords, objectCoordsAfterMove, objectID);
 
   //   console.log(game.sectors);
 };

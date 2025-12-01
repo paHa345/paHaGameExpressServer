@@ -31,6 +31,7 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
     //тут разделение на мехиники атаки NPC или игрока
     const objectEdgeChanks = (0, exports.getObjectEdgeChanks)(attackObjectID);
     if (attackObjectStatus === "gamer") {
+        console.log(gameObject_1.game.sectors);
         (0, attackObjectsFunctions_1.setAttackObjectStatus)(attackObjectID, attackObjectStatus, attackObjectType, io);
         const chanksAndObjectsUnderAttack = (0, attackObjectsFunctions_1.getChanksAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 1, objectEdgeChanks, io);
         if (chanksAndObjectsUnderAttack === null || chanksAndObjectsUnderAttack === void 0 ? void 0 : chanksAndObjectsUnderAttack.objectUnderAttack) {
