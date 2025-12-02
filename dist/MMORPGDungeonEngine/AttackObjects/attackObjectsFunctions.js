@@ -36,6 +36,17 @@ exports.setAttackObjectStatus = setAttackObjectStatus;
 const getChanksAndObjectsUnderAttack = (direction, attackObjectID, attackAreaDeep, objectEdgeChanks, io) => {
     const objectUnderAttack = {};
     const chanksUnderAttack = [];
+    const attackAreaCoords = () => {
+        console.log(gameObject_1.game.users[attackObjectID].NPCViewDirection);
+        // для игрока
+        if (!gameObject_1.game.users[attackObjectID].NPCViewDirection) {
+            console.log(gameObject_1.game.users[attackObjectID].moveDirection);
+            if (gameObject_1.game.users[attackObjectID].moveDirection === gameObject_1.UserMoveDirections.up) {
+            }
+        }
+        // для NPC
+    };
+    attackAreaCoords();
     const addUnderAttackObjectsAndChunksArr = (underAttackChankObjectID, row, col) => {
         chanksUnderAttack.push({ row: row, col: col });
         if (underAttackChankObjectID) {

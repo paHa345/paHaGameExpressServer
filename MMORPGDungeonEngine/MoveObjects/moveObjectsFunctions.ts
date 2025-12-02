@@ -1,5 +1,9 @@
 import { current } from "@reduxjs/toolkit";
 import { game, UserMoveDirections } from "../gameObject/gameObject";
+import {
+  getDownMOveIntersectionObjects,
+  getUpMoveIntersectionObjects,
+} from "./getIntersectionObjectsFunctions";
 
 export const getObjectCoords = (objectID: string) => {
   return {
@@ -470,14 +474,181 @@ export const setCurrentCoord = function (
       }
     }
   }
+
+  if (!moveStatus) return;
+
+  const seeSectors = () => {
+    if (game.users[objectID].type !== "gamer") return;
+    if (game.users[objectID].moveDirection === UserMoveDirections.down) {
+      if (
+        `${Math.floor(
+          (objectCoords.bottomLeftYCoord + clientData.shiftUserPixels) / (20 * 8)
+        )}${Math.floor(objectCoords.bottomLeftXCoord / (20 * 8))}` ===
+        `${Math.floor(
+          (objectCoords.bottomRightYCoord + clientData.shiftUserPixels) / (20 * 8)
+        )}${Math.floor(objectCoords.bottomRightXCoord / (20 * 8))}`
+      ) {
+        //   console.log("Одинаковый сектор, смотрим только сектор нижней правой точки");
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(
+            (objectCoords.bottomLeftYCoord + clientData.shiftUserPixels) / (20 * 8)
+          )}${Math.floor(objectCoords.bottomLeftXCoord / (20 * 8))}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getDownMOveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            moveStatus,
+            objectCoords
+          );
+        }
+      } else {
+        // разные сектора, смотрим объекты в обеих секторах
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(
+            (objectCoords.bottomLeftYCoord + clientData.shiftUserPixels) / (20 * 8)
+          )}${Math.floor(objectCoords.bottomLeftXCoord / (20 * 8))}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getDownMOveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            moveStatus,
+            objectCoords
+          );
+        }
+        if (!moveStatus) return;
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(
+            (objectCoords.bottomRightYCoord + clientData.shiftUserPixels) / (20 * 8)
+          )}${Math.floor(objectCoords.bottomRightXCoord / (20 * 8))}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getDownMOveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            moveStatus,
+            objectCoords
+          );
+        }
+      }
+    }
+    if (game.users[objectID].moveDirection === UserMoveDirections.up) {
+      if (
+        `${Math.floor(
+          (objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
+        )}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}` ===
+        `${Math.floor(
+          (objectCoords.topRightYCoord - clientData.shiftUserPixels) / (20 * 8)
+        )}${Math.floor(objectCoords.topRightXCoord / (20 * 8))}`
+      ) {
+        // одинаковые сектора, смотрим в одном
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(
+            (objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
+          )}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getUpMoveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            moveStatus,
+            objectCoords
+          );
+        }
+      } else {
+        // разные сектора, смотрим в обоих
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(
+            (objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
+          )}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getUpMoveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            moveStatus,
+            objectCoords
+          );
+        }
+
+        if (!moveStatus) return;
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(
+            (objectCoords.topRightYCoord - clientData.shiftUserPixels) / (20 * 8)
+          )}${Math.floor(objectCoords.topRightXCoord / (20 * 8))}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getUpMoveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            moveStatus,
+            objectCoords
+          );
+        }
+      }
+    }
+    if (game.users[objectID].moveDirection === UserMoveDirections.left) {
+      if (
+        `${Math.floor(
+          (objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
+        )}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}` ===
+        `${Math.floor(
+          (objectCoords.bottomLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
+        )}${Math.floor(objectCoords.bottomLeftXCoord / (20 * 8))}`
+      ) {
+        // одинаковые сектора, смотрим в одном
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(
+            (objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
+          )}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          //   moveStatus = getUpMoveIntersectionObjects(
+          //     inSectorObjectID,
+          //     clientData.shiftUserPixels,
+          //     moveStatus,
+          //     objectCoords
+          //   );
+        }
+      } else {
+        // разные сектора, смотрим в обоих
+      }
+    }
+  };
+
+  seeSectors();
+
+  if (!moveStatus) return;
+
   if (moveStatus) setMoveCoord(clientData, objectID, objectCoords);
 
-  const objectCoordsAfterMove = getObjectCoords(objectID);
+  // смотрим сектора куда перемещаемся
 
-  //   if (game.users[objectID].type === "gamer") {
-  //     console.log(objectCoords);
-  //     console.log(objectCoordsAfterMove);
-  //   }
+  const objectCoordsAfterMove: {
+    bottomLeftXCoord: number;
+    bottomRightXCoord: number;
+    topLeftXCoord: number;
+    topRightXCoord: number;
+    bottomLeftYCoord: number;
+    topLeftYCoord: number;
+    topRightYCoord: number;
+    bottomRightYCoord: number;
+  } = getObjectCoords(objectID);
 
   // после изменения координат, удаляем объект из секторов
   // которые покинул объект
@@ -486,6 +657,4 @@ export const setCurrentCoord = function (
   // после изменения координат, записываем объект в соответствующие сектора
 
   setAndDeleteObjectsFromSectors(objectCoords, objectCoordsAfterMove, objectID);
-
-  //   console.log(game.sectors);
 };

@@ -61,6 +61,19 @@ export const getChanksAndObjectsUnderAttack = (
 
   const chanksUnderAttack: { row: number; col: number }[] = [];
 
+  const attackAreaCoords = () => {
+    console.log(game.users[attackObjectID].NPCViewDirection);
+    // для игрока
+    if (!game.users[attackObjectID].NPCViewDirection) {
+      console.log(game.users[attackObjectID].moveDirection);
+      if (game.users[attackObjectID].moveDirection === UserMoveDirections.up) {
+      }
+    }
+    // для NPC
+  };
+
+  attackAreaCoords();
+
   const addUnderAttackObjectsAndChunksArr = (
     underAttackChankObjectID: string | undefined,
     row: number,
