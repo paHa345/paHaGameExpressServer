@@ -234,8 +234,7 @@ const setCurrentCoord = function (clientData, objectID) {
     if (!moveStatus)
         return;
     const seeSectors = () => {
-        if (gameObject_1.game.users[objectID].type !== "gamer")
-            return;
+        // if (game.users[objectID].type !== "gamer") return;
         if (gameObject_1.game.users[objectID].moveDirection === gameObject_1.UserMoveDirections.down) {
             if (`${Math.floor((objectCoords.bottomLeftYCoord + clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.bottomLeftXCoord / (20 * 8))}` ===
                 `${Math.floor((objectCoords.bottomRightYCoord + clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.bottomRightXCoord / (20 * 8))}`) {
@@ -243,7 +242,9 @@ const setCurrentCoord = function (clientData, objectID) {
                 for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor((objectCoords.bottomLeftYCoord + clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.bottomLeftXCoord / (20 * 8))}`].objectsID) {
                     if (inSectorObjectID === objectID)
                         continue;
-                    moveStatus = (0, getIntersectionObjectsFunctions_1.getDownMOveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, moveStatus, objectCoords);
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getDownMOveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
                 }
             }
             else {
@@ -251,14 +252,18 @@ const setCurrentCoord = function (clientData, objectID) {
                 for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor((objectCoords.bottomLeftYCoord + clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.bottomLeftXCoord / (20 * 8))}`].objectsID) {
                     if (inSectorObjectID === objectID)
                         continue;
-                    moveStatus = (0, getIntersectionObjectsFunctions_1.getDownMOveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, moveStatus, objectCoords);
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getDownMOveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
                 }
                 if (!moveStatus)
                     return;
                 for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor((objectCoords.bottomRightYCoord + clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.bottomRightXCoord / (20 * 8))}`].objectsID) {
                     if (inSectorObjectID === objectID)
                         continue;
-                    moveStatus = (0, getIntersectionObjectsFunctions_1.getDownMOveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, moveStatus, objectCoords);
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getDownMOveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
                 }
             }
         }
@@ -269,7 +274,9 @@ const setCurrentCoord = function (clientData, objectID) {
                 for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor((objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}`].objectsID) {
                     if (inSectorObjectID === objectID)
                         continue;
-                    moveStatus = (0, getIntersectionObjectsFunctions_1.getUpMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, moveStatus, objectCoords);
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getUpMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
                 }
             }
             else {
@@ -277,34 +284,81 @@ const setCurrentCoord = function (clientData, objectID) {
                 for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor((objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}`].objectsID) {
                     if (inSectorObjectID === objectID)
                         continue;
-                    moveStatus = (0, getIntersectionObjectsFunctions_1.getUpMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, moveStatus, objectCoords);
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getUpMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
                 }
                 if (!moveStatus)
                     return;
                 for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor((objectCoords.topRightYCoord - clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.topRightXCoord / (20 * 8))}`].objectsID) {
                     if (inSectorObjectID === objectID)
                         continue;
-                    moveStatus = (0, getIntersectionObjectsFunctions_1.getUpMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, moveStatus, objectCoords);
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getUpMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
                 }
             }
         }
         if (gameObject_1.game.users[objectID].moveDirection === gameObject_1.UserMoveDirections.left) {
-            if (`${Math.floor((objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}` ===
-                `${Math.floor((objectCoords.bottomLeftYCoord - clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.bottomLeftXCoord / (20 * 8))}`) {
+            if (`${Math.floor(objectCoords.topLeftYCoord / (20 * 8))}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}` ===
+                `${Math.floor((objectCoords.bottomLeftYCoord - clientData.shiftUserPixels) / (20 * 8))}${Math.floor((objectCoords.bottomLeftXCoord - clientData.shiftUserPixels) / (20 * 8))}`) {
                 // одинаковые сектора, смотрим в одном
-                for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor((objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8))}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}`].objectsID) {
+                for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor(objectCoords.topLeftYCoord / (20 * 8))}${Math.floor((objectCoords.topLeftXCoord - clientData.shiftUserPixels) / (20 * 8))}`].objectsID) {
                     if (inSectorObjectID === objectID)
                         continue;
-                    //   moveStatus = getUpMoveIntersectionObjects(
-                    //     inSectorObjectID,
-                    //     clientData.shiftUserPixels,
-                    //     moveStatus,
-                    //     objectCoords
-                    //   );
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getLeftMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
                 }
             }
             else {
                 // разные сектора, смотрим в обоих
+                for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor(objectCoords.topLeftYCoord / (20 * 8))}${Math.floor((objectCoords.topLeftXCoord - clientData.shiftUserPixels) / (20 * 8))}`].objectsID) {
+                    if (inSectorObjectID === objectID)
+                        continue;
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getLeftMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
+                }
+                if (!moveStatus)
+                    return;
+                for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor(objectCoords.bottomLeftYCoord / (20 * 8))}${Math.floor((objectCoords.bottomLeftXCoord - clientData.shiftUserPixels) / (20 * 8))}`].objectsID) {
+                    if (inSectorObjectID === objectID)
+                        continue;
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getLeftMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
+                }
+            }
+        }
+        if (gameObject_1.game.users[objectID].moveDirection === gameObject_1.UserMoveDirections.right) {
+            if (`${Math.floor(objectCoords.topRightYCoord / (20 * 8))}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}` ===
+                `${Math.floor(objectCoords.bottomRightYCoord / (20 * 8))}${Math.floor((objectCoords.bottomLeftXCoord + clientData.shiftUserPixels) / (20 * 8))}`) {
+                for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor(objectCoords.topRightYCoord / (20 * 8))}${Math.floor((objectCoords.topLeftXCoord + clientData.shiftUserPixels) / (20 * 8))}`].objectsID) {
+                    if (inSectorObjectID === objectID)
+                        continue;
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getRightMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
+                }
+            }
+            else {
+                for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor(objectCoords.topRightYCoord / (20 * 8))}${Math.floor((objectCoords.topLeftXCoord + clientData.shiftUserPixels) / (20 * 8))}`].objectsID) {
+                    if (inSectorObjectID === objectID)
+                        continue;
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getRightMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
+                }
+                if (!moveStatus)
+                    return;
+                for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor(objectCoords.bottomRightYCoord / (20 * 8))}${Math.floor((objectCoords.bottomLeftXCoord + clientData.shiftUserPixels) / (20 * 8))}`].objectsID) {
+                    if (inSectorObjectID === objectID)
+                        continue;
+                    moveStatus = (0, getIntersectionObjectsFunctions_1.getRightMoveIntersectionObjects)(inSectorObjectID, clientData.shiftUserPixels, objectCoords);
+                    if (!moveStatus)
+                        return;
+                }
             }
         }
     };

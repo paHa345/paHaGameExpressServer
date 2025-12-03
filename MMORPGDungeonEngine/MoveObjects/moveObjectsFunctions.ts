@@ -2,6 +2,8 @@ import { current } from "@reduxjs/toolkit";
 import { game, UserMoveDirections } from "../gameObject/gameObject";
 import {
   getDownMOveIntersectionObjects,
+  getLeftMoveIntersectionObjects,
+  getRightMoveIntersectionObjects,
   getUpMoveIntersectionObjects,
 } from "./getIntersectionObjectsFunctions";
 
@@ -478,7 +480,7 @@ export const setCurrentCoord = function (
   if (!moveStatus) return;
 
   const seeSectors = () => {
-    if (game.users[objectID].type !== "gamer") return;
+    // if (game.users[objectID].type !== "gamer") return;
     if (game.users[objectID].moveDirection === UserMoveDirections.down) {
       if (
         `${Math.floor(
@@ -500,9 +502,9 @@ export const setCurrentCoord = function (
           moveStatus = getDownMOveIntersectionObjects(
             inSectorObjectID,
             clientData.shiftUserPixels,
-            moveStatus,
             objectCoords
           );
+          if (!moveStatus) return;
         }
       } else {
         // разные сектора, смотрим объекты в обеих секторах
@@ -517,9 +519,9 @@ export const setCurrentCoord = function (
           moveStatus = getDownMOveIntersectionObjects(
             inSectorObjectID,
             clientData.shiftUserPixels,
-            moveStatus,
             objectCoords
           );
+          if (!moveStatus) return;
         }
         if (!moveStatus) return;
 
@@ -533,9 +535,9 @@ export const setCurrentCoord = function (
           moveStatus = getDownMOveIntersectionObjects(
             inSectorObjectID,
             clientData.shiftUserPixels,
-            moveStatus,
             objectCoords
           );
+          if (!moveStatus) return;
         }
       }
     }
@@ -560,9 +562,9 @@ export const setCurrentCoord = function (
           moveStatus = getUpMoveIntersectionObjects(
             inSectorObjectID,
             clientData.shiftUserPixels,
-            moveStatus,
             objectCoords
           );
+          if (!moveStatus) return;
         }
       } else {
         // разные сектора, смотрим в обоих
@@ -577,9 +579,9 @@ export const setCurrentCoord = function (
           moveStatus = getUpMoveIntersectionObjects(
             inSectorObjectID,
             clientData.shiftUserPixels,
-            moveStatus,
             objectCoords
           );
+          if (!moveStatus) return;
         }
 
         if (!moveStatus) return;
@@ -594,39 +596,128 @@ export const setCurrentCoord = function (
           moveStatus = getUpMoveIntersectionObjects(
             inSectorObjectID,
             clientData.shiftUserPixels,
-            moveStatus,
             objectCoords
           );
+          if (!moveStatus) return;
         }
       }
     }
+
     if (game.users[objectID].moveDirection === UserMoveDirections.left) {
       if (
-        `${Math.floor(
-          (objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
-        )}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}` ===
+        `${Math.floor(objectCoords.topLeftYCoord / (20 * 8))}${Math.floor(
+          objectCoords.topLeftXCoord / (20 * 8)
+        )}` ===
         `${Math.floor(
           (objectCoords.bottomLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
-        )}${Math.floor(objectCoords.bottomLeftXCoord / (20 * 8))}`
+        )}${Math.floor((objectCoords.bottomLeftXCoord - clientData.shiftUserPixels) / (20 * 8))}`
       ) {
         // одинаковые сектора, смотрим в одном
 
         for (const inSectorObjectID in game.sectors[
-          `${Math.floor(
-            (objectCoords.topLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
-          )}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}`
+          `${Math.floor(objectCoords.topLeftYCoord / (20 * 8))}${Math.floor(
+            (objectCoords.topLeftXCoord - clientData.shiftUserPixels) / (20 * 8)
+          )}`
         ].objectsID) {
           if (inSectorObjectID === objectID) continue;
 
-          //   moveStatus = getUpMoveIntersectionObjects(
-          //     inSectorObjectID,
-          //     clientData.shiftUserPixels,
-          //     moveStatus,
-          //     objectCoords
-          //   );
+          moveStatus = getLeftMoveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            objectCoords
+          );
+          if (!moveStatus) return;
         }
       } else {
         // разные сектора, смотрим в обоих
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(objectCoords.topLeftYCoord / (20 * 8))}${Math.floor(
+            (objectCoords.topLeftXCoord - clientData.shiftUserPixels) / (20 * 8)
+          )}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getLeftMoveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            objectCoords
+          );
+          if (!moveStatus) return;
+        }
+        if (!moveStatus) return;
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(objectCoords.bottomLeftYCoord / (20 * 8))}${Math.floor(
+            (objectCoords.bottomLeftXCoord - clientData.shiftUserPixels) / (20 * 8)
+          )}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getLeftMoveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            objectCoords
+          );
+          if (!moveStatus) return;
+        }
+      }
+    }
+
+    if (game.users[objectID].moveDirection === UserMoveDirections.right) {
+      if (
+        `${Math.floor(objectCoords.topRightYCoord / (20 * 8))}${Math.floor(
+          objectCoords.topLeftXCoord / (20 * 8)
+        )}` ===
+        `${Math.floor(objectCoords.bottomRightYCoord / (20 * 8))}${Math.floor(
+          (objectCoords.bottomLeftXCoord + clientData.shiftUserPixels) / (20 * 8)
+        )}`
+      ) {
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(objectCoords.topRightYCoord / (20 * 8))}${Math.floor(
+            (objectCoords.topLeftXCoord + clientData.shiftUserPixels) / (20 * 8)
+          )}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getRightMoveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            objectCoords
+          );
+          if (!moveStatus) return;
+        }
+      } else {
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(objectCoords.topRightYCoord / (20 * 8))}${Math.floor(
+            (objectCoords.topLeftXCoord + clientData.shiftUserPixels) / (20 * 8)
+          )}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getRightMoveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            objectCoords
+          );
+          if (!moveStatus) return;
+        }
+        if (!moveStatus) return;
+
+        for (const inSectorObjectID in game.sectors[
+          `${Math.floor(objectCoords.bottomRightYCoord / (20 * 8))}${Math.floor(
+            (objectCoords.bottomLeftXCoord + clientData.shiftUserPixels) / (20 * 8)
+          )}`
+        ].objectsID) {
+          if (inSectorObjectID === objectID) continue;
+
+          moveStatus = getRightMoveIntersectionObjects(
+            inSectorObjectID,
+            clientData.shiftUserPixels,
+            objectCoords
+          );
+          if (!moveStatus) return;
+        }
       }
     }
   };

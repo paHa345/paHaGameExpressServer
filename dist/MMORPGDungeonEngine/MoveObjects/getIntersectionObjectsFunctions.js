@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUpMoveIntersectionObjects = exports.getDownMOveIntersectionObjects = void 0;
+exports.getRightMoveIntersectionObjects = exports.getLeftMoveIntersectionObjects = exports.getUpMoveIntersectionObjects = exports.getDownMOveIntersectionObjects = void 0;
 const gameObject_1 = require("../gameObject/gameObject");
-const getDownMOveIntersectionObjects = (inSectorObjectID, shiftUserPixels, moveStatus, objectCoords) => {
+const getDownMOveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objectCoords) => {
     // нихняя левая координата
     if (objectCoords.bottomLeftYCoord + shiftUserPixels >
         gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.y &&
@@ -35,7 +35,7 @@ const getDownMOveIntersectionObjects = (inSectorObjectID, shiftUserPixels, moveS
     return true;
 };
 exports.getDownMOveIntersectionObjects = getDownMOveIntersectionObjects;
-const getUpMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, moveStatus, objectCoords) => {
+const getUpMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objectCoords) => {
     // верхняя левая координата
     if (objectCoords.topLeftYCoord - shiftUserPixels >
         gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.y &&
@@ -68,3 +68,71 @@ const getUpMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, moveSta
     return true;
 };
 exports.getUpMoveIntersectionObjects = getUpMoveIntersectionObjects;
+const getLeftMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objectCoords) => {
+    // верхняя левая координата
+    if (objectCoords.topLeftYCoord > gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.y &&
+        objectCoords.topLeftYCoord < gameObject_1.game.users[inSectorObjectID].square.currentCoord.bottomRight.y &&
+        objectCoords.topLeftXCoord - shiftUserPixels >
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.x &&
+        objectCoords.topLeftXCoord - shiftUserPixels <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.x) {
+        return false;
+    }
+    //середина объекта
+    if (Math.floor((objectCoords.topLeftYCoord + objectCoords.bottomLeftYCoord) / 2) >
+        gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.y &&
+        Math.floor((objectCoords.topLeftYCoord + objectCoords.bottomLeftYCoord) / 2) <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.bottomRight.y &&
+        objectCoords.topLeftXCoord - shiftUserPixels >
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.x &&
+        objectCoords.topLeftXCoord - shiftUserPixels <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.x) {
+        return false;
+    }
+    // нижняя левая координата
+    if (objectCoords.bottomLeftYCoord > gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.y &&
+        objectCoords.bottomLeftYCoord <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.bottomRight.y &&
+        objectCoords.bottomLeftXCoord - shiftUserPixels >
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.x &&
+        objectCoords.bottomLeftXCoord - shiftUserPixels <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.x) {
+        return false;
+    }
+    return true;
+};
+exports.getLeftMoveIntersectionObjects = getLeftMoveIntersectionObjects;
+const getRightMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objectCoords) => {
+    // верхняя левая координата
+    if (objectCoords.topRightYCoord > gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.y &&
+        objectCoords.topRightYCoord < gameObject_1.game.users[inSectorObjectID].square.currentCoord.bottomLeft.y &&
+        objectCoords.topRightXCoord + shiftUserPixels >
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.x &&
+        objectCoords.topRightXCoord + shiftUserPixels <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.x) {
+        return false;
+    }
+    //середина объекта
+    if (Math.floor((objectCoords.topRightYCoord + objectCoords.bottomRightYCoord) / 2) >
+        gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.y &&
+        Math.floor((objectCoords.topRightYCoord + objectCoords.bottomRightYCoord) / 2) <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.bottomLeft.y &&
+        objectCoords.topLeftXCoord + shiftUserPixels >
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.x &&
+        objectCoords.topLeftXCoord + shiftUserPixels <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.x) {
+        return false;
+    }
+    // нижняя левая координата
+    if (objectCoords.bottomRightYCoord > gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.y &&
+        objectCoords.bottomRightYCoord <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.bottomLeft.y &&
+        objectCoords.bottomRightXCoord + shiftUserPixels >
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.x &&
+        objectCoords.bottomRightXCoord + shiftUserPixels <
+            gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.x) {
+        return false;
+    }
+    return true;
+};
+exports.getRightMoveIntersectionObjects = getRightMoveIntersectionObjects;
