@@ -301,7 +301,7 @@ const setCurrentCoord = function (clientData, objectID) {
         }
         if (gameObject_1.game.users[objectID].moveDirection === gameObject_1.UserMoveDirections.left) {
             if (`${Math.floor(objectCoords.topLeftYCoord / (20 * 8))}${Math.floor(objectCoords.topLeftXCoord / (20 * 8))}` ===
-                `${Math.floor((objectCoords.bottomLeftYCoord - clientData.shiftUserPixels) / (20 * 8))}${Math.floor((objectCoords.bottomLeftXCoord - clientData.shiftUserPixels) / (20 * 8))}`) {
+                `${Math.floor(objectCoords.bottomLeftYCoord / (20 * 8))}${Math.floor((objectCoords.bottomLeftXCoord - clientData.shiftUserPixels) / (20 * 8))}`) {
                 // одинаковые сектора, смотрим в одном
                 for (const inSectorObjectID in gameObject_1.game.sectors[`${Math.floor(objectCoords.topLeftYCoord / (20 * 8))}${Math.floor((objectCoords.topLeftXCoord - clientData.shiftUserPixels) / (20 * 8))}`].objectsID) {
                     if (inSectorObjectID === objectID)

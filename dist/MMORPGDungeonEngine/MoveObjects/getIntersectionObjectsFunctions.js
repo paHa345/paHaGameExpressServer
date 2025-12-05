@@ -4,6 +4,9 @@ exports.getRightMoveIntersectionObjects = exports.getLeftMoveIntersectionObjects
 const gameObject_1 = require("../gameObject/gameObject");
 const getDownMOveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objectCoords) => {
     // нихняя левая координата
+    if (!gameObject_1.game.users[inSectorObjectID]) {
+        return false;
+    }
     if (objectCoords.bottomLeftYCoord + shiftUserPixels >
         gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.y &&
         objectCoords.bottomLeftYCoord + shiftUserPixels <
@@ -36,6 +39,9 @@ const getDownMOveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objec
 };
 exports.getDownMOveIntersectionObjects = getDownMOveIntersectionObjects;
 const getUpMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objectCoords) => {
+    if (!gameObject_1.game.users[inSectorObjectID]) {
+        return false;
+    }
     // верхняя левая координата
     if (objectCoords.topLeftYCoord - shiftUserPixels >
         gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.y &&
@@ -69,6 +75,9 @@ const getUpMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objectC
 };
 exports.getUpMoveIntersectionObjects = getUpMoveIntersectionObjects;
 const getLeftMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objectCoords) => {
+    if (!gameObject_1.game.users[inSectorObjectID]) {
+        return false;
+    }
     // верхняя левая координата
     if (objectCoords.topLeftYCoord > gameObject_1.game.users[inSectorObjectID].square.currentCoord.topRight.y &&
         objectCoords.topLeftYCoord < gameObject_1.game.users[inSectorObjectID].square.currentCoord.bottomRight.y &&
@@ -103,6 +112,9 @@ const getLeftMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objec
 };
 exports.getLeftMoveIntersectionObjects = getLeftMoveIntersectionObjects;
 const getRightMoveIntersectionObjects = (inSectorObjectID, shiftUserPixels, objectCoords) => {
+    if (!gameObject_1.game.users[inSectorObjectID]) {
+        return false;
+    }
     // верхняя левая координата
     if (objectCoords.topRightYCoord > gameObject_1.game.users[inSectorObjectID].square.currentCoord.topLeft.y &&
         objectCoords.topRightYCoord < gameObject_1.game.users[inSectorObjectID].square.currentCoord.bottomLeft.y &&

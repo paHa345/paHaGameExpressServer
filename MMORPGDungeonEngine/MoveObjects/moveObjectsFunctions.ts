@@ -608,9 +608,9 @@ export const setCurrentCoord = function (
         `${Math.floor(objectCoords.topLeftYCoord / (20 * 8))}${Math.floor(
           objectCoords.topLeftXCoord / (20 * 8)
         )}` ===
-        `${Math.floor(
-          (objectCoords.bottomLeftYCoord - clientData.shiftUserPixels) / (20 * 8)
-        )}${Math.floor((objectCoords.bottomLeftXCoord - clientData.shiftUserPixels) / (20 * 8))}`
+        `${Math.floor(objectCoords.bottomLeftYCoord / (20 * 8))}${Math.floor(
+          (objectCoords.bottomLeftXCoord - clientData.shiftUserPixels) / (20 * 8)
+        )}`
       ) {
         // одинаковые сектора, смотрим в одном
 

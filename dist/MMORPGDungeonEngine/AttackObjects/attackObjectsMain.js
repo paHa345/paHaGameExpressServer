@@ -22,6 +22,7 @@ const getObjectEdgeChanks = (objectID) => {
 exports.getObjectEdgeChanks = getObjectEdgeChanks;
 const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus, attackObjectType, io) => {
     var _a, _b;
+    const startAttack = Date.now();
     if ((_a = gameObject_1.game.attackStatusObj[attackObjectID]) === null || _a === void 0 ? void 0 : _a.isCooldown) {
         return;
     }
@@ -31,11 +32,17 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
     //тут разделение на мехиники атаки NPC или игрока
     const objectEdgeChanks = (0, exports.getObjectEdgeChanks)(attackObjectID);
     if (attackObjectStatus === "gamer") {
-        console.log(gameObject_1.game.sectors);
         (0, attackObjectsFunctions_1.setAttackObjectStatus)(attackObjectID, attackObjectStatus, attackObjectType, io);
-        const chanksAndObjectsUnderAttack = (0, attackObjectsFunctions_1.getChanksAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 1, objectEdgeChanks, io);
-        if (chanksAndObjectsUnderAttack === null || chanksAndObjectsUnderAttack === void 0 ? void 0 : chanksAndObjectsUnderAttack.objectUnderAttack) {
-            (0, attackObjectsFunctions_1.calculateDamage)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, io, chanksAndObjectsUnderAttack === null || chanksAndObjectsUnderAttack === void 0 ? void 0 : chanksAndObjectsUnderAttack.objectUnderAttack);
+        const areaAndObjectsUnderAttack = (0, attackObjectsFunctions_1.getAreaAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 24);
+        // const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
+        //   game.users[attackObjectID].moveDirection,
+        //   attackObjectID,
+        //   1,
+        //   objectEdgeChanks,
+        //   io
+        // );
+        if (areaAndObjectsUnderAttack === null || areaAndObjectsUnderAttack === void 0 ? void 0 : areaAndObjectsUnderAttack.objectsUnderAttack) {
+            (0, attackObjectsFunctions_1.calculateDamage)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, io, areaAndObjectsUnderAttack === null || areaAndObjectsUnderAttack === void 0 ? void 0 : areaAndObjectsUnderAttack.objectsUnderAttack);
         }
     }
     if (attackObjectStatus === "NPC") {
@@ -65,5 +72,7 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
         };
         NPCAttack();
     }
+    const finishAttack = Date.now();
+    console.log(`Attack ${finishAttack - startAttack}`);
 };
 exports.attackObjectMainMechanism = attackObjectMainMechanism;

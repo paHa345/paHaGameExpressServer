@@ -99,7 +99,7 @@ export const setClientCoordinates = (
     shiftUserPixels: number;
   }
 ) => {
-  const start = Date.now();
+  // const start = Date.now();
   if (game.users[objectID]) {
     game.users[objectID].square.prevCoord = JSON.parse(
       JSON.stringify(game.users[objectID].square.currentCoord)
@@ -118,11 +118,11 @@ export const setClientCoordinates = (
   // );
 
   // io.of("/").to(clientData.roomID).emit("serverMove", game.users);
-  const finish = Date.now();
+  // const finish = Date.now();
 
-  if (game.users[objectID].type === "gamer") {
-    console.log(finish - start);
-  }
+  // if (game.users[objectID].type === "gamer") {
+  //   console.log(finish - start);
+  // }
 };
 
 let moveNPCInterval: any;

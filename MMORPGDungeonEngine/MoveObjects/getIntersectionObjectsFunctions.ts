@@ -15,6 +15,11 @@ export const getDownMOveIntersectionObjects = (
   }
 ) => {
   // нихняя левая координата
+
+  if (!game.users[inSectorObjectID]) {
+    return false;
+  }
+
   if (
     objectCoords.bottomLeftYCoord + shiftUserPixels >
       game.users[inSectorObjectID].square.currentCoord.topLeft.y &&
@@ -70,6 +75,9 @@ export const getUpMoveIntersectionObjects = (
     bottomRightYCoord: number;
   }
 ) => {
+  if (!game.users[inSectorObjectID]) {
+    return false;
+  }
   // верхняя левая координата
   if (
     objectCoords.topLeftYCoord - shiftUserPixels >
@@ -126,6 +134,9 @@ export const getLeftMoveIntersectionObjects = (
     bottomRightYCoord: number;
   }
 ) => {
+  if (!game.users[inSectorObjectID]) {
+    return false;
+  }
   // верхняя левая координата
   if (
     objectCoords.topLeftYCoord > game.users[inSectorObjectID].square.currentCoord.topRight.y &&
@@ -183,6 +194,9 @@ export const getRightMoveIntersectionObjects = (
     bottomRightYCoord: number;
   }
 ) => {
+  if (!game.users[inSectorObjectID]) {
+    return false;
+  }
   // верхняя левая координата
   if (
     objectCoords.topRightYCoord > game.users[inSectorObjectID].square.currentCoord.topLeft.y &&

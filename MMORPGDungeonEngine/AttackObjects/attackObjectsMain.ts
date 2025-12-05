@@ -5,6 +5,7 @@ import { setClientCoordinates } from "../MoveObjects/moveObjectsMain";
 import { reduceGamerHP, reduceNPCHP } from "../StatObjects/statObjectsMain";
 import {
   calculateDamage,
+  getAreaAndObjectsUnderAttack,
   getChanksAndObjectsUnderAttack,
   NPCGetChanksUnderAttack,
   setAttackObjectStatus,
@@ -36,6 +37,7 @@ export const attackObjectMainMechanism = (
 
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
+  const startAttack = Date.now();
   if (game.attackStatusObj[attackObjectID]?.isCooldown) {
     return;
   }
@@ -47,23 +49,28 @@ export const attackObjectMainMechanism = (
   const objectEdgeChanks = getObjectEdgeChanks(attackObjectID);
 
   if (attackObjectStatus === "gamer") {
-    console.log(game.sectors);
-
     setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
-    const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
+
+    const areaAndObjectsUnderAttack = getAreaAndObjectsUnderAttack(
       game.users[attackObjectID].moveDirection,
       attackObjectID,
-      1,
-      objectEdgeChanks,
-      io
+      24
     );
 
-    if (chanksAndObjectsUnderAttack?.objectUnderAttack) {
+    // const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
+    //   game.users[attackObjectID].moveDirection,
+    //   attackObjectID,
+    //   1,
+    //   objectEdgeChanks,
+    //   io
+    // );
+
+    if (areaAndObjectsUnderAttack?.objectsUnderAttack) {
       calculateDamage(
         game.users[attackObjectID].moveDirection,
         attackObjectID,
         io,
-        chanksAndObjectsUnderAttack?.objectUnderAttack
+        areaAndObjectsUnderAttack?.objectsUnderAttack
       );
     }
   }
@@ -110,4 +117,7 @@ export const attackObjectMainMechanism = (
 
     NPCAttack();
   }
+  const finishAttack = Date.now();
+
+  console.log(`Attack ${finishAttack - startAttack}`);
 };

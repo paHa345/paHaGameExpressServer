@@ -3,6 +3,12 @@ import { game, UserMoveDirections } from "../gameObject/gameObject";
 import { NPCOrGamerObjectsData } from "../../types";
 import { reduceGamerHP, reduceNPCHP } from "../StatObjects/statObjectsMain";
 import { setClientCoordinates } from "../MoveObjects/moveObjectsMain";
+import { getObjectCoords } from "../MoveObjects/moveObjectsFunctions";
+import {
+  getDownAttackAreaCoords,
+  getLeftAttackAreaCoords,
+  getUpAttackAreaCoords,
+} from "./getAttackAreaCoordsFunctions";
 
 export const setAttackObjectStatus = (
   attackObjectID: string,
@@ -43,6 +49,314 @@ export const setAttackObjectStatus = (
   }, 100);
 };
 
+export const getAreaAndObjectsUnderAttack = (
+  direction: UserMoveDirections,
+  attackObjectID: string,
+  attackAreaDeep: number
+) => {
+  const attackObjectCoords: {
+    bottomLeftXCoord: number;
+    bottomRightXCoord: number;
+    topLeftXCoord: number;
+    topRightXCoord: number;
+    bottomLeftYCoord: number;
+    topLeftYCoord: number;
+    topRightYCoord: number;
+    bottomRightYCoord: number;
+  } = getObjectCoords(attackObjectID);
+
+  const underAttackSectorsAndObjects: {
+    [sectorName: string]: {
+      objectsID: {
+        [id: string]: {
+          objectType: string;
+        };
+      };
+    };
+  } = {};
+
+  const attackAreaCoord: {
+    [coordName: string]: {
+      x: number;
+      y: number;
+    };
+  } = {};
+
+  const objectsUnderAttack: {
+    [objectUnderAttackID: string]: number;
+  } = {};
+
+  //create attack area
+  if (direction === UserMoveDirections.up) {
+    getUpAttackAreaCoords(attackObjectCoords, attackAreaDeep, attackAreaCoord);
+
+    for (const coord in attackAreaCoord) {
+      if (
+        underAttackSectorsAndObjects[
+          `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+            attackAreaCoord[coord].x / (20 * 8)
+          )}`
+        ]
+      )
+        continue;
+
+      underAttackSectorsAndObjects[
+        `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+          attackAreaCoord[coord].x / (20 * 8)
+        )}`
+      ] =
+        game.sectors[
+          `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+            attackAreaCoord[coord].x / (20 * 8)
+          )}`
+        ];
+      for (const objectID in game.sectors[
+        `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+          attackAreaCoord[coord].x / (20 * 8)
+        )}`
+      ].objectsID) {
+        if (objectID === attackObjectID) continue;
+        // берём координаты объекта
+        // координаты области под атакой и смотрим находятся ли они в этой области
+
+        // bottom left point
+        if (
+          game.users[objectID].square.currentCoord.bottomLeft.y >
+            attackAreaCoord["topLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.bottomLeft.y <
+            attackAreaCoord["bottomLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.bottomLeft.x >
+            attackAreaCoord["topLeftCoords"].x &&
+          game.users[objectID].square.currentCoord.bottomLeft.x <
+            attackAreaCoord["topRightCoords"].x
+        ) {
+          objectsUnderAttack[objectID] = 1;
+          continue;
+        }
+
+        // bottom middle point
+
+        if (
+          game.users[objectID].square.currentCoord.bottomLeft.y >
+            attackAreaCoord["topLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.bottomLeft.y <
+            attackAreaCoord["bottomLeftCoords"].y &&
+          Math.floor(
+            (game.users[objectID].square.currentCoord.bottomLeft.x +
+              game.users[objectID].square.currentCoord.bottomRight.x) /
+              2
+          ) > attackAreaCoord["topLeftCoords"].x &&
+          Math.floor(
+            (game.users[objectID].square.currentCoord.bottomLeft.x +
+              game.users[objectID].square.currentCoord.bottomRight.x) /
+              2
+          ) < attackAreaCoord["topRightCoords"].x
+        ) {
+          objectsUnderAttack[objectID] = 1;
+
+          continue;
+        }
+
+        // bottom right point
+
+        if (
+          game.users[objectID].square.currentCoord.bottomRight.y >
+            attackAreaCoord["topLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.bottomRight.y <
+            attackAreaCoord["bottomRightCoords"].y &&
+          game.users[objectID].square.currentCoord.bottomRight.x >
+            attackAreaCoord["topLeftCoords"].x &&
+          game.users[objectID].square.currentCoord.bottomRight.x <
+            attackAreaCoord["topRightCoords"].x
+        ) {
+          objectsUnderAttack[objectID] = 1;
+
+          continue;
+        }
+      }
+    }
+  }
+  if (direction === UserMoveDirections.down) {
+    getDownAttackAreaCoords(attackObjectCoords, attackAreaDeep, attackAreaCoord);
+    for (const coord in attackAreaCoord) {
+      if (
+        underAttackSectorsAndObjects[
+          `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+            attackAreaCoord[coord].x / (20 * 8)
+          )}`
+        ]
+      )
+        continue;
+
+      underAttackSectorsAndObjects[
+        `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+          attackAreaCoord[coord].x / (20 * 8)
+        )}`
+      ] =
+        game.sectors[
+          `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+            attackAreaCoord[coord].x / (20 * 8)
+          )}`
+        ];
+      for (const objectID in game.sectors[
+        `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+          attackAreaCoord[coord].x / (20 * 8)
+        )}`
+      ].objectsID) {
+        if (objectID === attackObjectID) continue;
+        // берём координаты объекта
+        // координаты области под атакой и смотрим находятся ли они в этой области
+
+        // top left point
+        if (
+          game.users[objectID].square.currentCoord.topLeft.y > attackAreaCoord["topLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.topLeft.y <
+            attackAreaCoord["bottomLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.topLeft.x >
+            attackAreaCoord["bottomLeftCoords"].x &&
+          game.users[objectID].square.currentCoord.topLeft.x <
+            attackAreaCoord["bottomRightCoords"].x
+        ) {
+          objectsUnderAttack[objectID] = 1;
+          continue;
+        }
+
+        // top middle point
+
+        if (
+          game.users[objectID].square.currentCoord.topRight.y >
+            attackAreaCoord["topLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.topRight.y <
+            attackAreaCoord["bottomLeftCoords"].y &&
+          Math.floor(
+            (game.users[objectID].square.currentCoord.topLeft.x +
+              game.users[objectID].square.currentCoord.topRight.x) /
+              2
+          ) > attackAreaCoord["bottomLeftCoords"].x &&
+          Math.floor(
+            (game.users[objectID].square.currentCoord.topLeft.x +
+              game.users[objectID].square.currentCoord.topRight.x) /
+              2
+          ) < attackAreaCoord["bottomRightCoords"].x
+        ) {
+          objectsUnderAttack[objectID] = 1;
+
+          continue;
+        }
+
+        // top right point
+
+        if (
+          game.users[objectID].square.currentCoord.topRight.y >
+            attackAreaCoord["topLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.topRight.y <
+            attackAreaCoord["bottomLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.topRight.x >
+            attackAreaCoord["bottomLeftCoords"].x &&
+          game.users[objectID].square.currentCoord.topRight.x <
+            attackAreaCoord["bottomRightCoords"].x
+        ) {
+          objectsUnderAttack[objectID] = 1;
+
+          continue;
+        }
+      }
+    }
+  }
+  if (direction === UserMoveDirections.left) {
+    getLeftAttackAreaCoords(attackObjectCoords, attackAreaDeep, attackAreaCoord);
+
+    for (const coord in attackAreaCoord) {
+      if (
+        underAttackSectorsAndObjects[
+          `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+            attackAreaCoord[coord].x / (20 * 8)
+          )}`
+        ]
+      )
+        continue;
+
+      underAttackSectorsAndObjects[
+        `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+          attackAreaCoord[coord].x / (20 * 8)
+        )}`
+      ] =
+        game.sectors[
+          `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+            attackAreaCoord[coord].x / (20 * 8)
+          )}`
+        ];
+      for (const objectID in game.sectors[
+        `${Math.floor(attackAreaCoord[coord].y / (20 * 8))}${Math.floor(
+          attackAreaCoord[coord].x / (20 * 8)
+        )}`
+      ].objectsID) {
+        if (objectID === attackObjectID) continue;
+        // берём координаты объекта
+        // координаты области под атакой и смотрим находятся ли они в этой области
+
+        // top right point
+
+        if (
+          game.users[objectID].square.currentCoord.topRight.y >
+            attackAreaCoord["topLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.topRight.y <
+            attackAreaCoord["bottomLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.topRight.x >
+            attackAreaCoord["bottomLeftCoords"].x &&
+          game.users[objectID].square.currentCoord.topRight.x <
+            attackAreaCoord["bottomRightCoords"].x
+        ) {
+          objectsUnderAttack[objectID] = 1;
+
+          continue;
+        }
+
+        // bottom left point
+        if (
+          game.users[objectID].square.currentCoord.bottomRight.y >
+            attackAreaCoord["topLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.bottomRight.y <
+            attackAreaCoord["bottomLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.bottomRight.x >
+            attackAreaCoord["bottomLeftCoords"].x &&
+          game.users[objectID].square.currentCoord.bottomRight.x <
+            attackAreaCoord["bottomRightCoords"].x
+        ) {
+          objectsUnderAttack[objectID] = 1;
+          continue;
+        }
+
+        // top middle point
+
+        if (
+          game.users[objectID].square.currentCoord.topRight.y >
+            attackAreaCoord["topLeftCoords"].y &&
+          game.users[objectID].square.currentCoord.topRight.y <
+            attackAreaCoord["bottomLeftCoords"].y &&
+          Math.floor(
+            (game.users[objectID].square.currentCoord.bottomRight.x +
+              game.users[objectID].square.currentCoord.topRight.x) /
+              2
+          ) > attackAreaCoord["bottomLeftCoords"].x &&
+          Math.floor(
+            (game.users[objectID].square.currentCoord.bottomRight.x +
+              game.users[objectID].square.currentCoord.topRight.x) /
+              2
+          ) < attackAreaCoord["bottomRightCoords"].x
+        ) {
+          objectsUnderAttack[objectID] = 1;
+
+          continue;
+        }
+      }
+    }
+  }
+  if (direction === UserMoveDirections.right) {
+  }
+  return { objectsUnderAttack: objectsUnderAttack };
+};
+
 export const getChanksAndObjectsUnderAttack = (
   direction: UserMoveDirections,
   attackObjectID: string,
@@ -61,18 +375,16 @@ export const getChanksAndObjectsUnderAttack = (
 
   const chanksUnderAttack: { row: number; col: number }[] = [];
 
-  const attackAreaCoords = () => {
-    console.log(game.users[attackObjectID].NPCViewDirection);
-    // для игрока
-    if (!game.users[attackObjectID].NPCViewDirection) {
-      console.log(game.users[attackObjectID].moveDirection);
-      if (game.users[attackObjectID].moveDirection === UserMoveDirections.up) {
-      }
-    }
-    // для NPC
-  };
+  // const attackAreaCoords = () => {
+  //   // для игрока
+  //   if (!game.users[attackObjectID].NPCViewDirection) {
+  //     if (game.users[attackObjectID].moveDirection === UserMoveDirections.up) {
+  //     }
+  //   }
+  //   // для NPC
+  // };
 
-  attackAreaCoords();
+  // attackAreaCoords();
 
   const addUnderAttackObjectsAndChunksArr = (
     underAttackChankObjectID: string | undefined,
@@ -207,33 +519,63 @@ export const calculateDamage = (
       //  и объект удаляется и очищаются занимаемые чанки
       if (game.statObj.NPC[underAttackObjectID].currentHP <= 0) {
         // находим чанки и очищаем их
-        const getDeletedObjectCurrentChanks = (underAttackObjectID: string) => {
-          const topLeftXChank = Math.floor(
-            game.users[underAttackObjectID].square.currentCoord.topLeft.x / 8
-          );
-          const topLeftYChank = Math.floor(
-            game.users[underAttackObjectID].square.currentCoord.topLeft.y / 8
-          );
 
-          const deletedObjectType = game.users[underAttackObjectID].objectType;
+        const deleteObjectFromSectors = (objectID: string) => {
+          const objectoords = getObjectCoords(objectID);
 
-          for (let i = 0; i <= NPCOrGamerObjectsData[deletedObjectType].widthChanks; i++) {
-            for (let j = 0; j <= NPCOrGamerObjectsData[deletedObjectType].heightChanks; j++) {
-              if (
-                game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank.objectID ===
-                underAttackObjectID
-              ) {
-                game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank = {
-                  objectID: undefined,
-                  isObjectChank: false,
-                  isGamerChank: null,
-                };
-              }
-            }
-          }
+          delete game.sectors[
+            `${Math.floor(objectoords.topLeftYCoord / (20 * 8))}${Math.floor(
+              objectoords.topLeftXCoord / (20 * 8)
+            )}`
+          ].objectsID[underAttackObjectID];
+
+          delete game.sectors[
+            `${Math.floor(objectoords.topRightYCoord / (20 * 8))}${Math.floor(
+              objectoords.topRightXCoord / (20 * 8)
+            )}`
+          ].objectsID[underAttackObjectID];
+
+          delete game.sectors[
+            `${Math.floor(objectoords.bottomLeftYCoord / (20 * 8))}${Math.floor(
+              objectoords.bottomLeftXCoord / (20 * 8)
+            )}`
+          ].objectsID[underAttackObjectID];
+
+          delete game.sectors[
+            `${Math.floor(objectoords.bottomRightYCoord / (20 * 8))}${Math.floor(
+              objectoords.bottomRightXCoord / (20 * 8)
+            )}`
+          ].objectsID[underAttackObjectID];
         };
+        deleteObjectFromSectors(underAttackObjectID);
 
-        getDeletedObjectCurrentChanks(underAttackObjectID);
+        // const getDeletedObjectCurrentChanks = (underAttackObjectID: string) => {
+        //   const topLeftXChank = Math.floor(
+        //     game.users[underAttackObjectID].square.currentCoord.topLeft.x / 8
+        //   );
+        //   const topLeftYChank = Math.floor(
+        //     game.users[underAttackObjectID].square.currentCoord.topLeft.y / 8
+        //   );
+
+        //   const deletedObjectType = game.users[underAttackObjectID].objectType;
+
+        //   for (let i = 0; i <= NPCOrGamerObjectsData[deletedObjectType].widthChanks; i++) {
+        //     for (let j = 0; j <= NPCOrGamerObjectsData[deletedObjectType].heightChanks; j++) {
+        //       if (
+        //         game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank.objectID ===
+        //         underAttackObjectID
+        //       ) {
+        //         game.gameField[topLeftYChank + j][topLeftXChank + i].objectDataChank = {
+        //           objectID: undefined,
+        //           isObjectChank: false,
+        //           isGamerChank: null,
+        //         };
+        //       }
+        //     }
+        //   }
+        // };
+
+        // getDeletedObjectCurrentChanks(underAttackObjectID);
 
         game.users[underAttackObjectID].deathAnimationStatus = true;
         game.users[
@@ -275,8 +617,6 @@ export const calculateDamage = (
       game.users[
         underAttackObjectID
       ].imgName = `${game.users[underAttackObjectID].objectType}GetDamageImage`;
-
-      console.log(game.users[underAttackObjectID].imgName);
 
       setTimeout(() => {
         game.users[underAttackObjectID].getDamageStatus = false;
