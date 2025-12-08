@@ -33,7 +33,7 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
     const objectEdgeChanks = (0, exports.getObjectEdgeChanks)(attackObjectID);
     if (attackObjectStatus === "gamer") {
         (0, attackObjectsFunctions_1.setAttackObjectStatus)(attackObjectID, attackObjectStatus, attackObjectType, io);
-        const areaAndObjectsUnderAttack = (0, attackObjectsFunctions_1.getAreaAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 24);
+        const areaAndObjectsUnderAttack = (0, attackObjectsFunctions_1.getAreaAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 8);
         // const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
         //   game.users[attackObjectID].moveDirection,
         //   attackObjectID,

@@ -1,4 +1,4 @@
-import { game } from "../gameObject/gameObject";
+import { game, UserMoveDirections } from "../gameObject/gameObject";
 
 export const getUpAttackAreaCoords = (
   attackObjectCoords: {
@@ -156,28 +156,208 @@ export const getRightAttackAreaCoords = (
   }
 ) => {
   attackAreaCoord["topRightCoords"] = {
-    x: attackObjectCoords.topLeftXCoord + 5,
-    y: attackObjectCoords.topLeftYCoord,
+    x:
+      attackObjectCoords.topRightXCoord + attackAreaDeep < (game.mapSize - 1) * 8
+        ? (game.mapSize - 1) * 8
+        : attackObjectCoords.topRightXCoord + attackAreaDeep,
+    y: attackObjectCoords.topRightYCoord,
   };
 
   attackAreaCoord["bottomRightCoords"] = {
-    x: attackObjectCoords.bottomLeftXCoord + 5,
-    y: attackObjectCoords.bottomLeftYCoord,
+    x:
+      attackObjectCoords.bottomRightXCoord + attackAreaDeep < (game.mapSize - 1) * 8
+        ? (game.mapSize - 1) * 8
+        : attackObjectCoords.bottomRightXCoord + attackAreaDeep,
+    y: attackObjectCoords.bottomRightYCoord,
   };
 
   attackAreaCoord["topLeftCoords"] = {
-    x:
-      attackObjectCoords.topLeftXCoord - attackAreaDeep < 0
-        ? 0
-        : attackObjectCoords.topLeftXCoord - attackAreaDeep,
-    y: attackObjectCoords.topLeftYCoord,
+    x: attackObjectCoords.topRightXCoord - 5,
+    y: attackObjectCoords.topRightYCoord,
+    // x:
+    //   attackObjectCoords.topLeftXCoord - attackAreaDeep < 0
+    //     ? 0
+    //     : attackObjectCoords.topLeftXCoord - attackAreaDeep,
+    // y: attackObjectCoords.topLeftYCoord,
   };
 
   attackAreaCoord["bottomLeftCoords"] = {
-    x:
-      attackObjectCoords.bottomLeftXCoord - attackAreaDeep < 0
-        ? 0
-        : attackObjectCoords.bottomLeftXCoord - attackAreaDeep,
-    y: attackObjectCoords.bottomLeftYCoord,
+    x: attackObjectCoords.bottomRightXCoord - 5,
+    y: attackObjectCoords.bottomRightYCoord,
   };
+};
+
+export const firstPointIntersection = (
+  direction: UserMoveDirections,
+  objectID: string,
+  attackAreaCoord: {
+    [coordName: string]: {
+      x: number;
+      y: number;
+    };
+  }
+) => {
+  if (direction === UserMoveDirections.up) {
+    return (
+      game.users[objectID].square.currentCoord.bottomLeft.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.bottomLeft.y <
+        attackAreaCoord["bottomLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.bottomLeft.x >
+        attackAreaCoord["bottomLeftCoords"].x &&
+      game.users[objectID].square.currentCoord.bottomLeft.x < attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+  if (direction === UserMoveDirections.down) {
+    return (
+      game.users[objectID].square.currentCoord.topLeft.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topLeft.y < attackAreaCoord["bottomLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topLeft.x > attackAreaCoord["bottomLeftCoords"].x &&
+      game.users[objectID].square.currentCoord.topLeft.x < attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+  if (direction === UserMoveDirections.left) {
+    return (
+      game.users[objectID].square.currentCoord.topRight.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topRight.y < attackAreaCoord["bottomLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topRight.x > attackAreaCoord["bottomLeftCoords"].x &&
+      game.users[objectID].square.currentCoord.topRight.x < attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+  if (direction === UserMoveDirections.right) {
+    return (
+      game.users[objectID].square.currentCoord.topLeft.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topLeft.y < attackAreaCoord["bottomLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topLeft.x > attackAreaCoord["bottomLeftCoords"].x &&
+      game.users[objectID].square.currentCoord.topLeft.x < attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+};
+
+export const secoundPointIntersection = (
+  direction: UserMoveDirections,
+  objectID: string,
+  attackAreaCoord: {
+    [coordName: string]: {
+      x: number;
+      y: number;
+    };
+  }
+) => {
+  if (direction === UserMoveDirections.up) {
+    return (
+      game.users[objectID].square.currentCoord.bottomRight.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.bottomRight.y <
+        attackAreaCoord["bottomLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.bottomRight.x >
+        attackAreaCoord["bottomLeftCoords"].x &&
+      game.users[objectID].square.currentCoord.bottomRight.x <
+        attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+  if (direction === UserMoveDirections.down) {
+    return (
+      game.users[objectID].square.currentCoord.topRight.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topRight.y < attackAreaCoord["bottomLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topRight.x > attackAreaCoord["bottomLeftCoords"].x &&
+      game.users[objectID].square.currentCoord.topRight.x < attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+  if (direction === UserMoveDirections.left) {
+    return (
+      game.users[objectID].square.currentCoord.bottomRight.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.bottomRight.y <
+        attackAreaCoord["bottomLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.bottomRight.x >
+        attackAreaCoord["bottomLeftCoords"].x &&
+      game.users[objectID].square.currentCoord.bottomRight.x <
+        attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+  if (direction === UserMoveDirections.right) {
+    return (
+      game.users[objectID].square.currentCoord.bottomLeft.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.bottomLeft.y <
+        attackAreaCoord["bottomLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.bottomLeft.x >
+        attackAreaCoord["bottomLeftCoords"].x &&
+      game.users[objectID].square.currentCoord.bottomLeft.x < attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+};
+
+export const middlePointIntersection = (
+  direction: UserMoveDirections,
+  objectID: string,
+  attackAreaCoord: {
+    [coordName: string]: {
+      x: number;
+      y: number;
+    };
+  }
+) => {
+  if (direction === UserMoveDirections.up) {
+    return (
+      game.users[objectID].square.currentCoord.bottomLeft.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.bottomLeft.y <
+        attackAreaCoord["bottomLeftCoords"].y &&
+      Math.floor(
+        (game.users[objectID].square.currentCoord.bottomLeft.x +
+          game.users[objectID].square.currentCoord.bottomRight.x) /
+          2
+      ) > attackAreaCoord["topLeftCoords"].x &&
+      Math.floor(
+        (game.users[objectID].square.currentCoord.bottomLeft.x +
+          game.users[objectID].square.currentCoord.bottomRight.x) /
+          2
+      ) < attackAreaCoord["topRightCoords"].x
+    );
+  }
+  if (direction === UserMoveDirections.down) {
+    return (
+      game.users[objectID].square.currentCoord.topRight.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topRight.y < attackAreaCoord["bottomLeftCoords"].y &&
+      Math.floor(
+        (game.users[objectID].square.currentCoord.topLeft.x +
+          game.users[objectID].square.currentCoord.topRight.x) /
+          2
+      ) > attackAreaCoord["bottomLeftCoords"].x &&
+      Math.floor(
+        (game.users[objectID].square.currentCoord.topLeft.x +
+          game.users[objectID].square.currentCoord.topRight.x) /
+          2
+      ) < attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+  if (direction === UserMoveDirections.left) {
+    return (
+      game.users[objectID].square.currentCoord.topRight.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topRight.y < attackAreaCoord["bottomLeftCoords"].y &&
+      Math.floor(
+        (game.users[objectID].square.currentCoord.bottomRight.x +
+          game.users[objectID].square.currentCoord.topRight.x) /
+          2
+      ) > attackAreaCoord["bottomLeftCoords"].x &&
+      Math.floor(
+        (game.users[objectID].square.currentCoord.bottomRight.x +
+          game.users[objectID].square.currentCoord.topRight.x) /
+          2
+      ) < attackAreaCoord["bottomRightCoords"].x
+    );
+  }
+  if (direction === UserMoveDirections.right) {
+    return (
+      game.users[objectID].square.currentCoord.topLeft.y > attackAreaCoord["topLeftCoords"].y &&
+      game.users[objectID].square.currentCoord.topLeft.y < attackAreaCoord["bottomLeftCoords"].y &&
+      Math.floor(
+        (game.users[objectID].square.currentCoord.bottomLeft.x +
+          game.users[objectID].square.currentCoord.topLeft.x) /
+          2
+      ) > attackAreaCoord["bottomLeftCoords"].x &&
+      Math.floor(
+        (game.users[objectID].square.currentCoord.bottomLeft.x +
+          game.users[objectID].square.currentCoord.topLeft.x) /
+          2
+      ) < attackAreaCoord["bottomRightCoords"].x
+    );
+  }
 };

@@ -54,7 +54,7 @@ export const attackObjectMainMechanism = (
     const areaAndObjectsUnderAttack = getAreaAndObjectsUnderAttack(
       game.users[attackObjectID].moveDirection,
       attackObjectID,
-      24
+      8
     );
 
     // const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
