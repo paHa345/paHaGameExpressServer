@@ -19,6 +19,7 @@ exports.game = {
     attackStatusObj: {},
     NPCUnderAttackChanksObj: {},
     NPCDataObj: {},
+    NPCViewAreaCoord: {},
     frameObj: {
         mainFrame: 0,
         objects: {},

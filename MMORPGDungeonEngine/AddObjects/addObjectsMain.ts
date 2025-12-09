@@ -31,6 +31,14 @@ export const addGamerOrNPC = (
       currentDamage: damage,
       percentHP: 100,
     };
+    game.NPCViewAreaCoord[addedElID] = {
+      viewAreaCoord: {
+        topLeft: { x: 0, y: 0 },
+        topRight: { x: 0, y: 0 },
+        bottomLeft: { x: 0, y: 0 },
+        bottomRight: { x: 0, y: 0 },
+      },
+    };
   }
 
   game.users[addedElID] = {

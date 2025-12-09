@@ -2,6 +2,11 @@ import { DefaultEventsMap, Server } from "socket.io";
 import { game, UserMoveDirections } from "../gameObject/gameObject";
 import { NPCOrGamerObjectsData } from "../../types";
 import { attackObjectMainMechanism } from "../AttackObjects/attackObjectsMain";
+import {
+  createNPCViewArea,
+  getObjectsInViewArea,
+  getViewAreaSectorsAndObjects,
+} from "./createViewAreaFunctions";
 
 export const NPCViewMain = (
   NPCObj: {
@@ -28,6 +33,20 @@ export const NPCViewMain = (
   const topRightYChank = Math.floor(game.users[NPCID].square.currentCoord.topRight.y / 8);
   const chanks = [];
   let baseNPCLevel: number;
+
+  const underAttackSectorsAndObjects: {
+    sectors: { [sectorName: string]: { value: number } };
+    objects: {
+      [id: string]: {
+        value: number;
+      };
+    };
+  } = { sectors: {}, objects: {} };
+
+  createNPCViewArea(NPCID);
+  getViewAreaSectorsAndObjects(NPCID, underAttackSectorsAndObjects);
+  getObjectsInViewArea(underAttackSectorsAndObjects, NPCID);
+
   if (
     game.users[NPCID].NPCViewDirection === UserMoveDirections.up ||
     game.users[NPCID].NPCViewDirection === UserMoveDirections.stop

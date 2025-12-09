@@ -10,6 +10,7 @@ import {
   NPCGetChanksUnderAttack,
   setAttackObjectStatus,
 } from "./attackObjectsFunctions";
+import { createNPCViewArea } from "../NPCView/createViewAreaFunctions";
 
 export const getObjectEdgeChanks = (objectID: string) => {
   const topLeftXChank = Math.floor(game.users[objectID].square.currentCoord.topLeft.x / 8);

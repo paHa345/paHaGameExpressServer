@@ -93,6 +93,17 @@ export interface IGameMain {
     };
   };
 
+  NPCViewAreaCoord: {
+    [NPCID: string]: {
+      viewAreaCoord: {
+        topLeft: { x: number; y: number };
+        topRight: { x: number; y: number };
+        bottomLeft: { x: number; y: number };
+        bottomRight: { x: number; y: number };
+      };
+    };
+  };
+
   NPCDataObj: {
     [NPCID: string]: {
       timeMoveDirection: number;
@@ -185,6 +196,7 @@ export const game: IGameMain = {
   attackStatusObj: {},
   NPCUnderAttackChanksObj: {},
   NPCDataObj: {},
+  NPCViewAreaCoord: {},
   frameObj: {
     mainFrame: 0,
     objects: {},

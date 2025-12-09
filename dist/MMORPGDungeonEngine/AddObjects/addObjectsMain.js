@@ -24,6 +24,14 @@ const addGamerOrNPC = (addedElType, objectType, addedElID, hp, armour, damage, X
             currentDamage: damage,
             percentHP: 100,
         };
+        gameObject_1.game.NPCViewAreaCoord[addedElID] = {
+            viewAreaCoord: {
+                topLeft: { x: 0, y: 0 },
+                topRight: { x: 0, y: 0 },
+                bottomLeft: { x: 0, y: 0 },
+                bottomRight: { x: 0, y: 0 },
+            },
+        };
     }
     gameObject_1.game.users[addedElID] = {
         type: addedElType,

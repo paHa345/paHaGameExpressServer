@@ -4,6 +4,7 @@ exports.NPCViewMain = void 0;
 const gameObject_1 = require("../gameObject/gameObject");
 const types_1 = require("../../types");
 const attackObjectsMain_1 = require("../AttackObjects/attackObjectsMain");
+const createViewAreaFunctions_1 = require("./createViewAreaFunctions");
 const NPCViewMain = (NPCObj, NPCID, io) => {
     var _a, _b, _c, _d, _e, _f, _g, _h;
     if (!gameObject_1.game.users[NPCID])
@@ -16,6 +17,10 @@ const NPCViewMain = (NPCObj, NPCID, io) => {
     const topRightYChank = Math.floor(gameObject_1.game.users[NPCID].square.currentCoord.topRight.y / 8);
     const chanks = [];
     let baseNPCLevel;
+    const underAttackSectorsAndObjects = { sectors: {}, objects: {} };
+    (0, createViewAreaFunctions_1.createNPCViewArea)(NPCID);
+    (0, createViewAreaFunctions_1.getViewAreaSectorsAndObjects)(NPCID, underAttackSectorsAndObjects);
+    (0, createViewAreaFunctions_1.getObjectsInViewArea)(underAttackSectorsAndObjects, NPCID);
     if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.up ||
         gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.stop) {
         baseNPCLevel = topLeftXChank + 1;
