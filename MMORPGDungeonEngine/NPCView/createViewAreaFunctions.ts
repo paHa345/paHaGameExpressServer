@@ -227,15 +227,203 @@ export const getObjectsInViewArea = (
 ) => {
   for (const objectID in underAttackSectorsAndObjects.objects) {
     // get collision object with view area
-    console.log(game.NPCViewAreaCoord[NPCID].viewAreaCoord);
     if (
       getCollision(
         game.users[objectID].square.currentCoord,
         game.NPCViewAreaCoord[NPCID].viewAreaCoord
       )
     ) {
-      console.log("Get collision");
-      console.log(Date.now());
+      //   console.log("Get collision");
+      //   console.log(Date.now());
+      game.NPCDataObj[NPCID].aggressionGamerObj = objectID;
+      return;
     }
+  }
+  game.NPCDataObj[NPCID].aggressionGamerObj = undefined;
+};
+
+export const moveBaseAxiosToObject = () => {};
+
+export const moveNPCToAggrObject = (NPCID: string) => {
+  if (!game.NPCDataObj[NPCID].aggressionGamerObj) return;
+  if (!game.users[game.NPCDataObj[NPCID].aggressionGamerObj]) return;
+
+  const checkObjectInUpDownMainAxes = () => {
+    if (!game.NPCDataObj[NPCID].aggressionGamerObj) return false;
+
+    if (
+      game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.x - 8 >
+        Math.floor(
+          (game.users[NPCID].square.currentCoord.topRight.x +
+            game.users[NPCID].square.currentCoord.topLeft.x) /
+            2
+        ) &&
+      game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomLeft.x + 8 <
+        Math.floor(
+          (game.users[NPCID].square.currentCoord.topRight.x +
+            game.users[NPCID].square.currentCoord.topLeft.x) /
+            2
+        )
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const checkObjectInLeftRightMainAxes = () => {
+    if (!game.NPCDataObj[NPCID].aggressionGamerObj) return false;
+
+    if (
+      game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topRight.y + 8 <
+        Math.floor(
+          (game.users[NPCID].square.currentCoord.bottomLeft.y +
+            game.users[NPCID].square.currentCoord.topLeft.y) /
+            2
+        ) &&
+      game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.y - 8 >
+        Math.floor(
+          (game.users[NPCID].square.currentCoord.bottomLeft.y +
+            game.users[NPCID].square.currentCoord.topLeft.y) /
+            2
+        )
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  if (
+    game.users[NPCID].NPCViewDirection === UserMoveDirections.up ||
+    game.users[NPCID].NPCViewDirection === UserMoveDirections.stop
+  ) {
+    if (checkObjectInUpDownMainAxes()) {
+      console.log("Игрок на основной оси, приближаюсь к нему");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 2;
+      return;
+    }
+    if (
+      game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.x <
+      game.users[NPCID].square.currentCoord.topRight.x
+    ) {
+      console.log("Вижу игрока. Двигаюсь влево");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 3;
+      return;
+    } else {
+      console.log("Вижу игрока. Двигаюсь вправо");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 0;
+      return;
+    }
+
+    // if (
+    //   game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomLeft.x >
+    //   game.users[NPCID].square.currentCoord.topLeft.x
+    // ) {
+    //   console.log("Вижу игрока. Двигаюсь вправо");
+    //   game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+    //   game.NPCDataObj[NPCID].directionPointer = 0;
+    //   return;
+    // }
+  }
+  if (game.users[NPCID].NPCViewDirection === UserMoveDirections.down) {
+    if (checkObjectInUpDownMainAxes()) {
+      console.log("Игрок на основной оси, приближаюсь к нему");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 1;
+      return;
+    }
+
+    if (
+      game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.x <
+      game.users[NPCID].square.currentCoord.topRight.x
+    ) {
+      console.log("Вижу игрока. Двигаюсь влево");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 3;
+      return;
+    } else {
+      console.log("Вижу игрока. Двигаюсь вправо");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 0;
+      return;
+    }
+
+    // if (
+    //   game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topLeft.x >
+    //   game.users[NPCID].square.currentCoord.bottomLeft.x
+    // ) {
+    //   console.log("Вижу игрока. Двигаюсь вправо");
+    //   game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+    //   game.NPCDataObj[NPCID].directionPointer = 0;
+    //   return;
+    // }
+  }
+  if (game.users[NPCID].NPCViewDirection === UserMoveDirections.left) {
+    if (checkObjectInLeftRightMainAxes()) {
+      console.log("Игрок на основной оси, приближаюсь к нему");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 3;
+      return;
+    }
+
+    if (
+      game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.y <
+      game.users[NPCID].square.currentCoord.bottomLeft.y
+    ) {
+      console.log("Вижу игрока. Двигаюсь вверх");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 2;
+      return;
+    } else {
+      console.log("Вижу игрока. Двигаюсь вниз");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 1;
+      return;
+    }
+
+    // if (
+    //   game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topRight.y >
+    //   game.users[NPCID].square.currentCoord.topLeft.y
+    // ) {
+    //   console.log("Вижу игрока. Двигаюсь вниз");
+    //   game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+    //   game.NPCDataObj[NPCID].directionPointer = 1;
+    //   return;
+    // }
+  }
+  if (game.users[NPCID].NPCViewDirection === UserMoveDirections.right) {
+    if (checkObjectInLeftRightMainAxes()) {
+      console.log("Игрок на основной оси, приближаюсь к нему");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 0;
+      return;
+    }
+
+    if (
+      game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.y <
+      game.users[NPCID].square.currentCoord.bottomLeft.y
+    ) {
+      console.log("Вижу игрока. Двигаюсь вверх");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 2;
+      return;
+    } else {
+      console.log("Вижу игрока. Двигаюсь вниз");
+      game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+      game.NPCDataObj[NPCID].directionPointer = 1;
+      return;
+    }
+
+    // if (
+    //   game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topLeft.y >
+    //   game.users[NPCID].square.currentCoord.topRight.y
+    // ) {
+    //   console.log("Вижу игрока. Двигаюсь вниз");
+    //   game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+    //   game.NPCDataObj[NPCID].directionPointer = 1;
+    //   return;
+    // }
   }
 };

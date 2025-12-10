@@ -116,6 +116,7 @@ export interface IGameMain {
         viewDirection: number;
       };
       NPCPrepareToAttackStatus: boolean;
+      aggressionGamerObj?: string;
     };
   };
   NPCUnderAttackChanksObj: {
