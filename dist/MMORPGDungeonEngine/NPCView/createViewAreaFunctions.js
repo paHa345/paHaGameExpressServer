@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.moveNPCToAggrObject = exports.moveBaseAxiosToObject = exports.getObjectsInViewArea = exports.getCollision = exports.getViewAreaSectorsAndObjects = exports.createNPCViewArea = void 0;
+const attackObjectsMain_1 = require("../AttackObjects/attackObjectsMain");
 const gameObject_1 = require("../gameObject/gameObject");
 const moveObjectsFunctions_1 = require("../MoveObjects/moveObjectsFunctions");
 const createNPCViewArea = (NPCID) => {
@@ -119,6 +120,8 @@ const getViewAreaSectorsAndObjects = (NPCID, underAttackSectorsAndObjects) => {
                 continue;
             if (viewAreaObject === NPCID)
                 continue;
+            if (gameObject_1.game.users[viewAreaObject].type === "NPC")
+                continue;
             underAttackSectorsAndObjects.objects[viewAreaObject] = { value: 1 };
         }
     }
@@ -149,49 +152,105 @@ const getObjectsInViewArea = (underAttackSectorsAndObjects, NPCID) => {
 exports.getObjectsInViewArea = getObjectsInViewArea;
 const moveBaseAxiosToObject = () => { };
 exports.moveBaseAxiosToObject = moveBaseAxiosToObject;
-const moveNPCToAggrObject = (NPCID) => {
+const moveNPCToAggrObject = (NPCID, io) => {
     if (!gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj)
         return;
     if (!gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj])
         return;
-    const checkObjectInUpDownMainAxes = () => {
+    const checkObjectInMainAxes = () => {
         if (!gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj)
             return false;
-        if (gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.x - 8 >
-            Math.floor((gameObject_1.game.users[NPCID].square.currentCoord.topRight.x +
-                gameObject_1.game.users[NPCID].square.currentCoord.topLeft.x) /
-                2) &&
-            gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomLeft.x + 8 <
+        if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.up ||
+            gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.stop ||
+            gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.down) {
+            if (gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.x -
+                8 >
                 Math.floor((gameObject_1.game.users[NPCID].square.currentCoord.topRight.x +
                     gameObject_1.game.users[NPCID].square.currentCoord.topLeft.x) /
-                    2)) {
-            return true;
-        }
-        return false;
-    };
-    const checkObjectInLeftRightMainAxes = () => {
-        if (!gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj)
+                    2) &&
+                gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomLeft.x + 8 <
+                    Math.floor((gameObject_1.game.users[NPCID].square.currentCoord.topRight.x +
+                        gameObject_1.game.users[NPCID].square.currentCoord.topLeft.x) /
+                        2)) {
+                gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.up
+                    ? (gameObject_1.game.NPCDataObj[NPCID].directionPointer = 2)
+                    : (gameObject_1.game.NPCDataObj[NPCID].directionPointer = 1);
+                return true;
+            }
             return false;
-        if (gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topRight.y + 8 <
-            Math.floor((gameObject_1.game.users[NPCID].square.currentCoord.bottomLeft.y +
-                gameObject_1.game.users[NPCID].square.currentCoord.topLeft.y) /
-                2) &&
-            gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.y - 8 >
+        }
+        if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.left ||
+            gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.right) {
+            if (gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topRight.y + 8 <
                 Math.floor((gameObject_1.game.users[NPCID].square.currentCoord.bottomLeft.y +
                     gameObject_1.game.users[NPCID].square.currentCoord.topLeft.y) /
-                    2)) {
-            return true;
+                    2) &&
+                gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.y -
+                    8 >
+                    Math.floor((gameObject_1.game.users[NPCID].square.currentCoord.bottomLeft.y +
+                        gameObject_1.game.users[NPCID].square.currentCoord.topLeft.y) /
+                        2)) {
+                gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.left
+                    ? (gameObject_1.game.NPCDataObj[NPCID].directionPointer = 3)
+                    : (gameObject_1.game.NPCDataObj[NPCID].directionPointer = 0);
+                return true;
+            }
+            return false;
         }
-        return false;
     };
+    const checkObjectIsNearWithNPC = () => {
+        if (!gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj)
+            return false;
+        let result = false;
+        if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.up ||
+            gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.stop) {
+            gameObject_1.game.users[NPCID].square.currentCoord.topRight.y -
+                gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.y <
+                4
+                ? (result = true)
+                : (result = false);
+            return result;
+        }
+        if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.down) {
+            gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topLeft.y -
+                gameObject_1.game.users[NPCID].square.currentCoord.bottomLeft.y <
+                4
+                ? (result = true)
+                : (result = false);
+            return result;
+        }
+        if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.left) {
+            gameObject_1.game.users[NPCID].square.currentCoord.bottomLeft.x -
+                gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.x <
+                4
+                ? (result = true)
+                : (result = false);
+            return result;
+        }
+        if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.right) {
+            gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomLeft.x -
+                gameObject_1.game.users[NPCID].square.currentCoord.bottomRight.x <
+                4
+                ? (result = true)
+                : (result = false);
+            return result;
+        }
+    };
+    if (checkObjectInMainAxes() && checkObjectIsNearWithNPC()) {
+        console.log(`Игрок в зоне атаки. Атакую ${NPCID}`);
+        if (!gameObject_1.game.users[NPCID].NPCViewDirection)
+            return;
+        gameObject_1.game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+        (0, attackObjectsMain_1.attackObjectMainMechanism)(NPCID, gameObject_1.game.users[NPCID].NPCViewDirection, "NPC", "orc3", io);
+        return;
+    }
+    if (checkObjectInMainAxes()) {
+        console.log("Игрок на основной оси, приближаюсь к нему");
+        gameObject_1.game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
+        return;
+    }
     if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.up ||
         gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.stop) {
-        if (checkObjectInUpDownMainAxes()) {
-            console.log("Игрок на основной оси, приближаюсь к нему");
-            gameObject_1.game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
-            gameObject_1.game.NPCDataObj[NPCID].directionPointer = 2;
-            return;
-        }
         if (gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.x <
             gameObject_1.game.users[NPCID].square.currentCoord.topRight.x) {
             console.log("Вижу игрока. Двигаюсь влево");
@@ -205,23 +264,8 @@ const moveNPCToAggrObject = (NPCID) => {
             gameObject_1.game.NPCDataObj[NPCID].directionPointer = 0;
             return;
         }
-        // if (
-        //   game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomLeft.x >
-        //   game.users[NPCID].square.currentCoord.topLeft.x
-        // ) {
-        //   console.log("Вижу игрока. Двигаюсь вправо");
-        //   game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
-        //   game.NPCDataObj[NPCID].directionPointer = 0;
-        //   return;
-        // }
     }
     if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.down) {
-        if (checkObjectInUpDownMainAxes()) {
-            console.log("Игрок на основной оси, приближаюсь к нему");
-            gameObject_1.game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
-            gameObject_1.game.NPCDataObj[NPCID].directionPointer = 1;
-            return;
-        }
         if (gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.x <
             gameObject_1.game.users[NPCID].square.currentCoord.topRight.x) {
             console.log("Вижу игрока. Двигаюсь влево");
@@ -235,23 +279,8 @@ const moveNPCToAggrObject = (NPCID) => {
             gameObject_1.game.NPCDataObj[NPCID].directionPointer = 0;
             return;
         }
-        // if (
-        //   game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topLeft.x >
-        //   game.users[NPCID].square.currentCoord.bottomLeft.x
-        // ) {
-        //   console.log("Вижу игрока. Двигаюсь вправо");
-        //   game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
-        //   game.NPCDataObj[NPCID].directionPointer = 0;
-        //   return;
-        // }
     }
     if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.left) {
-        if (checkObjectInLeftRightMainAxes()) {
-            console.log("Игрок на основной оси, приближаюсь к нему");
-            gameObject_1.game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
-            gameObject_1.game.NPCDataObj[NPCID].directionPointer = 3;
-            return;
-        }
         if (gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.y <
             gameObject_1.game.users[NPCID].square.currentCoord.bottomLeft.y) {
             console.log("Вижу игрока. Двигаюсь вверх");
@@ -265,23 +294,8 @@ const moveNPCToAggrObject = (NPCID) => {
             gameObject_1.game.NPCDataObj[NPCID].directionPointer = 1;
             return;
         }
-        // if (
-        //   game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topRight.y >
-        //   game.users[NPCID].square.currentCoord.topLeft.y
-        // ) {
-        //   console.log("Вижу игрока. Двигаюсь вниз");
-        //   game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
-        //   game.NPCDataObj[NPCID].directionPointer = 1;
-        //   return;
-        // }
     }
     if (gameObject_1.game.users[NPCID].NPCViewDirection === gameObject_1.UserMoveDirections.right) {
-        if (checkObjectInLeftRightMainAxes()) {
-            console.log("Игрок на основной оси, приближаюсь к нему");
-            gameObject_1.game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
-            gameObject_1.game.NPCDataObj[NPCID].directionPointer = 0;
-            return;
-        }
         if (gameObject_1.game.users[gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.bottomRight.y <
             gameObject_1.game.users[NPCID].square.currentCoord.bottomLeft.y) {
             console.log("Вижу игрока. Двигаюсь вверх");
@@ -295,15 +309,6 @@ const moveNPCToAggrObject = (NPCID) => {
             gameObject_1.game.NPCDataObj[NPCID].directionPointer = 1;
             return;
         }
-        // if (
-        //   game.users[game.NPCDataObj[NPCID].aggressionGamerObj].square.currentCoord.topLeft.y >
-        //   game.users[NPCID].square.currentCoord.topRight.y
-        // ) {
-        //   console.log("Вижу игрока. Двигаюсь вниз");
-        //   game.NPCDataObj[NPCID].NPCCondition.type = "aggression";
-        //   game.NPCDataObj[NPCID].directionPointer = 1;
-        //   return;
-        // }
     }
 };
 exports.moveNPCToAggrObject = moveNPCToAggrObject;

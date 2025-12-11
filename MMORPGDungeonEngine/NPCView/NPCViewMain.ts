@@ -27,14 +27,14 @@ export const NPCViewMain = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
   if (!game.users[NPCID]) return;
-  const topLeftXChank = Math.floor(game.users[NPCID].square.currentCoord.topLeft.x / 8);
-  const topLeftYChank = Math.floor(game.users[NPCID].square.currentCoord.topLeft.y / 8);
-  const bottomLeftXChank = Math.floor(game.users[NPCID].square.currentCoord.bottomLeft.x / 8);
-  const bottomLeftYChank = Math.floor(game.users[NPCID].square.currentCoord.bottomLeft.y / 8);
-  const topRightXChank = Math.floor(game.users[NPCID].square.currentCoord.topRight.x / 8);
-  const topRightYChank = Math.floor(game.users[NPCID].square.currentCoord.topRight.y / 8);
-  const chanks = [];
-  let baseNPCLevel: number;
+  // const topLeftXChank = Math.floor(game.users[NPCID].square.currentCoord.topLeft.x / 8);
+  // const topLeftYChank = Math.floor(game.users[NPCID].square.currentCoord.topLeft.y / 8);
+  // const bottomLeftXChank = Math.floor(game.users[NPCID].square.currentCoord.bottomLeft.x / 8);
+  // const bottomLeftYChank = Math.floor(game.users[NPCID].square.currentCoord.bottomLeft.y / 8);
+  // const topRightXChank = Math.floor(game.users[NPCID].square.currentCoord.topRight.x / 8);
+  // const topRightYChank = Math.floor(game.users[NPCID].square.currentCoord.topRight.y / 8);
+  // const chanks = [];
+  // let baseNPCLevel: number;
 
   const underAttackSectorsAndObjects: {
     sectors: { [sectorName: string]: { value: number } };
@@ -50,7 +50,7 @@ export const NPCViewMain = (
   getObjectsInViewArea(underAttackSectorsAndObjects, NPCID);
 
   if (game.NPCDataObj[NPCID].aggressionGamerObj) {
-    moveNPCToAggrObject(NPCID);
+    moveNPCToAggrObject(NPCID, io);
   } else {
     game.NPCDataObj[NPCID].NPCCondition.type = "observation";
   }

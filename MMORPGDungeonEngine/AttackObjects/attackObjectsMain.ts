@@ -95,22 +95,29 @@ export const attackObjectMainMechanism = (
           .to("68a82c599d9ad19c1b4ec4d2")
           .emit("NPCChanksUnderAttack", game.NPCUnderAttackChanksObj);
         if (!game.users[attackObjectID]) return;
-        const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
+
+        // const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
+        //   game.users[attackObjectID].moveDirection,
+        //   attackObjectID,
+        //   4,
+        //   objectEdgeChanks,
+        //   io
+        // );
+
+        const areaAndObjectsUnderAttack = getAreaAndObjectsUnderAttack(
           game.users[attackObjectID].moveDirection,
           attackObjectID,
-          4,
-          objectEdgeChanks,
-          io
+          8
         );
 
         setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
 
-        if (chanksAndObjectsUnderAttack?.objectUnderAttack) {
+        if (areaAndObjectsUnderAttack?.objectsUnderAttack) {
           calculateDamage(
             game.users[attackObjectID].moveDirection,
             attackObjectID,
             io,
-            chanksAndObjectsUnderAttack?.objectUnderAttack
+            areaAndObjectsUnderAttack?.objectsUnderAttack
           );
         }
       }, 3000);

@@ -63,10 +63,17 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
                     .emit("NPCChanksUnderAttack", gameObject_1.game.NPCUnderAttackChanksObj);
                 if (!gameObject_1.game.users[attackObjectID])
                     return;
-                const chanksAndObjectsUnderAttack = (0, attackObjectsFunctions_1.getChanksAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 4, objectEdgeChanks, io);
+                // const chanksAndObjectsUnderAttack = getChanksAndObjectsUnderAttack(
+                //   game.users[attackObjectID].moveDirection,
+                //   attackObjectID,
+                //   4,
+                //   objectEdgeChanks,
+                //   io
+                // );
+                const areaAndObjectsUnderAttack = (0, attackObjectsFunctions_1.getAreaAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 8);
                 (0, attackObjectsFunctions_1.setAttackObjectStatus)(attackObjectID, attackObjectStatus, attackObjectType, io);
-                if (chanksAndObjectsUnderAttack === null || chanksAndObjectsUnderAttack === void 0 ? void 0 : chanksAndObjectsUnderAttack.objectUnderAttack) {
-                    (0, attackObjectsFunctions_1.calculateDamage)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, io, chanksAndObjectsUnderAttack === null || chanksAndObjectsUnderAttack === void 0 ? void 0 : chanksAndObjectsUnderAttack.objectUnderAttack);
+                if (areaAndObjectsUnderAttack === null || areaAndObjectsUnderAttack === void 0 ? void 0 : areaAndObjectsUnderAttack.objectsUnderAttack) {
+                    (0, attackObjectsFunctions_1.calculateDamage)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, io, areaAndObjectsUnderAttack === null || areaAndObjectsUnderAttack === void 0 ? void 0 : areaAndObjectsUnderAttack.objectsUnderAttack);
                 }
             }, 3000);
         };

@@ -6,20 +6,20 @@ const createViewAreaFunctions_1 = require("./createViewAreaFunctions");
 const NPCViewMain = (NPCObj, NPCID, io) => {
     if (!gameObject_1.game.users[NPCID])
         return;
-    const topLeftXChank = Math.floor(gameObject_1.game.users[NPCID].square.currentCoord.topLeft.x / 8);
-    const topLeftYChank = Math.floor(gameObject_1.game.users[NPCID].square.currentCoord.topLeft.y / 8);
-    const bottomLeftXChank = Math.floor(gameObject_1.game.users[NPCID].square.currentCoord.bottomLeft.x / 8);
-    const bottomLeftYChank = Math.floor(gameObject_1.game.users[NPCID].square.currentCoord.bottomLeft.y / 8);
-    const topRightXChank = Math.floor(gameObject_1.game.users[NPCID].square.currentCoord.topRight.x / 8);
-    const topRightYChank = Math.floor(gameObject_1.game.users[NPCID].square.currentCoord.topRight.y / 8);
-    const chanks = [];
-    let baseNPCLevel;
+    // const topLeftXChank = Math.floor(game.users[NPCID].square.currentCoord.topLeft.x / 8);
+    // const topLeftYChank = Math.floor(game.users[NPCID].square.currentCoord.topLeft.y / 8);
+    // const bottomLeftXChank = Math.floor(game.users[NPCID].square.currentCoord.bottomLeft.x / 8);
+    // const bottomLeftYChank = Math.floor(game.users[NPCID].square.currentCoord.bottomLeft.y / 8);
+    // const topRightXChank = Math.floor(game.users[NPCID].square.currentCoord.topRight.x / 8);
+    // const topRightYChank = Math.floor(game.users[NPCID].square.currentCoord.topRight.y / 8);
+    // const chanks = [];
+    // let baseNPCLevel: number;
     const underAttackSectorsAndObjects = { sectors: {}, objects: {} };
     (0, createViewAreaFunctions_1.createNPCViewArea)(NPCID);
     (0, createViewAreaFunctions_1.getViewAreaSectorsAndObjects)(NPCID, underAttackSectorsAndObjects);
     (0, createViewAreaFunctions_1.getObjectsInViewArea)(underAttackSectorsAndObjects, NPCID);
     if (gameObject_1.game.NPCDataObj[NPCID].aggressionGamerObj) {
-        (0, createViewAreaFunctions_1.moveNPCToAggrObject)(NPCID);
+        (0, createViewAreaFunctions_1.moveNPCToAggrObject)(NPCID, io);
     }
     else {
         gameObject_1.game.NPCDataObj[NPCID].NPCCondition.type = "observation";
