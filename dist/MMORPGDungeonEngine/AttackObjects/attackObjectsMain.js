@@ -71,7 +71,6 @@ const attackObjectMainMechanism = (attackObjectID, direction, attackObjectStatus
                 //   io
                 // );
                 const areaAndObjectsUnderAttack = (0, attackObjectsFunctions_1.getAreaAndObjectsUnderAttack)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, 8);
-                (0, attackObjectsFunctions_1.setAttackObjectStatus)(attackObjectID, attackObjectStatus, attackObjectType, io);
                 if (areaAndObjectsUnderAttack === null || areaAndObjectsUnderAttack === void 0 ? void 0 : areaAndObjectsUnderAttack.objectsUnderAttack) {
                     (0, attackObjectsFunctions_1.calculateDamage)(gameObject_1.game.users[attackObjectID].moveDirection, attackObjectID, io, areaAndObjectsUnderAttack === null || areaAndObjectsUnderAttack === void 0 ? void 0 : areaAndObjectsUnderAttack.objectsUnderAttack);
                 }

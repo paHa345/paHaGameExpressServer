@@ -116,6 +116,8 @@ const getViewAreaSectorsAndObjects = (NPCID, underAttackSectorsAndObjects) => {
             continue;
         underAttackSectorsAndObjects.sectors[`${Math.floor(coords.y / (20 * 8))}${Math.floor(coords.x / (20 * 8))}`] = { value: 1 };
         for (const viewAreaObject in gameObject_1.game.sectors[`${Math.floor(coords.y / (20 * 8))}${Math.floor(coords.x / (20 * 8))}`].objectsID) {
+            if (!gameObject_1.game.users[viewAreaObject])
+                return;
             if (underAttackSectorsAndObjects.objects[viewAreaObject])
                 continue;
             if (viewAreaObject === NPCID)

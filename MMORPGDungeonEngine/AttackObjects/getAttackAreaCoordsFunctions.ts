@@ -197,6 +197,10 @@ export const firstPointIntersection = (
     };
   }
 ) => {
+  if (!game.users[objectID]) {
+    return;
+  }
+
   if (direction === UserMoveDirections.up) {
     return (
       game.users[objectID].square.currentCoord.bottomLeft.y > attackAreaCoord["topLeftCoords"].y &&
@@ -243,6 +247,8 @@ export const secoundPointIntersection = (
     };
   }
 ) => {
+  if (!game.users[objectID]) return;
+
   if (direction === UserMoveDirections.up) {
     return (
       game.users[objectID].square.currentCoord.bottomRight.y > attackAreaCoord["topLeftCoords"].y &&
@@ -295,6 +301,7 @@ export const middlePointIntersection = (
     };
   }
 ) => {
+  if (!game.users[objectID]) return;
   if (direction === UserMoveDirections.up) {
     return (
       game.users[objectID].square.currentCoord.bottomLeft.y > attackAreaCoord["topLeftCoords"].y &&

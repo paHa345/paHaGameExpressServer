@@ -160,6 +160,7 @@ export const getViewAreaSectorsAndObjects = (
     for (const viewAreaObject in game.sectors[
       `${Math.floor(coords.y / (20 * 8))}${Math.floor(coords.x / (20 * 8))}`
     ].objectsID) {
+      if (!game.users[viewAreaObject]) return;
       if (underAttackSectorsAndObjects.objects[viewAreaObject]) continue;
       if (viewAreaObject === NPCID) continue;
       if (game.users[viewAreaObject].type === "NPC") continue;

@@ -100,6 +100,9 @@ const getRightAttackAreaCoords = (attackObjectCoords, attackAreaDeep, attackArea
 };
 exports.getRightAttackAreaCoords = getRightAttackAreaCoords;
 const firstPointIntersection = (direction, objectID, attackAreaCoord) => {
+    if (!gameObject_1.game.users[objectID]) {
+        return;
+    }
     if (direction === gameObject_1.UserMoveDirections.up) {
         return (gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y > attackAreaCoord["topLeftCoords"].y &&
             gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y <
@@ -129,6 +132,8 @@ const firstPointIntersection = (direction, objectID, attackAreaCoord) => {
 };
 exports.firstPointIntersection = firstPointIntersection;
 const secoundPointIntersection = (direction, objectID, attackAreaCoord) => {
+    if (!gameObject_1.game.users[objectID])
+        return;
     if (direction === gameObject_1.UserMoveDirections.up) {
         return (gameObject_1.game.users[objectID].square.currentCoord.bottomRight.y > attackAreaCoord["topLeftCoords"].y &&
             gameObject_1.game.users[objectID].square.currentCoord.bottomRight.y <
@@ -164,6 +169,8 @@ const secoundPointIntersection = (direction, objectID, attackAreaCoord) => {
 };
 exports.secoundPointIntersection = secoundPointIntersection;
 const middlePointIntersection = (direction, objectID, attackAreaCoord) => {
+    if (!gameObject_1.game.users[objectID])
+        return;
     if (direction === gameObject_1.UserMoveDirections.up) {
         return (gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y > attackAreaCoord["topLeftCoords"].y &&
             gameObject_1.game.users[objectID].square.currentCoord.bottomLeft.y <

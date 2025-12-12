@@ -110,8 +110,6 @@ export const attackObjectMainMechanism = (
           8
         );
 
-        setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
-
         if (areaAndObjectsUnderAttack?.objectsUnderAttack) {
           calculateDamage(
             game.users[attackObjectID].moveDirection,
