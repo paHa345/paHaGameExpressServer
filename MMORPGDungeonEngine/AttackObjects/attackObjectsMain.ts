@@ -104,6 +104,8 @@ export const attackObjectMainMechanism = (
         //   io
         // );
 
+        setAttackObjectStatus(attackObjectID, attackObjectStatus, attackObjectType, io);
+
         const areaAndObjectsUnderAttack = getAreaAndObjectsUnderAttack(
           game.users[attackObjectID].moveDirection,
           attackObjectID,
