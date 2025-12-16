@@ -571,6 +571,8 @@ const calculateDamage = (direction, attackObjectID, io, objectUnderAttack) => {
             gameObject_1.game.users[underAttackObjectID].getDamageStatus = true;
             gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}GetDamageImage`;
             setTimeout(() => {
+                if (!gameObject_1.game.users[underAttackObjectID])
+                    return;
                 gameObject_1.game.users[underAttackObjectID].getDamageStatus = false;
                 gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}WalkImage`;
             }, 750);

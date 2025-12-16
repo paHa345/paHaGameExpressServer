@@ -425,7 +425,7 @@ export const createGameField = (socketID: string) => {
     // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
     // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
   }
-  addGamerOrNPC("gamer", "gamer", socketID, 100, 0.2, 10, 150, 150);
+  addGamerOrNPC("gamer", "gamer", socketID, 100, 0.2, 10, 10, 10);
 
   game.gameIsstarted = true;
 };

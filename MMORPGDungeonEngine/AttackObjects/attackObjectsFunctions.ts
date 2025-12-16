@@ -802,6 +802,7 @@ export const calculateDamage = (
       ].imgName = `${game.users[underAttackObjectID].objectType}GetDamageImage`;
 
       setTimeout(() => {
+        if (!game.users[underAttackObjectID]) return;
         game.users[underAttackObjectID].getDamageStatus = false;
         game.users[
           underAttackObjectID
