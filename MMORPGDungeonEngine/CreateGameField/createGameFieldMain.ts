@@ -6,6 +6,7 @@ io;
 
 export const createGameField = (socketID: string) => {
   if (!game.gameField[0]) {
+    console.log("Create game field");
     for (let i = 0; i < game.mapSize; i++) {
       const gameFieldCreatedObjRow: any = {};
       for (let j = 0; j < game.mapSize; j++) {
@@ -418,13 +419,10 @@ export const createGameField = (socketID: string) => {
     addGamerOrNPC("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
     addGamerOrNPC("NPC", "orc3", "ORC#5", 100, 0.1, 20, 100, 260);
     moveNPCMain(io);
-    // moveNPC("ORC#1", "orc3");
-    // moveNPC("ORC#2", "orc3");
-    // moveNPC("ORC#3", "orc3");
-    // moveNPC("ORC#4", "orc3");
-    // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
-    // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
   }
+
+  console.log("Update game field");
+
   addGamerOrNPC("gamer", "gamer", socketID, 100, 0.2, 10, 10, 10);
 
   game.gameIsstarted = true;

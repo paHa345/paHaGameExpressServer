@@ -8,6 +8,7 @@ const moveObjectsMain_1 = require("../MoveObjects/moveObjectsMain");
 src_1.io;
 const createGameField = (socketID) => {
     if (!gameObject_1.game.gameField[0]) {
+        console.log("Create game field");
         for (let i = 0; i < gameObject_1.game.mapSize; i++) {
             const gameFieldCreatedObjRow = {};
             for (let j = 0; j < gameObject_1.game.mapSize; j++) {
@@ -126,13 +127,8 @@ const createGameField = (socketID) => {
         (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
         (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#5", 100, 0.1, 20, 100, 260);
         (0, moveObjectsMain_1.moveNPCMain)(src_1.io);
-        // moveNPC("ORC#1", "orc3");
-        // moveNPC("ORC#2", "orc3");
-        // moveNPC("ORC#3", "orc3");
-        // moveNPC("ORC#4", "orc3");
-        // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
-        // addGamerOrNPC("NPC", "orc3", "ORC#1", 100, 0.1, 20);
     }
+    console.log("Update game field");
     (0, addObjectsMain_1.addGamerOrNPC)("gamer", "gamer", socketID, 100, 0.2, 10, 10, 10);
     gameObject_1.game.gameIsstarted = true;
 };

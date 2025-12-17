@@ -36,6 +36,10 @@ export const setAttackObjectStatus = (
   let stopAttackInterval: any;
 
   stopAttackInterval = setInterval(() => {
+    if (!game.users[attackObjectID]) {
+      clearInterval(stopAttackInterval);
+      return;
+    }
     if (Date.now() - startAttackTimestamp > 500) {
       game.attackStatusObj[attackObjectID].isActive = false;
       game.users[attackObjectID].imgName = `${game.users[attackObjectID].objectType}WalkImage`;
