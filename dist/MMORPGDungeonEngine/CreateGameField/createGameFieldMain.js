@@ -83,7 +83,7 @@ const createGameField = (socketID) => {
             gameObject_1.game.gameField[XChank][YChank].textureObj.sourceY = sourceY;
             gameObject_1.game.gameField[XChank][YChank].textureObj.heigthChanks = heightChanks;
             gameObject_1.game.gameField[XChank][YChank].textureObj.widthChanks = widthChanks;
-            if (objectType === "tree") {
+            if (objectType === "tree" || objectType === "tree") {
                 for (let i = 0; i < widthChanks; i++) {
                     for (let j = 0; j < heightChanks; j++) {
                         gameObject_1.game.gameField[XChank + i][YChank + j].type = objectType;
@@ -121,6 +121,7 @@ const createGameField = (socketID) => {
         createBackgroundObjectTreeTexture(40, 30, 191, 0, 64, 80, 8, 10, "tree", "trees");
         createBackgroundObjectTreeTexture(40, 10, 191, 0, 64, 80, 8, 10, "tree", "trees");
         createBackgroundObjectTreeTexture(40, 80, 12, 0, 132, 128, 17, 16, "playersHouse", "exterior");
+        createBackgroundObjectTreeTexture(75, 100, 4, 545, 55, 65, 8, 10, "scarecrow", "exterior");
         (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#1", 100, 0.1, 20, 200, 200);
         (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
         (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
