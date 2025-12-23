@@ -80,6 +80,7 @@ export interface IGameMain {
         currentArmour: number;
         currentDamage: number;
         percentHP: number;
+        XP: number;
       };
     };
     gamers: {
@@ -89,6 +90,9 @@ export interface IGameMain {
         currentArmour: number;
         currentDamage: number;
         percentHP: number;
+        currentLVL: number;
+        currentLVLUserPoint: number;
+        currentLVLMaxPoint: number;
       };
     };
   };

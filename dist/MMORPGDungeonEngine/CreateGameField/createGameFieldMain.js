@@ -72,6 +72,7 @@ const createGameField = (socketID) => {
         createBackgroundObjectTextureHomogenous(44, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
         createBackgroundObjectTextureHomogenous(48, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
         createBackgroundObjectTextureHomogenous(52, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
+        createBackgroundObjectTextureHomogenous(85, 110, 126, 774, 24, 16, 6, 4, "grass", "exterior", false);
         createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
         createBackgroundObjectTextureHomogenous(45, 100, 101, 517, 25, 25, 3, 3, "mushroom", "exterior", true);
         const createBackgroundObjectTreeTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceX, sourceY, heightChanks, widthChanks, objectType, imageName) => {
@@ -83,11 +84,28 @@ const createGameField = (socketID) => {
             gameObject_1.game.gameField[XChank][YChank].textureObj.sourceY = sourceY;
             gameObject_1.game.gameField[XChank][YChank].textureObj.heigthChanks = heightChanks;
             gameObject_1.game.gameField[XChank][YChank].textureObj.widthChanks = widthChanks;
-            if (objectType === "tree" || objectType === "tree") {
+            if (objectType === "tree") {
                 for (let i = 0; i < widthChanks; i++) {
                     for (let j = 0; j < heightChanks; j++) {
                         gameObject_1.game.gameField[XChank + i][YChank + j].type = objectType;
                         if (j >= 1 && j <= 5 && i >= 6) {
+                            gameObject_1.game.gameField[XChank + i][YChank + j].notMove = true;
+                        }
+                        gameObject_1.game.gameField[XChank + i][YChank + j].coord = {
+                            topLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) },
+                            topRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) },
+                            bottomLeft: { x: 8 * (XChank + i), y: 8 * (YChank + j) + 8 },
+                            bottomRight: { x: 8 * (XChank + i) + 8, y: 8 * (YChank + j) + 8 },
+                        };
+                    }
+                }
+                return;
+            }
+            if (objectType === "scarecrow") {
+                for (let i = 0; i < widthChanks; i++) {
+                    for (let j = 0; j < heightChanks; j++) {
+                        gameObject_1.game.gameField[XChank + i][YChank + j].type = objectType;
+                        if (j >= 2 && j <= 3 && i >= 7) {
                             gameObject_1.game.gameField[XChank + i][YChank + j].notMove = true;
                         }
                         gameObject_1.game.gameField[XChank + i][YChank + j].coord = {
@@ -121,16 +139,76 @@ const createGameField = (socketID) => {
         createBackgroundObjectTreeTexture(40, 30, 191, 0, 64, 80, 8, 10, "tree", "trees");
         createBackgroundObjectTreeTexture(40, 10, 191, 0, 64, 80, 8, 10, "tree", "trees");
         createBackgroundObjectTreeTexture(40, 80, 12, 0, 132, 128, 17, 16, "playersHouse", "exterior");
-        createBackgroundObjectTreeTexture(75, 100, 4, 545, 55, 65, 8, 10, "scarecrow", "exterior");
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#1", 100, 0.1, 20, 200, 200);
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
-        (0, addObjectsMain_1.addGamerOrNPC)("NPC", "orc3", "ORC#5", 100, 0.1, 20, 100, 260);
+        createBackgroundObjectTreeTexture(75, 100, 4, 545, 55, 65, 7, 8, "scarecrow", "exterior");
+        //     createBackgroundObjectTreeTexture(
+        //   85,
+        //   110,
+        //   126,
+        //   774,
+        //   24,
+        //   16,
+        //   6,
+        //   4,
+        //   "highGrass",
+        //   "exterior"
+        // );
+        (0, addObjectsMain_1.addGamerOrNPC)({
+            addedElType: "NPC",
+            objectType: "orc3",
+            addedElID: "ORC#1",
+            XCoord: 200,
+            YCoord: 200,
+            level: 3,
+        });
+        (0, addObjectsMain_1.addGamerOrNPC)({
+            addedElType: "NPC",
+            objectType: "orc3",
+            addedElID: "ORC#2",
+            XCoord: 350,
+            YCoord: 200,
+            level: 3,
+        });
+        (0, addObjectsMain_1.addGamerOrNPC)({
+            addedElType: "NPC",
+            objectType: "orc3",
+            addedElID: "ORC#3",
+            XCoord: 350,
+            YCoord: 350,
+            level: 3,
+        });
+        (0, addObjectsMain_1.addGamerOrNPC)({
+            addedElType: "NPC",
+            objectType: "orc3",
+            addedElID: "ORC#4",
+            XCoord: 450,
+            YCoord: 350,
+            level: 3,
+        });
+        (0, addObjectsMain_1.addGamerOrNPC)({
+            addedElType: "NPC",
+            objectType: "orc3",
+            addedElID: "ORC#5",
+            XCoord: 100,
+            YCoord: 260,
+            level: 3,
+        });
+        // addGamerOrNPC("NPC", "orc3", "ORC#2", 100, 0.1, 20, 350, 200);
+        // addGamerOrNPC("NPC", "orc3", "ORC#3", 100, 0.1, 20, 350, 350);
+        // addGamerOrNPC("NPC", "orc3", "ORC#4", 100, 0.1, 20, 450, 350);
+        // addGamerOrNPC("NPC", "orc3", "ORC#5", 100, 0.1, 20, 100, 260);
         (0, moveObjectsMain_1.moveNPCMain)(src_1.io);
     }
     console.log("Update game field");
-    (0, addObjectsMain_1.addGamerOrNPC)("gamer", "gamer", socketID, 100, 0.2, 10, 10, 10);
+    (0, addObjectsMain_1.addGamerOrNPC)({
+        addedElType: "gamer",
+        objectType: "gamer",
+        addedElID: socketID,
+        hp: 100,
+        armour: 0.2,
+        damage: 10,
+        XCoord: 10,
+        YCoord: 10,
+    });
     gameObject_1.game.gameIsstarted = true;
 };
 exports.createGameField = createGameField;

@@ -739,6 +739,44 @@ export const calculateDamage = (
 
         // getDeletedObjectCurrentChanks(underAttackObjectID);
 
+        // добавляем опыта тому игроку, который убил NPC
+
+        const increaseUserXP = (XP: number) => {
+          const increaseLVLXP = (XP: number) => {
+            if (
+              game.statObj.gamers[attackObjectID].currentLVLMaxPoint -
+                game.statObj.gamers[attackObjectID].currentLVLUserPoint <
+              XP
+            ) {
+              game.statObj.gamers[attackObjectID].currentLVL =
+                game.statObj.gamers[attackObjectID].currentLVL + 1;
+              game.statObj.gamers[attackObjectID].currentLVLMaxPoint =
+                game.statObj.gamers[attackObjectID].currentLVLMaxPoint * 2;
+              game.statObj.gamers[attackObjectID].currentLVLUserPoint = 0;
+              increaseLVLXP(
+                Math.abs(
+                  XP -
+                    (game.statObj.gamers[attackObjectID].currentLVLMaxPoint / 2 -
+                      game.statObj.gamers[attackObjectID].currentLVLUserPoint)
+                )
+              );
+              return;
+            }
+            game.statObj.gamers[attackObjectID].currentLVLUserPoint =
+              game.statObj.gamers[attackObjectID].currentLVLUserPoint + XP;
+
+            return;
+          };
+
+          increaseLVLXP(XP);
+        };
+        increaseUserXP(game.statObj.NPC[underAttackObjectID].XP);
+
+        io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverIncreaseUserXP", {
+          userID: attackObjectID,
+          userStat: game.statObj.gamers[attackObjectID],
+        });
+
         game.users[underAttackObjectID].deathAnimationStatus = true;
         game.users[
           underAttackObjectID

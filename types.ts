@@ -337,3 +337,18 @@ export type ImageNames =
   | "gamerAttackImage"
   | "gamerWalkImage"
   | "gamerGetDamageImage";
+
+export const NPCBaseStat = {
+  orc3: {
+    HP: 100,
+    armour: 0.1,
+    damage: 20,
+    XP: 20,
+  },
+  gamer: {
+    HP: 100,
+    armour: 0.2,
+    damage: 10,
+    XP: 20,
+  },
+};

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NPCOrGamerObjectsData = exports.exerciseTypes = exports.UserType = exports.raitingExerciseArr = exports.coachesFilterElements = exports.filterElements = exports.mainMuscleGrourArr = void 0;
+exports.NPCBaseStat = exports.NPCOrGamerObjectsData = exports.exerciseTypes = exports.UserType = exports.raitingExerciseArr = exports.coachesFilterElements = exports.filterElements = exports.mainMuscleGrourArr = void 0;
 exports.mainMuscleGrourArr = [
     { nameRu: "Бицепс", nameEn: "biceps" },
     { nameRu: "Трицепс", nameEn: "triceps" },
@@ -55,5 +55,19 @@ exports.NPCOrGamerObjectsData = {
         widthChanks: 4,
         heightPixels: 48,
         widthPixels: 32,
+    },
+};
+exports.NPCBaseStat = {
+    orc3: {
+        HP: 100,
+        armour: 0.1,
+        damage: 20,
+        XP: 20,
+    },
+    gamer: {
+        HP: 100,
+        armour: 0.2,
+        damage: 10,
+        XP: 20,
     },
 };

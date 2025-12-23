@@ -1,37 +1,59 @@
-import { NPCOrGamerObjectsData } from "../../types";
+import { NPCBaseStat, NPCOrGamerObjectsData } from "../../types";
 import { game, UserMoveDirections } from "../gameObject/gameObject";
 import { getObjectCoords, setObjectInSectors } from "../MoveObjects/moveObjectsFunctions";
 // import { setUserCurrentChanks } from "../MoveObjects/moveObjectsMain";
 
-export const addGamerOrNPC = (
-  addedElType: "gamer" | "NPC",
-  objectType: string,
-  addedElID: string,
-  hp: number,
-  armour: number,
-  damage: number,
-  XCoord?: number,
-  YCoord?: number
-) => {
-  const numberOfGamers = addedElType === "NPC" ? 5 : Object.keys(game.users).length;
+export const addGamerOrNPC = (addedObjectData: {
+  addedElType: "gamer" | "NPC";
+  objectType: "orc3" | "gamer";
+  addedElID: string;
+  hp?: number;
+  armour?: number;
+  damage?: number;
+  XCoord?: number;
+  YCoord?: number;
+  level?: number;
+}) => {
+  const numberOfGamers = addedObjectData.addedElType === "NPC" ? 5 : Object.keys(game.users).length;
+  const statLVLMultiplicator = addedObjectData.level
+    ? 1 + Math.sqrt(addedObjectData.level) / 10
+    : 1;
 
-  if (addedElType === "gamer") {
-    game.statObj.gamers[addedElID] = {
-      baseHP: hp,
-      currentHP: hp,
-      currentArmour: armour,
-      currentDamage: damage,
+  if (addedObjectData.addedElType === "gamer") {
+    game.statObj.gamers[addedObjectData.addedElID] = {
+      baseHP: addedObjectData.hp ? addedObjectData.hp : NPCBaseStat[addedObjectData.objectType].HP,
+      currentHP: addedObjectData.hp
+        ? addedObjectData.hp
+        : NPCBaseStat[addedObjectData.objectType].HP,
+      currentArmour: addedObjectData.armour
+        ? addedObjectData.armour
+        : NPCBaseStat[addedObjectData.objectType].armour,
+      currentDamage: addedObjectData.damage
+        ? addedObjectData.damage
+        : NPCBaseStat[addedObjectData.objectType].damage,
       percentHP: 100,
+      currentLVL: 1,
+      currentLVLUserPoint: 0,
+      currentLVLMaxPoint: 10,
     };
   } else {
-    game.statObj.NPC[addedElID] = {
-      baseHP: hp,
-      currentHP: hp,
-      currentArmour: armour,
-      currentDamage: damage,
+    game.statObj.NPC[addedObjectData.addedElID] = {
+      baseHP: addedObjectData.hp
+        ? addedObjectData.hp * statLVLMultiplicator
+        : NPCBaseStat[addedObjectData.objectType].HP * statLVLMultiplicator,
+      currentHP: addedObjectData.hp
+        ? addedObjectData.hp * statLVLMultiplicator
+        : NPCBaseStat[addedObjectData.objectType].HP * statLVLMultiplicator,
+      currentArmour: addedObjectData.armour
+        ? addedObjectData.armour * statLVLMultiplicator
+        : NPCBaseStat[addedObjectData.objectType].armour * statLVLMultiplicator,
+      currentDamage: addedObjectData.damage
+        ? addedObjectData.damage * statLVLMultiplicator
+        : NPCBaseStat[addedObjectData.objectType].damage * statLVLMultiplicator,
       percentHP: 100,
+      XP: NPCBaseStat[addedObjectData.objectType].XP * statLVLMultiplicator,
     };
-    game.NPCViewAreaCoord[addedElID] = {
+    game.NPCViewAreaCoord[addedObjectData.addedElID] = {
       viewAreaCoord: {
         topLeft: { x: 0, y: 0 },
         topRight: { x: 0, y: 0 },
@@ -41,11 +63,11 @@ export const addGamerOrNPC = (
     };
   }
 
-  game.users[addedElID] = {
-    type: addedElType,
-    objectType: objectType,
+  game.users[addedObjectData.addedElID] = {
+    type: addedObjectData.addedElType,
+    objectType: addedObjectData.objectType,
     getDamageStatus: false,
-    imgName: `${objectType}WalkImage`,
+    imgName: `${addedObjectData.objectType}WalkImage`,
     deathAnimationStatus: false,
     chanks: {
       topChanks: {},
@@ -57,53 +79,70 @@ export const addGamerOrNPC = (
     square: {
       prevCoord: {
         topLeft: {
-          x: XCoord ? XCoord : 8 + numberOfGamers * 40,
-          y: YCoord ? YCoord : 8,
+          x: addedObjectData.XCoord ? addedObjectData.XCoord : 8 + numberOfGamers * 40,
+          y: addedObjectData.YCoord ? addedObjectData.YCoord : 8,
         },
         topRight: {
-          x: XCoord
-            ? XCoord + NPCOrGamerObjectsData[objectType].widthChanks * 8
-            : 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-          y: YCoord ? YCoord : 8,
+          x: addedObjectData.XCoord
+            ? addedObjectData.XCoord +
+              NPCOrGamerObjectsData[addedObjectData.objectType].widthChanks * 8
+            : 8 +
+              NPCOrGamerObjectsData[addedObjectData.objectType].widthChanks * 8 +
+              numberOfGamers * 40,
+          y: addedObjectData.YCoord ? addedObjectData.YCoord : 8,
         },
         bottomLeft: {
-          x: XCoord ? XCoord : 8 + numberOfGamers * 40,
-          y: YCoord
-            ? YCoord + NPCOrGamerObjectsData[objectType].heightChanks * 8
-            : 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
+          x: addedObjectData.XCoord ? addedObjectData.XCoord : 8 + numberOfGamers * 40,
+          y: addedObjectData.YCoord
+            ? addedObjectData.YCoord +
+              NPCOrGamerObjectsData[addedObjectData.objectType].heightChanks * 8
+            : 8 + NPCOrGamerObjectsData[addedObjectData.objectType].heightChanks * 8,
         },
         bottomRight: {
-          x: XCoord
-            ? XCoord + NPCOrGamerObjectsData[objectType].widthChanks * 8
-            : 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-          y: YCoord ? YCoord : 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
+          x: addedObjectData.XCoord
+            ? addedObjectData.XCoord +
+              NPCOrGamerObjectsData[addedObjectData.objectType].widthChanks * 8
+            : 8 +
+              NPCOrGamerObjectsData[addedObjectData.objectType].widthChanks * 8 +
+              numberOfGamers * 40,
+          y: addedObjectData.YCoord
+            ? addedObjectData.YCoord
+            : 8 + NPCOrGamerObjectsData[addedObjectData.objectType].heightChanks * 8,
         },
       },
 
       currentCoord: {
         topLeft: {
-          x: XCoord ? XCoord : 8 + numberOfGamers * 40,
-          y: YCoord ? YCoord : 8,
+          x: addedObjectData.XCoord ? addedObjectData.XCoord : 8 + numberOfGamers * 40,
+          y: addedObjectData.YCoord ? addedObjectData.YCoord : 8,
         },
         topRight: {
-          x: XCoord
-            ? XCoord + NPCOrGamerObjectsData[objectType].widthChanks * 8
-            : 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-          y: YCoord ? YCoord : 8,
+          x: addedObjectData.XCoord
+            ? addedObjectData.XCoord +
+              NPCOrGamerObjectsData[addedObjectData.objectType].widthChanks * 8
+            : 8 +
+              NPCOrGamerObjectsData[addedObjectData.objectType].widthChanks * 8 +
+              numberOfGamers * 40,
+          y: addedObjectData.YCoord ? addedObjectData.YCoord : 8,
         },
         bottomLeft: {
-          x: XCoord ? XCoord : 8 + numberOfGamers * 40,
-          y: YCoord
-            ? YCoord + NPCOrGamerObjectsData[objectType].heightChanks * 8
-            : 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
+          x: addedObjectData.XCoord ? addedObjectData.XCoord : 8 + numberOfGamers * 40,
+          y: addedObjectData.YCoord
+            ? addedObjectData.YCoord +
+              NPCOrGamerObjectsData[addedObjectData.objectType].heightChanks * 8
+            : 8 + NPCOrGamerObjectsData[addedObjectData.objectType].heightChanks * 8,
         },
         bottomRight: {
-          x: XCoord
-            ? XCoord + NPCOrGamerObjectsData[objectType].widthChanks * 8
-            : 8 + NPCOrGamerObjectsData[objectType].widthChanks * 8 + numberOfGamers * 40,
-          y: YCoord
-            ? YCoord + NPCOrGamerObjectsData[objectType].heightChanks * 8
-            : 8 + NPCOrGamerObjectsData[objectType].heightChanks * 8,
+          x: addedObjectData.XCoord
+            ? addedObjectData.XCoord +
+              NPCOrGamerObjectsData[addedObjectData.objectType].widthChanks * 8
+            : 8 +
+              NPCOrGamerObjectsData[addedObjectData.objectType].widthChanks * 8 +
+              numberOfGamers * 40,
+          y: addedObjectData.YCoord
+            ? addedObjectData.YCoord +
+              NPCOrGamerObjectsData[addedObjectData.objectType].heightChanks * 8
+            : 8 + NPCOrGamerObjectsData[addedObjectData.objectType].heightChanks * 8,
         },
       },
     },
@@ -111,8 +150,8 @@ export const addGamerOrNPC = (
     userRole: numberOfGamers > 0 ? "creeper" : "steve",
   };
 
-  if (addedElType === "NPC") {
-    game.users[addedElID].NPCViewDirection = UserMoveDirections.up;
+  if (addedObjectData.addedElType === "NPC") {
+    game.users[addedObjectData.addedElID].NPCViewDirection = UserMoveDirections.up;
   }
 
   // setUserCurrentChanks(
@@ -134,9 +173,9 @@ export const addGamerOrNPC = (
 
   // для каждой точки определяем в каком секторе она находится
 
-  const objectCoords = getObjectCoords(addedElID);
+  const objectCoords = getObjectCoords(addedObjectData.addedElID);
 
-  setObjectInSectors(objectCoords, addedElID);
+  setObjectInSectors(objectCoords, addedObjectData.addedElID);
 
-  game.frameObj.objects[addedElID] = { idFrame: 0 };
+  game.frameObj.objects[addedObjectData.addedElID] = { idFrame: 0 };
 };

@@ -526,6 +526,33 @@ const calculateDamage = (direction, attackObjectID, io, objectUnderAttack) => {
                 //   }
                 // };
                 // getDeletedObjectCurrentChanks(underAttackObjectID);
+                // добавляем опыта тому игроку, который убил NPC
+                const increaseUserXP = (XP) => {
+                    const increaseLVLXP = (XP) => {
+                        if (gameObject_1.game.statObj.gamers[attackObjectID].currentLVLMaxPoint -
+                            gameObject_1.game.statObj.gamers[attackObjectID].currentLVLUserPoint <
+                            XP) {
+                            gameObject_1.game.statObj.gamers[attackObjectID].currentLVL =
+                                gameObject_1.game.statObj.gamers[attackObjectID].currentLVL + 1;
+                            gameObject_1.game.statObj.gamers[attackObjectID].currentLVLMaxPoint =
+                                gameObject_1.game.statObj.gamers[attackObjectID].currentLVLMaxPoint * 2;
+                            gameObject_1.game.statObj.gamers[attackObjectID].currentLVLUserPoint = 0;
+                            increaseLVLXP(Math.abs(XP -
+                                (gameObject_1.game.statObj.gamers[attackObjectID].currentLVLMaxPoint / 2 -
+                                    gameObject_1.game.statObj.gamers[attackObjectID].currentLVLUserPoint)));
+                            return;
+                        }
+                        gameObject_1.game.statObj.gamers[attackObjectID].currentLVLUserPoint =
+                            gameObject_1.game.statObj.gamers[attackObjectID].currentLVLUserPoint + XP;
+                        return;
+                    };
+                    increaseLVLXP(XP);
+                };
+                increaseUserXP(gameObject_1.game.statObj.NPC[underAttackObjectID].XP);
+                io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverIncreaseUserXP", {
+                    userID: attackObjectID,
+                    userStat: gameObject_1.game.statObj.gamers[attackObjectID],
+                });
                 gameObject_1.game.users[underAttackObjectID].deathAnimationStatus = true;
                 gameObject_1.game.users[underAttackObjectID].imgName = `${gameObject_1.game.users[underAttackObjectID].objectType}DeathImage`;
                 io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverNPCDeathAnimationStatus", {
