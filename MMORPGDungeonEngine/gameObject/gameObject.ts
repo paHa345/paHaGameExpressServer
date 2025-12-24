@@ -93,6 +93,7 @@ export interface IGameMain {
         currentLVL: number;
         currentLVLUserPoint: number;
         currentLVLMaxPoint: number;
+        levelPoints: number;
       };
     };
   };

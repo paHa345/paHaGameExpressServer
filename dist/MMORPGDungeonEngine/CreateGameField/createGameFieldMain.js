@@ -204,8 +204,8 @@ const createGameField = (socketID) => {
         objectType: "gamer",
         addedElID: socketID,
         hp: 100,
-        armour: 0.2,
-        damage: 10,
+        armour: 2,
+        damage: 50,
         XCoord: 10,
         YCoord: 10,
     });

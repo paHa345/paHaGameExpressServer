@@ -7,9 +7,7 @@ const moveObjectsFunctions_1 = require("../MoveObjects/moveObjectsFunctions");
 // import { setUserCurrentChanks } from "../MoveObjects/moveObjectsMain";
 const addGamerOrNPC = (addedObjectData) => {
     const numberOfGamers = addedObjectData.addedElType === "NPC" ? 5 : Object.keys(gameObject_1.game.users).length;
-    const statLVLMultiplicator = addedObjectData.level
-        ? 1 + Math.sqrt(addedObjectData.level) / 10
-        : 1;
+    const statLVLMultiplicator = addedObjectData.level ? addedObjectData.level : 1;
     if (addedObjectData.addedElType === "gamer") {
         gameObject_1.game.statObj.gamers[addedObjectData.addedElID] = {
             baseHP: addedObjectData.hp ? addedObjectData.hp : types_1.NPCBaseStat[addedObjectData.objectType].HP,
@@ -26,24 +24,25 @@ const addGamerOrNPC = (addedObjectData) => {
             currentLVL: 1,
             currentLVLUserPoint: 0,
             currentLVLMaxPoint: 10,
+            levelPoints: 0,
         };
     }
     else {
         gameObject_1.game.statObj.NPC[addedObjectData.addedElID] = {
             baseHP: addedObjectData.hp
-                ? addedObjectData.hp * statLVLMultiplicator
-                : types_1.NPCBaseStat[addedObjectData.objectType].HP * statLVLMultiplicator,
+                ? addedObjectData.hp + statLVLMultiplicator * 10
+                : types_1.NPCBaseStat[addedObjectData.objectType].HP + statLVLMultiplicator * 10,
             currentHP: addedObjectData.hp
-                ? addedObjectData.hp * statLVLMultiplicator
-                : types_1.NPCBaseStat[addedObjectData.objectType].HP * statLVLMultiplicator,
+                ? addedObjectData.hp + statLVLMultiplicator * 10
+                : types_1.NPCBaseStat[addedObjectData.objectType].HP + statLVLMultiplicator * 10,
             currentArmour: addedObjectData.armour
-                ? addedObjectData.armour * statLVLMultiplicator
-                : types_1.NPCBaseStat[addedObjectData.objectType].armour * statLVLMultiplicator,
+                ? addedObjectData.armour + statLVLMultiplicator
+                : types_1.NPCBaseStat[addedObjectData.objectType].armour + statLVLMultiplicator,
             currentDamage: addedObjectData.damage
                 ? addedObjectData.damage * statLVLMultiplicator
-                : types_1.NPCBaseStat[addedObjectData.objectType].damage * statLVLMultiplicator,
+                : types_1.NPCBaseStat[addedObjectData.objectType].damage + statLVLMultiplicator,
             percentHP: 100,
-            XP: types_1.NPCBaseStat[addedObjectData.objectType].XP * statLVLMultiplicator,
+            XP: types_1.NPCBaseStat[addedObjectData.objectType].XP + statLVLMultiplicator * 5,
         };
         gameObject_1.game.NPCViewAreaCoord[addedObjectData.addedElID] = {
             viewAreaCoord: {

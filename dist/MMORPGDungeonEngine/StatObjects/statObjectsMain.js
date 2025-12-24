@@ -7,8 +7,8 @@ const reduceNPCHP = (underAttackObjectID, attackObjectID) => {
         return;
     gameObject_1.game.statObj.NPC[underAttackObjectID].currentHP =
         gameObject_1.game.statObj.NPC[underAttackObjectID].currentHP -
-            (1 - gameObject_1.game.statObj.NPC[underAttackObjectID].currentArmour) *
-                gameObject_1.game.statObj.gamers[attackObjectID].currentDamage;
+            (gameObject_1.game.statObj.gamers[attackObjectID].currentDamage -
+                gameObject_1.game.statObj.NPC[underAttackObjectID].currentArmour);
     gameObject_1.game.statObj.NPC[underAttackObjectID].percentHP =
         (gameObject_1.game.statObj.NPC[underAttackObjectID].currentHP /
             gameObject_1.game.statObj.NPC[underAttackObjectID].baseHP) *
@@ -20,8 +20,8 @@ const reduceGamerHP = (underAttackObjectID, attackObjectID) => {
         return;
     gameObject_1.game.statObj.gamers[underAttackObjectID].currentHP =
         gameObject_1.game.statObj.gamers[underAttackObjectID].currentHP -
-            (1 - gameObject_1.game.statObj.gamers[underAttackObjectID].currentArmour) *
-                gameObject_1.game.statObj.NPC[attackObjectID].currentDamage;
+            (gameObject_1.game.statObj.NPC[attackObjectID].currentDamage -
+                gameObject_1.game.statObj.gamers[underAttackObjectID].currentArmour);
     gameObject_1.game.statObj.gamers[underAttackObjectID].percentHP =
         (gameObject_1.game.statObj.gamers[underAttackObjectID].currentHP /
             gameObject_1.game.statObj.gamers[underAttackObjectID].baseHP) *

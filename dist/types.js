@@ -60,14 +60,14 @@ exports.NPCOrGamerObjectsData = {
 exports.NPCBaseStat = {
     orc3: {
         HP: 100,
-        armour: 0.1,
+        armour: 1,
         damage: 20,
         XP: 20,
     },
     gamer: {
         HP: 100,
-        armour: 0.2,
-        damage: 10,
+        armour: 2,
+        damage: 50,
         XP: 20,
     },
 };

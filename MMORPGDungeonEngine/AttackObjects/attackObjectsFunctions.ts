@@ -753,6 +753,21 @@ export const calculateDamage = (
               game.statObj.gamers[attackObjectID].currentLVLMaxPoint =
                 game.statObj.gamers[attackObjectID].currentLVLMaxPoint * 2;
               game.statObj.gamers[attackObjectID].currentLVLUserPoint = 0;
+              game.statObj.gamers[attackObjectID].levelPoints =
+                game.statObj.gamers[attackObjectID].levelPoints + 1;
+
+              //увеличиваем статы игрока в связи с ростом уровня
+
+              game.statObj.gamers[attackObjectID].baseHP =
+                game.statObj.gamers[attackObjectID].baseHP + 10;
+              game.statObj.gamers[attackObjectID].currentHP =
+                game.statObj.gamers[attackObjectID].baseHP;
+              game.statObj.gamers[attackObjectID].percentHP = 100;
+              game.statObj.gamers[attackObjectID].currentArmour =
+                game.statObj.gamers[attackObjectID].currentArmour + 1;
+              game.statObj.gamers[attackObjectID].currentDamage =
+                game.statObj.gamers[attackObjectID].currentDamage + 1;
+
               increaseLVLXP(
                 Math.abs(
                   XP -

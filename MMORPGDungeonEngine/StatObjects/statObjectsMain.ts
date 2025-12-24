@@ -4,8 +4,8 @@ export const reduceNPCHP = (underAttackObjectID: string, attackObjectID: string)
   if (!game.statObj.gamers[attackObjectID]) return;
   game.statObj.NPC[underAttackObjectID].currentHP =
     game.statObj.NPC[underAttackObjectID].currentHP -
-    (1 - game.statObj.NPC[underAttackObjectID].currentArmour) *
-      game.statObj.gamers[attackObjectID].currentDamage;
+    (game.statObj.gamers[attackObjectID].currentDamage -
+      game.statObj.NPC[underAttackObjectID].currentArmour);
 
   game.statObj.NPC[underAttackObjectID].percentHP =
     (game.statObj.NPC[underAttackObjectID].currentHP /
@@ -16,8 +16,8 @@ export const reduceGamerHP = (underAttackObjectID: string, attackObjectID: strin
   if (!game.statObj.NPC[attackObjectID]) return;
   game.statObj.gamers[underAttackObjectID].currentHP =
     game.statObj.gamers[underAttackObjectID].currentHP -
-    (1 - game.statObj.gamers[underAttackObjectID].currentArmour) *
-      game.statObj.NPC[attackObjectID].currentDamage;
+    (game.statObj.NPC[attackObjectID].currentDamage -
+      game.statObj.gamers[underAttackObjectID].currentArmour);
 
   game.statObj.gamers[underAttackObjectID].percentHP =
     (game.statObj.gamers[underAttackObjectID].currentHP /

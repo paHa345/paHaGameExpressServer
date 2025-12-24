@@ -15,9 +15,7 @@ export const addGamerOrNPC = (addedObjectData: {
   level?: number;
 }) => {
   const numberOfGamers = addedObjectData.addedElType === "NPC" ? 5 : Object.keys(game.users).length;
-  const statLVLMultiplicator = addedObjectData.level
-    ? 1 + Math.sqrt(addedObjectData.level) / 10
-    : 1;
+  const statLVLMultiplicator = addedObjectData.level ? addedObjectData.level : 1;
 
   if (addedObjectData.addedElType === "gamer") {
     game.statObj.gamers[addedObjectData.addedElID] = {
@@ -35,24 +33,26 @@ export const addGamerOrNPC = (addedObjectData: {
       currentLVL: 1,
       currentLVLUserPoint: 0,
       currentLVLMaxPoint: 10,
+      levelPoints: 0,
     };
   } else {
     game.statObj.NPC[addedObjectData.addedElID] = {
       baseHP: addedObjectData.hp
-        ? addedObjectData.hp * statLVLMultiplicator
-        : NPCBaseStat[addedObjectData.objectType].HP * statLVLMultiplicator,
+        ? addedObjectData.hp + statLVLMultiplicator * 10
+        : NPCBaseStat[addedObjectData.objectType].HP + statLVLMultiplicator * 10,
       currentHP: addedObjectData.hp
-        ? addedObjectData.hp * statLVLMultiplicator
-        : NPCBaseStat[addedObjectData.objectType].HP * statLVLMultiplicator,
+        ? addedObjectData.hp + statLVLMultiplicator * 10
+        : NPCBaseStat[addedObjectData.objectType].HP + statLVLMultiplicator * 10,
       currentArmour: addedObjectData.armour
-        ? addedObjectData.armour * statLVLMultiplicator
-        : NPCBaseStat[addedObjectData.objectType].armour * statLVLMultiplicator,
+        ? addedObjectData.armour + statLVLMultiplicator
+        : NPCBaseStat[addedObjectData.objectType].armour + statLVLMultiplicator,
       currentDamage: addedObjectData.damage
         ? addedObjectData.damage * statLVLMultiplicator
-        : NPCBaseStat[addedObjectData.objectType].damage * statLVLMultiplicator,
+        : NPCBaseStat[addedObjectData.objectType].damage + statLVLMultiplicator,
       percentHP: 100,
-      XP: NPCBaseStat[addedObjectData.objectType].XP * statLVLMultiplicator,
+      XP: NPCBaseStat[addedObjectData.objectType].XP + statLVLMultiplicator * 5,
     };
+
     game.NPCViewAreaCoord[addedObjectData.addedElID] = {
       viewAreaCoord: {
         topLeft: { x: 0, y: 0 },
