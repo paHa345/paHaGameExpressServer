@@ -249,6 +249,33 @@ io.on("connection", (socket) => {
     );
   });
 
+  socket.on(
+    "clientLevelUpHandler",
+    (upStatData: { userID: string; upStat: "HP" | "damage" | "armour" }) => {
+      //тут увеличиваем харктеристики
+      console.log(upStatData);
+      if (!game.statObj.gamers[upStatData.userID]) return;
+      if (game.statObj.gamers[upStatData.userID].levelPoints === 0) return;
+
+      if (upStatData.upStat === "HP") {
+        game.statObj.gamers[upStatData.userID].baseHP =
+          game.statObj.gamers[upStatData.userID].baseHP + 10;
+        game.statObj.gamers[upStatData.userID].percentHP =
+          game.statObj.gamers[upStatData.userID].currentHP /
+          game.statObj.gamers[upStatData.userID].baseHP;
+        game.statObj.gamers[upStatData.userID].levelPoints =
+          game.statObj.gamers[upStatData.userID].levelPoints - 1;
+
+        io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverIncreaseUserXP", {
+          userID: upStatData.userID,
+          userStat: game.statObj.gamers[upStatData.userID],
+        });
+
+        return;
+      }
+    }
+  );
+
   socket.on("resetCraftOrgServer", (data) => {
     console.log(data);
     game.attackStatusObj = {};

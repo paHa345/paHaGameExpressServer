@@ -185,6 +185,28 @@ exports.io.on("connection", (socket) => {
         var _a;
         (0, attackObjectsMain_1.attackObjectMainMechanism)(socket.id, (_a = gameObject_1.game.users[socket.id]) === null || _a === void 0 ? void 0 : _a.moveDirection, "gamer", "gamer", exports.io);
     });
+    socket.on("clientLevelUpHandler", (upStatData) => {
+        //тут увеличиваем харктеристики
+        console.log(upStatData);
+        if (!gameObject_1.game.statObj.gamers[upStatData.userID])
+            return;
+        if (gameObject_1.game.statObj.gamers[upStatData.userID].levelPoints === 0)
+            return;
+        if (upStatData.upStat === "HP") {
+            gameObject_1.game.statObj.gamers[upStatData.userID].baseHP =
+                gameObject_1.game.statObj.gamers[upStatData.userID].baseHP + 10;
+            gameObject_1.game.statObj.gamers[upStatData.userID].percentHP =
+                gameObject_1.game.statObj.gamers[upStatData.userID].currentHP /
+                    gameObject_1.game.statObj.gamers[upStatData.userID].baseHP;
+            gameObject_1.game.statObj.gamers[upStatData.userID].levelPoints =
+                gameObject_1.game.statObj.gamers[upStatData.userID].levelPoints - 1;
+            exports.io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverIncreaseUserXP", {
+                userID: upStatData.userID,
+                userStat: gameObject_1.game.statObj.gamers[upStatData.userID],
+            });
+            return;
+        }
+    });
     socket.on("resetCraftOrgServer", (data) => {
         console.log(data);
         gameObject_1.game.attackStatusObj = {};
