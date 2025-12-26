@@ -270,7 +270,30 @@ io.on("connection", (socket) => {
           userID: upStatData.userID,
           userStat: game.statObj.gamers[upStatData.userID],
         });
+        return;
+      }
+      if (upStatData.upStat === "damage") {
+        game.statObj.gamers[upStatData.userID].currentDamage =
+          game.statObj.gamers[upStatData.userID].currentDamage + 1;
+        game.statObj.gamers[upStatData.userID].levelPoints =
+          game.statObj.gamers[upStatData.userID].levelPoints - 1;
 
+        io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverIncreaseUserXP", {
+          userID: upStatData.userID,
+          userStat: game.statObj.gamers[upStatData.userID],
+        });
+        return;
+      }
+      if (upStatData.upStat === "armour") {
+        game.statObj.gamers[upStatData.userID].currentArmour =
+          game.statObj.gamers[upStatData.userID].currentArmour + 1;
+        game.statObj.gamers[upStatData.userID].levelPoints =
+          game.statObj.gamers[upStatData.userID].levelPoints - 1;
+
+        io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverIncreaseUserXP", {
+          userID: upStatData.userID,
+          userStat: game.statObj.gamers[upStatData.userID],
+        });
         return;
       }
     }

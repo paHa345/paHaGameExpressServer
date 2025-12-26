@@ -206,6 +206,28 @@ exports.io.on("connection", (socket) => {
             });
             return;
         }
+        if (upStatData.upStat === "damage") {
+            gameObject_1.game.statObj.gamers[upStatData.userID].currentDamage =
+                gameObject_1.game.statObj.gamers[upStatData.userID].currentDamage + 1;
+            gameObject_1.game.statObj.gamers[upStatData.userID].levelPoints =
+                gameObject_1.game.statObj.gamers[upStatData.userID].levelPoints - 1;
+            exports.io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverIncreaseUserXP", {
+                userID: upStatData.userID,
+                userStat: gameObject_1.game.statObj.gamers[upStatData.userID],
+            });
+            return;
+        }
+        if (upStatData.upStat === "armour") {
+            gameObject_1.game.statObj.gamers[upStatData.userID].currentArmour =
+                gameObject_1.game.statObj.gamers[upStatData.userID].currentArmour + 1;
+            gameObject_1.game.statObj.gamers[upStatData.userID].levelPoints =
+                gameObject_1.game.statObj.gamers[upStatData.userID].levelPoints - 1;
+            exports.io.of("/").to("68a82c599d9ad19c1b4ec4d2").emit("serverIncreaseUserXP", {
+                userID: upStatData.userID,
+                userStat: gameObject_1.game.statObj.gamers[upStatData.userID],
+            });
+            return;
+        }
     });
     socket.on("resetCraftOrgServer", (data) => {
         console.log(data);
