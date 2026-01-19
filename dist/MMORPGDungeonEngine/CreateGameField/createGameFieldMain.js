@@ -73,6 +73,9 @@ const createGameField = (socketID) => {
         createBackgroundObjectTextureHomogenous(48, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
         createBackgroundObjectTextureHomogenous(52, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
         createBackgroundObjectTextureHomogenous(85, 110, 126, 774, 24, 16, 6, 4, "grass", "exterior", false);
+        createBackgroundObjectTextureHomogenous(3, 3, 126, 774, 24, 16, 6, 4, "grass", "exterior", false);
+        createBackgroundObjectTextureHomogenous(25, 16, 56, 63, 114, 107, 3, 3, "armour", "equipment", false);
+        createBackgroundObjectTextureHomogenous(30, 16, 397, 57, 113, 112, 3, 3, "armour", "equipment", false);
         createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
         createBackgroundObjectTextureHomogenous(45, 100, 101, 517, 25, 25, 3, 3, "mushroom", "exterior", true);
         const createBackgroundObjectTreeTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceX, sourceY, heightChanks, widthChanks, objectType, imageName) => {
