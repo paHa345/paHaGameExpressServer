@@ -1,5 +1,6 @@
 import { io } from "../../src";
 import { addGamerOrNPC } from "../AddObjects/addObjectsMain";
+import { checkDropNearUser } from "../DropObject/DropObjectMain";
 import { game } from "../gameObject/gameObject";
 import { moveNPCMain } from "../MoveObjects/moveObjectsMain";
 io;
@@ -31,6 +32,65 @@ export const createGameField = (socketID: string) => {
     };
 
     createGameFieldSectors();
+
+    const createDropObjectTexture = (
+      XChank: number,
+      YChank: number,
+      XSpriteCoord: number,
+      YSpriteCoord: number,
+      sourceX: number,
+      sourceY: number,
+      heightChanks: number,
+      widthChanks: number,
+      objectType: string,
+      imageName: string
+    ) => {
+      if (game.dropObject.objectData[`${XChank}:${YChank}`]) {
+        game.dropObject.objectData[`${XChank}:${YChank}`].push({
+          XChank: XChank,
+          YChank: YChank,
+          imageName: imageName,
+          XSpriteCoord: XSpriteCoord,
+          YSpriteCoord: YSpriteCoord,
+          sourceX: sourceX,
+          sourceY: sourceY,
+          heigthChanks: heightChanks,
+          widthChanks: widthChanks,
+        });
+      } else {
+        game.dropObject.objectData[`${XChank}:${YChank}`] = [
+          {
+            XChank: XChank,
+            YChank: YChank,
+            imageName: imageName,
+            XSpriteCoord: XSpriteCoord,
+            YSpriteCoord: YSpriteCoord,
+            sourceX: sourceX,
+            sourceY: sourceY,
+            heigthChanks: heightChanks,
+            widthChanks: widthChanks,
+          },
+        ];
+      }
+
+      // console.log(
+      //   `Added Drop Item Sector: ${Math.floor(XChank / 20)} : ${Math.floor(YChank / 20)}`
+      // );
+
+      const dropObjectSector = `${Math.floor(XChank / 20)}:${Math.floor(YChank / 20)}`;
+
+      if (game.dropObject.dropObjectSectors[dropObjectSector]) {
+        game.dropObject.dropObjectSectors[dropObjectSector].push({
+          dropChankID: `${XChank}:${YChank}`,
+          XChank: XChank,
+          YChank: YChank,
+        });
+      } else {
+        game.dropObject.dropObjectSectors[dropObjectSector] = [
+          { dropChankID: `${XChank}:${YChank}`, XChank: XChank, YChank: YChank },
+        ];
+      }
+    };
 
     const createBackgroundObjectTextureHomogenous = (
       XChank: number,
@@ -360,33 +420,13 @@ export const createGameField = (socketID: string) => {
       false
     );
 
-    createBackgroundObjectTextureHomogenous(
-      25,
-      16,
-      56,
-      63,
-      114,
-      107,
-      3,
-      3,
-      "armour",
-      "equipment",
-      false
-    );
+    createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "armour", "equipment");
 
-    createBackgroundObjectTextureHomogenous(
-      30,
-      16,
-      397,
-      57,
-      113,
-      112,
-      3,
-      3,
-      "armour",
-      "equipment",
-      false
-    );
+    createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "armour", "equipment");
+
+    createDropObjectTexture(30, 30, 56, 63, 114, 107, 3, 3, "armour", "equipment");
+
+    createDropObjectTexture(34, 34, 396, 396, 114, 107, 3, 3, "armour", "equipment");
 
     createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
     createBackgroundObjectTextureHomogenous(
@@ -556,6 +596,7 @@ export const createGameField = (socketID: string) => {
   }
 
   console.log("Update game field");
+  // console.log(game.dropObject);
 
   addGamerOrNPC({
     addedElType: "gamer",
@@ -569,4 +610,6 @@ export const createGameField = (socketID: string) => {
   });
 
   game.gameIsstarted = true;
+
+  checkDropNearUser(io, socketID);
 };

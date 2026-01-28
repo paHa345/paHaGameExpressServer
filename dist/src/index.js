@@ -31,6 +31,7 @@ const socket_io_1 = require("socket.io");
 const moveObjectsMain_1 = require("../MMORPGDungeonEngine/MoveObjects/moveObjectsMain");
 const createGameFieldMain_1 = require("../MMORPGDungeonEngine/CreateGameField/createGameFieldMain");
 const attackObjectsMain_1 = require("../MMORPGDungeonEngine/AttackObjects/attackObjectsMain");
+const DropObjectMain_1 = require("../MMORPGDungeonEngine/DropObject/DropObjectMain");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
@@ -144,6 +145,7 @@ exports.io.on("connection", (socket) => {
             frameObject: gameObject_1.game.frameObj,
             statsObj: gameObject_1.game.statObj,
             mapSize: gameObject_1.game.mapSize,
+            dropObject: gameObject_1.game.dropObject,
         });
     });
     // setInterval(() => {
@@ -184,6 +186,9 @@ exports.io.on("connection", (socket) => {
     socket.on("clientStartAttack", (clientData) => {
         var _a;
         (0, attackObjectsMain_1.attackObjectMainMechanism)(socket.id, (_a = gameObject_1.game.users[socket.id]) === null || _a === void 0 ? void 0 : _a.moveDirection, "gamer", "gamer", exports.io);
+    });
+    socket.on("clientPickUpLootHandler", () => {
+        (0, DropObjectMain_1.pickUpDropNearUser)(exports.io, socket.id);
     });
     socket.on("clientLevelUpHandler", (upStatData) => {
         //тут увеличиваем харктеристики

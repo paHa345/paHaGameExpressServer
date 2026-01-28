@@ -57,6 +57,28 @@ export interface IGameMain {
       };
     };
   };
+  dropObject: {
+    objectData: {
+      [chanks: string]: {
+        XChank?: number;
+        YChank?: number;
+        imageName?: string;
+        XSpriteCoord?: number;
+        YSpriteCoord?: number;
+        sourceX?: number;
+        sourceY?: number;
+        heigthChanks?: number;
+        widthChanks?: number;
+      }[];
+    };
+    dropObjectSectors: {
+      [sectorID: string]: {
+        dropChankID: string;
+        XChank: number;
+        YChank: number;
+      }[];
+    };
+  };
   frameObj: {
     mainFrame: number;
     objects: {
@@ -199,6 +221,10 @@ export const game: IGameMain = {
   users: {},
   mapSize: 140,
   gameField: {},
+  dropObject: {
+    objectData: {},
+    dropObjectSectors: {},
+  },
   attackStatusObj: {},
   NPCUnderAttackChanksObj: {},
   NPCDataObj: {},

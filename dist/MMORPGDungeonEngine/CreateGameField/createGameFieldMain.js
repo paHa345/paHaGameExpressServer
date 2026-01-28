@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createGameField = void 0;
 const src_1 = require("../../src");
 const addObjectsMain_1 = require("../AddObjects/addObjectsMain");
+const DropObjectMain_1 = require("../DropObject/DropObjectMain");
 const gameObject_1 = require("../gameObject/gameObject");
 const moveObjectsMain_1 = require("../MoveObjects/moveObjectsMain");
 src_1.io;
@@ -30,6 +31,52 @@ const createGameField = (socketID) => {
             }
         };
         createGameFieldSectors();
+        const createDropObjectTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceX, sourceY, heightChanks, widthChanks, objectType, imageName) => {
+            if (gameObject_1.game.dropObject.objectData[`${XChank}:${YChank}`]) {
+                gameObject_1.game.dropObject.objectData[`${XChank}:${YChank}`].push({
+                    XChank: XChank,
+                    YChank: YChank,
+                    imageName: imageName,
+                    XSpriteCoord: XSpriteCoord,
+                    YSpriteCoord: YSpriteCoord,
+                    sourceX: sourceX,
+                    sourceY: sourceY,
+                    heigthChanks: heightChanks,
+                    widthChanks: widthChanks,
+                });
+            }
+            else {
+                gameObject_1.game.dropObject.objectData[`${XChank}:${YChank}`] = [
+                    {
+                        XChank: XChank,
+                        YChank: YChank,
+                        imageName: imageName,
+                        XSpriteCoord: XSpriteCoord,
+                        YSpriteCoord: YSpriteCoord,
+                        sourceX: sourceX,
+                        sourceY: sourceY,
+                        heigthChanks: heightChanks,
+                        widthChanks: widthChanks,
+                    },
+                ];
+            }
+            // console.log(
+            //   `Added Drop Item Sector: ${Math.floor(XChank / 20)} : ${Math.floor(YChank / 20)}`
+            // );
+            const dropObjectSector = `${Math.floor(XChank / 20)}:${Math.floor(YChank / 20)}`;
+            if (gameObject_1.game.dropObject.dropObjectSectors[dropObjectSector]) {
+                gameObject_1.game.dropObject.dropObjectSectors[dropObjectSector].push({
+                    dropChankID: `${XChank}:${YChank}`,
+                    XChank: XChank,
+                    YChank: YChank,
+                });
+            }
+            else {
+                gameObject_1.game.dropObject.dropObjectSectors[dropObjectSector] = [
+                    { dropChankID: `${XChank}:${YChank}`, XChank: XChank, YChank: YChank },
+                ];
+            }
+        };
         const createBackgroundObjectTextureHomogenous = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceX, sourceY, heightChanks, widthChanks, objectType, imageName, impenetrableStatus) => {
             gameObject_1.game.gameField[XChank][YChank].textureObj = {};
             gameObject_1.game.gameField[XChank][YChank].textureObj.imageName = imageName;
@@ -74,8 +121,10 @@ const createGameField = (socketID) => {
         createBackgroundObjectTextureHomogenous(52, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
         createBackgroundObjectTextureHomogenous(85, 110, 126, 774, 24, 16, 6, 4, "grass", "exterior", false);
         createBackgroundObjectTextureHomogenous(3, 3, 126, 774, 24, 16, 6, 4, "grass", "exterior", false);
-        createBackgroundObjectTextureHomogenous(25, 16, 56, 63, 114, 107, 3, 3, "armour", "equipment", false);
-        createBackgroundObjectTextureHomogenous(30, 16, 397, 57, 113, 112, 3, 3, "armour", "equipment", false);
+        createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "armour", "equipment");
+        createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "armour", "equipment");
+        createDropObjectTexture(30, 30, 56, 63, 114, 107, 3, 3, "armour", "equipment");
+        createDropObjectTexture(34, 34, 396, 396, 114, 107, 3, 3, "armour", "equipment");
         createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
         createBackgroundObjectTextureHomogenous(45, 100, 101, 517, 25, 25, 3, 3, "mushroom", "exterior", true);
         const createBackgroundObjectTreeTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceX, sourceY, heightChanks, widthChanks, objectType, imageName) => {
@@ -202,6 +251,7 @@ const createGameField = (socketID) => {
         (0, moveObjectsMain_1.moveNPCMain)(src_1.io);
     }
     console.log("Update game field");
+    // console.log(game.dropObject);
     (0, addObjectsMain_1.addGamerOrNPC)({
         addedElType: "gamer",
         objectType: "gamer",
@@ -213,5 +263,6 @@ const createGameField = (socketID) => {
         YCoord: 10,
     });
     gameObject_1.game.gameIsstarted = true;
+    (0, DropObjectMain_1.checkDropNearUser)(src_1.io, socketID);
 };
 exports.createGameField = createGameField;

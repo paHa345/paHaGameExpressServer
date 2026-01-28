@@ -16,6 +16,10 @@ exports.game = {
     users: {},
     mapSize: 140,
     gameField: {},
+    dropObject: {
+        objectData: {},
+        dropObjectSectors: {},
+    },
     attackStatusObj: {},
     NPCUnderAttackChanksObj: {},
     NPCDataObj: {},
