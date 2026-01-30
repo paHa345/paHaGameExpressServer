@@ -110,8 +110,12 @@ const pickUpDropNearUser = (io, socketID) => {
                 if (Math.pow(dropSectorEl.XChank - Math.floor(currentUserBottomLeftChanks.y / 8), 2) < 25 &&
                     Math.pow(dropSectorEl.YChank - Math.floor(currentUserBottomLeftChanks.x / 8), 2) < 25) {
                     // console.log(`Drop near`);
-                    console.log(dropSectorEl);
-                    console.log(index);
+                    // console.log(dropSectorEl);
+                    // console.log(index);
+                    const dropObject = gameObject_1.game.dropObject.objectData[`${gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`][index].XChank}:${gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`][index].YChank}`];
+                    // game.users[socketID].inventory.push({
+                    //   imageName: dropObject.
+                    // })
                     delete gameObject_1.game.dropObject.objectData[`${gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`][index].XChank}:${gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`][index].YChank}`];
                     gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`].splice(index, 1);
                 }

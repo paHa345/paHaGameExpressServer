@@ -38,8 +38,8 @@ export const createGameField = (socketID: string) => {
       YChank: number,
       XSpriteCoord: number,
       YSpriteCoord: number,
-      sourceX: number,
-      sourceY: number,
+      sourceXLenght: number,
+      sourceYLenght: number,
       heightChanks: number,
       widthChanks: number,
       objectType: string,
@@ -52,8 +52,8 @@ export const createGameField = (socketID: string) => {
           imageName: imageName,
           XSpriteCoord: XSpriteCoord,
           YSpriteCoord: YSpriteCoord,
-          sourceX: sourceX,
-          sourceY: sourceY,
+          sourceX: sourceXLenght,
+          sourceY: sourceYLenght,
           heigthChanks: heightChanks,
           widthChanks: widthChanks,
         });
@@ -65,8 +65,8 @@ export const createGameField = (socketID: string) => {
             imageName: imageName,
             XSpriteCoord: XSpriteCoord,
             YSpriteCoord: YSpriteCoord,
-            sourceX: sourceX,
-            sourceY: sourceY,
+            sourceX: sourceXLenght,
+            sourceY: sourceYLenght,
             heigthChanks: heightChanks,
             widthChanks: widthChanks,
           },
@@ -421,11 +421,8 @@ export const createGameField = (socketID: string) => {
     );
 
     createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "armour", "equipment");
-
     createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "armour", "equipment");
-
     createDropObjectTexture(30, 30, 56, 63, 114, 107, 3, 3, "armour", "equipment");
-
     createDropObjectTexture(34, 34, 396, 396, 114, 107, 3, 3, "armour", "equipment");
 
     createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);

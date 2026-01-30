@@ -163,6 +163,14 @@ export interface IGameMain {
     imgName: string;
     deathAnimationStatus: boolean;
 
+    inventory: {
+      imageName: string;
+      XSpriteCoord: number;
+      YSpriteCoord: number;
+      sourceXLength: number;
+      sourceYLength: number;
+    }[];
+
     square: {
       prevCoord: {
         topLeft: {

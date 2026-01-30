@@ -31,7 +31,7 @@ const createGameField = (socketID) => {
             }
         };
         createGameFieldSectors();
-        const createDropObjectTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceX, sourceY, heightChanks, widthChanks, objectType, imageName) => {
+        const createDropObjectTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceXLenght, sourceYLenght, heightChanks, widthChanks, objectType, imageName) => {
             if (gameObject_1.game.dropObject.objectData[`${XChank}:${YChank}`]) {
                 gameObject_1.game.dropObject.objectData[`${XChank}:${YChank}`].push({
                     XChank: XChank,
@@ -39,8 +39,8 @@ const createGameField = (socketID) => {
                     imageName: imageName,
                     XSpriteCoord: XSpriteCoord,
                     YSpriteCoord: YSpriteCoord,
-                    sourceX: sourceX,
-                    sourceY: sourceY,
+                    sourceX: sourceXLenght,
+                    sourceY: sourceYLenght,
                     heigthChanks: heightChanks,
                     widthChanks: widthChanks,
                 });
@@ -53,8 +53,8 @@ const createGameField = (socketID) => {
                         imageName: imageName,
                         XSpriteCoord: XSpriteCoord,
                         YSpriteCoord: YSpriteCoord,
-                        sourceX: sourceX,
-                        sourceY: sourceY,
+                        sourceX: sourceXLenght,
+                        sourceY: sourceYLenght,
                         heigthChanks: heightChanks,
                         widthChanks: widthChanks,
                     },

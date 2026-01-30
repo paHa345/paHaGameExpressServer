@@ -64,6 +64,7 @@ export const addGamerOrNPC = (addedObjectData: {
   }
 
   game.users[addedObjectData.addedElID] = {
+    inventory: [],
     type: addedObjectData.addedElType,
     objectType: addedObjectData.objectType,
     getDamageStatus: false,
