@@ -174,9 +174,20 @@ export const pickUpDropNearUser = (
               }`
             ];
 
-          // game.users[socketID].inventory.push({
-          //   imageName: dropObject.
-          // })
+          dropObject.forEach((dropObj) => {
+            game.users[socketID].inventory.push({
+              imageName: dropObj.imageName,
+              XSpriteCoord: dropObj.XSpriteCoord,
+              YSpriteCoord: dropObj.YSpriteCoord,
+              sourceXLength: dropObj.sourceX,
+              sourceYLength: dropObj.sourceY,
+            });
+          });
+
+          console.log(game.users[socketID].inventory);
+
+          io.to(socketID).emit("setUserDropObjectObjectFromServer", game.dropObject.objectData);
+
           delete game.dropObject.objectData[
             `${game.dropObject.dropObjectSectors[`${i}:${j}`][index].XChank}:${
               game.dropObject.dropObjectSectors[`${i}:${j}`][index].YChank
