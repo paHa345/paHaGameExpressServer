@@ -60,6 +60,8 @@ export interface IGameMain {
   dropObject: {
     objectData: {
       [chanks: string]: {
+        id: string;
+        type: string;
         XChank?: number;
         YChank?: number;
         imageName?: string;
@@ -164,6 +166,8 @@ export interface IGameMain {
     deathAnimationStatus: boolean;
 
     inventory: {
+      id: string | undefined;
+      type: string | undefined;
       imageName: string | undefined;
       XSpriteCoord: number | undefined;
       YSpriteCoord: number | undefined;

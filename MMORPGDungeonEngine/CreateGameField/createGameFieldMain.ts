@@ -3,7 +3,7 @@ import { addGamerOrNPC } from "../AddObjects/addObjectsMain";
 import { checkDropNearUser } from "../DropObject/DropObjectMain";
 import { game } from "../gameObject/gameObject";
 import { moveNPCMain } from "../MoveObjects/moveObjectsMain";
-io;
+import { v4 as uuidv4 } from "uuid";
 
 export const createGameField = (socketID: string) => {
   if (!game.gameField[0]) {
@@ -47,6 +47,7 @@ export const createGameField = (socketID: string) => {
     ) => {
       if (game.dropObject.objectData[`${XChank}:${YChank}`]) {
         game.dropObject.objectData[`${XChank}:${YChank}`].push({
+          id: uuidv4(),
           XChank: XChank,
           YChank: YChank,
           imageName: imageName,
@@ -56,10 +57,12 @@ export const createGameField = (socketID: string) => {
           sourceY: sourceYLenght,
           heigthChanks: heightChanks,
           widthChanks: widthChanks,
+          type: objectType,
         });
       } else {
         game.dropObject.objectData[`${XChank}:${YChank}`] = [
           {
+            id: uuidv4(),
             XChank: XChank,
             YChank: YChank,
             imageName: imageName,
@@ -69,6 +72,7 @@ export const createGameField = (socketID: string) => {
             sourceY: sourceYLenght,
             heigthChanks: heightChanks,
             widthChanks: widthChanks,
+            type: objectType,
           },
         ];
       }
@@ -420,10 +424,12 @@ export const createGameField = (socketID: string) => {
       false
     );
 
-    createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "armour", "equipment");
-    createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "armour", "equipment");
-    createDropObjectTexture(30, 30, 56, 63, 114, 107, 3, 3, "armour", "equipment");
-    createDropObjectTexture(34, 34, 396, 396, 114, 107, 3, 3, "armour", "equipment");
+    createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
+    createDropObjectTexture(26, 17, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
+    createDropObjectTexture(27, 17, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
+    createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "sword", "equipment");
+    createDropObjectTexture(30, 30, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
+    createDropObjectTexture(34, 34, 396, 396, 114, 107, 3, 3, "other", "equipment");
 
     createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
     createBackgroundObjectTextureHomogenous(
