@@ -53,8 +53,19 @@ const addGamerOrNPC = (addedObjectData) => {
             },
         };
     }
-    gameObject_1.game.users[addedObjectData.addedElID] = {
+    gameObject_1.game.usersInventoryAndEquipment[addedObjectData.addedElID] = {
         inventory: [],
+        equipment: {
+            helmet: [],
+            weapon: [],
+            shield: [],
+            armour: [],
+            boots: [],
+            ring: [],
+            amulet: [],
+        },
+    };
+    gameObject_1.game.users[addedObjectData.addedElID] = {
         type: addedObjectData.addedElType,
         objectType: addedObjectData.objectType,
         getDamageStatus: false,

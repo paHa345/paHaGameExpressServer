@@ -175,7 +175,7 @@ export const pickUpDropNearUser = (
             ];
 
           dropObject.forEach((dropObj) => {
-            game.users[socketID].inventory.push({
+            game.usersInventoryAndEquipment[socketID].inventory.push({
               id: dropObj.id,
               type: dropObj.type,
               imageName: dropObj.imageName,
@@ -186,7 +186,10 @@ export const pickUpDropNearUser = (
             });
           });
 
-          io.to(socketID).emit("setUserDropObjectObjectFromServer", game.users[socketID].inventory);
+          io.to(socketID).emit(
+            "setUserDropObjectObjectFromServer",
+            game.usersInventoryAndEquipment[socketID].inventory
+          );
 
           delete game.dropObject.objectData[
             `${game.dropObject.dropObjectSectors[`${i}:${j}`][index].XChank}:${

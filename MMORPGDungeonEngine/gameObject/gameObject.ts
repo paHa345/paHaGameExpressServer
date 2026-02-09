@@ -13,6 +13,16 @@ export interface IGameUserMain<T> {
   [socketID: string]: T;
 }
 
+export interface IUserInventoryObj {
+  id: string | undefined;
+  type: string | undefined;
+  imageName: string | undefined;
+  XSpriteCoord: number | undefined;
+  YSpriteCoord: number | undefined;
+  sourceXLength: number | undefined;
+  sourceYLength: number | undefined;
+}
+
 export interface IGameMain {
   gameIsstarted: boolean;
   goodPlayer?: string;
@@ -158,22 +168,27 @@ export interface IGameMain {
       };
     };
   };
+
+  usersInventoryAndEquipment: IGameUserMain<{
+    inventory: IUserInventoryObj[];
+
+    equipment: {
+      helmet: IUserInventoryObj[];
+      weapon: IUserInventoryObj[];
+      shield: IUserInventoryObj[];
+      armour: IUserInventoryObj[];
+      boots: IUserInventoryObj[];
+      ring: IUserInventoryObj[];
+      amulet: IUserInventoryObj[];
+    };
+  }>;
+
   users: IGameUserMain<{
     type: "gamer" | "NPC";
     objectType: string;
     getDamageStatus: boolean;
     imgName: string;
     deathAnimationStatus: boolean;
-
-    inventory: {
-      id: string | undefined;
-      type: string | undefined;
-      imageName: string | undefined;
-      XSpriteCoord: number | undefined;
-      YSpriteCoord: number | undefined;
-      sourceXLength: number | undefined;
-      sourceYLength: number | undefined;
-    }[];
 
     square: {
       prevCoord: {
@@ -230,6 +245,7 @@ export const game: IGameMain = {
   sectors: {},
   statObj: { NPC: {}, gamers: {} },
   gameIsstarted: false,
+  usersInventoryAndEquipment: {},
   users: {},
   mapSize: 140,
   gameField: {},

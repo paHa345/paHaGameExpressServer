@@ -13,6 +13,7 @@ exports.game = {
     sectors: {},
     statObj: { NPC: {}, gamers: {} },
     gameIsstarted: false,
+    usersInventoryAndEquipment: {},
     users: {},
     mapSize: 140,
     gameField: {},
