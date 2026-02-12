@@ -117,7 +117,8 @@ export const clearCheckDropNearUserInterval = () => {
 
 export const pickUpDropNearUser = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
-  socketID: string
+  socketID: string,
+  roomID: string
 ) => {
   console.log(`Pick Up Loot User ${socketID}`);
 
@@ -186,10 +187,10 @@ export const pickUpDropNearUser = (
             });
           });
 
-          io.to(socketID).emit(
-            "setUserDropObjectObjectFromServer",
-            game.usersInventoryAndEquipment[socketID].inventory
-          );
+          io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
+            inventory: game.usersInventoryAndEquipment[socketID].inventory,
+            equipment: game.usersInventoryAndEquipment[socketID].equipment,
+          });
 
           delete game.dropObject.objectData[
             `${game.dropObject.dropObjectSectors[`${i}:${j}`][index].XChank}:${
@@ -202,5 +203,106 @@ export const pickUpDropNearUser = (
     }
   }
 
-  io.to(socketID).emit("getDropObjectFromServer", game.dropObject.objectData);
+  // io.to(socketID).emit("getDropObjectFromServer", game.dropObject.objectData);
+  io.of("/").to(roomID).emit("getDropObjectFromServer", game.dropObject.objectData);
+};
+
+export const equipUserObject = (
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+  socketID: string,
+  objectID: string
+) => {
+  console.log(`Equip ${objectID} object to user ${socketID}`);
+
+  // найти данный объект у конкретного пользователя
+  // если его нет, то не продолжаем выполнять функцию
+
+  const equipedObj: { index: number; objectType: string | undefined } = {
+    index: -1,
+    objectType: "",
+  };
+
+  for (let i = 0; i < game.usersInventoryAndEquipment[socketID].inventory.length; i++) {
+    if (game.usersInventoryAndEquipment[socketID].inventory[i].id === objectID) {
+      equipedObj.index = i;
+      equipedObj.objectType = game.usersInventoryAndEquipment[socketID].inventory[i].type;
+      break;
+    }
+  }
+
+  if (equipedObj.index < 0) return;
+  console.log(equipedObj);
+
+  // добавляем объект в экипировку в соответствующую ячейку
+  if (equipedObj.objectType === "helmet") {
+    if (game.usersInventoryAndEquipment[socketID].equipment.helmet.length > 0) {
+      game.usersInventoryAndEquipment[socketID].inventory.push(
+        game.usersInventoryAndEquipment[socketID].equipment.helmet[0]
+      );
+    }
+    game.usersInventoryAndEquipment[socketID].equipment.helmet[0] =
+      game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+  }
+  if (equipedObj.objectType === "weapon") {
+    if (game.usersInventoryAndEquipment[socketID].equipment.weapon.length > 0) {
+      game.usersInventoryAndEquipment[socketID].inventory.push(
+        game.usersInventoryAndEquipment[socketID].equipment.weapon[0]
+      );
+    }
+    game.usersInventoryAndEquipment[socketID].equipment.weapon[0] =
+      game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+  }
+  if (equipedObj.objectType === "shield") {
+    if (game.usersInventoryAndEquipment[socketID].equipment.shield.length > 0) {
+      game.usersInventoryAndEquipment[socketID].inventory.push(
+        game.usersInventoryAndEquipment[socketID].equipment.shield[0]
+      );
+    }
+    game.usersInventoryAndEquipment[socketID].equipment.shield[0] =
+      game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+  }
+  if (equipedObj.objectType === "armour") {
+    if (game.usersInventoryAndEquipment[socketID].equipment.armour.length > 0) {
+      game.usersInventoryAndEquipment[socketID].inventory.push(
+        game.usersInventoryAndEquipment[socketID].equipment.armour[0]
+      );
+    }
+    game.usersInventoryAndEquipment[socketID].equipment.armour[0] =
+      game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+  }
+  if (equipedObj.objectType === "boots") {
+    if (game.usersInventoryAndEquipment[socketID].equipment.boots.length > 0) {
+      game.usersInventoryAndEquipment[socketID].inventory.push(
+        game.usersInventoryAndEquipment[socketID].equipment.boots[0]
+      );
+    }
+    game.usersInventoryAndEquipment[socketID].equipment.boots[0] =
+      game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+  }
+  if (equipedObj.objectType === "ring") {
+    if (game.usersInventoryAndEquipment[socketID].equipment.ring.length > 0) {
+      game.usersInventoryAndEquipment[socketID].inventory.push(
+        game.usersInventoryAndEquipment[socketID].equipment.ring[0]
+      );
+    }
+    game.usersInventoryAndEquipment[socketID].equipment.ring[0] =
+      game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+  }
+  if (equipedObj.objectType === "amulet") {
+    if (game.usersInventoryAndEquipment[socketID].equipment.amulet.length > 0) {
+      game.usersInventoryAndEquipment[socketID].inventory.push(
+        game.usersInventoryAndEquipment[socketID].equipment.amulet[0]
+      );
+    }
+    game.usersInventoryAndEquipment[socketID].equipment.amulet[0] =
+      game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+  }
+
+  // удаляем объект из яцейки инвентаря
+  game.usersInventoryAndEquipment[socketID].inventory.splice(equipedObj.index, 1);
+
+  io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
+    inventory: game.usersInventoryAndEquipment[socketID].inventory,
+    equipment: game.usersInventoryAndEquipment[socketID].equipment,
+  });
 };

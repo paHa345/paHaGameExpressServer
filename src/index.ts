@@ -27,7 +27,10 @@ import { NPCOrGamerObjectsData } from "../types";
 import { setClientCoordinates } from "../MMORPGDungeonEngine/MoveObjects/moveObjectsMain";
 import { createGameField } from "../MMORPGDungeonEngine/CreateGameField/createGameFieldMain";
 import { attackObjectMainMechanism } from "../MMORPGDungeonEngine/AttackObjects/attackObjectsMain";
-import { pickUpDropNearUser } from "../MMORPGDungeonEngine/DropObject/DropObjectMain";
+import {
+  equipUserObject,
+  pickUpDropNearUser,
+} from "../MMORPGDungeonEngine/DropObject/DropObjectMain";
 
 dotenv.config();
 
@@ -251,8 +254,14 @@ io.on("connection", (socket) => {
     );
   });
 
-  socket.on("clientPickUpLootHandler", () => {
-    pickUpDropNearUser(io, socket.id);
+  socket.on("clientPickUpLootHandler", (roomID: string) => {
+    pickUpDropNearUser(io, socket.id, roomID);
+  });
+
+  socket.on("clientEquipObject", (objectID: string) => {
+    console.log(socket.id);
+    console.log(objectID);
+    equipUserObject(io, socket.id, objectID);
   });
 
   socket.on(

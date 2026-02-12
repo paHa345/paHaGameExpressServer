@@ -425,11 +425,20 @@ export const createGameField = (socketID: string) => {
     );
 
     createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
-    createDropObjectTexture(26, 17, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
-    createDropObjectTexture(27, 17, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
-    createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "sword", "equipment");
-    createDropObjectTexture(30, 30, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
+    createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "weapon", "equipment");
+    createDropObjectTexture(30, 30, 56, 396, 114, 107, 3, 3, "boots", "equipment");
     createDropObjectTexture(34, 34, 396, 396, 114, 107, 3, 3, "other", "equipment");
+    createDropObjectTexture(30, 60, 56, 169, 114, 107, 3, 3, "armour", "equipment");
+    createDropObjectTexture(27, 17, 510, 56, 114, 107, 3, 3, "shield", "equipment");
+    createDropObjectTexture(40, 60, 516, 394, 114, 107, 3, 3, "ring", "equipment");
+    createDropObjectTexture(60, 60, 510, 284, 114, 107, 3, 3, "amulet", "equipment");
+
+    createDropObjectTexture(80, 80, 397, 170, 113, 112, 3, 3, "weapon", "equipment");
+    createDropObjectTexture(110, 88, 397, 282, 113, 112, 3, 3, "weapon", "equipment");
+    createDropObjectTexture(90, 80, 510, 170, 113, 112, 3, 3, "shield", "equipment");
+    createDropObjectTexture(100, 120, 170, 170, 113, 112, 3, 3, "armour", "equipment");
+    createDropObjectTexture(130, 130, 283, 170, 113, 112, 3, 3, "armour", "equipment");
+    createDropObjectTexture(120, 130, 516, 394, 113, 112, 3, 3, "ring", "equipment");
 
     createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
     createBackgroundObjectTextureHomogenous(

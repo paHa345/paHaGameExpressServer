@@ -187,8 +187,13 @@ exports.io.on("connection", (socket) => {
         var _a;
         (0, attackObjectsMain_1.attackObjectMainMechanism)(socket.id, (_a = gameObject_1.game.users[socket.id]) === null || _a === void 0 ? void 0 : _a.moveDirection, "gamer", "gamer", exports.io);
     });
-    socket.on("clientPickUpLootHandler", () => {
-        (0, DropObjectMain_1.pickUpDropNearUser)(exports.io, socket.id);
+    socket.on("clientPickUpLootHandler", (roomID) => {
+        (0, DropObjectMain_1.pickUpDropNearUser)(exports.io, socket.id, roomID);
+    });
+    socket.on("clientEquipObject", (objectID) => {
+        console.log(socket.id);
+        console.log(objectID);
+        (0, DropObjectMain_1.equipUserObject)(exports.io, socket.id, objectID);
     });
     socket.on("clientLevelUpHandler", (upStatData) => {
         //тут увеличиваем харктеристики

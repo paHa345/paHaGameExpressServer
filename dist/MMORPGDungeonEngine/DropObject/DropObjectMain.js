@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pickUpDropNearUser = exports.clearCheckDropNearUserInterval = exports.checkDropNearUser = void 0;
+exports.equipUserObject = exports.pickUpDropNearUser = exports.clearCheckDropNearUserInterval = exports.checkDropNearUser = void 0;
 const gameObject_1 = require("../gameObject/gameObject");
 let checkDropNearUserInterval;
 const usersCurrentChanks = {};
@@ -84,7 +84,7 @@ const clearCheckDropNearUserInterval = () => {
     checkDropNearUserInterval = null;
 };
 exports.clearCheckDropNearUserInterval = clearCheckDropNearUserInterval;
-const pickUpDropNearUser = (io, socketID) => {
+const pickUpDropNearUser = (io, socketID, roomID) => {
     console.log(`Pick Up Loot User ${socketID}`);
     //находим чанк, в котором находится конкретный игрок
     // сектор, в котором он находится
@@ -124,13 +124,93 @@ const pickUpDropNearUser = (io, socketID) => {
                             sourceYLength: dropObj.sourceY,
                         });
                     });
-                    io.to(socketID).emit("setUserDropObjectObjectFromServer", gameObject_1.game.usersInventoryAndEquipment[socketID].inventory);
+                    io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
+                        inventory: gameObject_1.game.usersInventoryAndEquipment[socketID].inventory,
+                        equipment: gameObject_1.game.usersInventoryAndEquipment[socketID].equipment,
+                    });
                     delete gameObject_1.game.dropObject.objectData[`${gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`][index].XChank}:${gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`][index].YChank}`];
                     gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`].splice(index, 1);
                 }
             });
         }
     }
-    io.to(socketID).emit("getDropObjectFromServer", gameObject_1.game.dropObject.objectData);
+    // io.to(socketID).emit("getDropObjectFromServer", game.dropObject.objectData);
+    io.of("/").to(roomID).emit("getDropObjectFromServer", gameObject_1.game.dropObject.objectData);
 };
 exports.pickUpDropNearUser = pickUpDropNearUser;
+const equipUserObject = (io, socketID, objectID) => {
+    console.log(`Equip ${objectID} object to user ${socketID}`);
+    // найти данный объект у конкретного пользователя
+    // если его нет, то не продолжаем выполнять функцию
+    const equipedObj = {
+        index: -1,
+        objectType: "",
+    };
+    for (let i = 0; i < gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.length; i++) {
+        if (gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[i].id === objectID) {
+            equipedObj.index = i;
+            equipedObj.objectType = gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[i].type;
+            break;
+        }
+    }
+    if (equipedObj.index < 0)
+        return;
+    console.log(equipedObj);
+    // добавляем объект в экипировку в соответствующую ячейку
+    if (equipedObj.objectType === "helmet") {
+        if (gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.helmet.length > 0) {
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.helmet[0]);
+        }
+        gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.helmet[0] =
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+    }
+    if (equipedObj.objectType === "weapon") {
+        if (gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.weapon.length > 0) {
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.weapon[0]);
+        }
+        gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.weapon[0] =
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+    }
+    if (equipedObj.objectType === "shield") {
+        if (gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.shield.length > 0) {
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.shield[0]);
+        }
+        gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.shield[0] =
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+    }
+    if (equipedObj.objectType === "armour") {
+        if (gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.armour.length > 0) {
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.armour[0]);
+        }
+        gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.armour[0] =
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+    }
+    if (equipedObj.objectType === "boots") {
+        if (gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.boots.length > 0) {
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.boots[0]);
+        }
+        gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.boots[0] =
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+    }
+    if (equipedObj.objectType === "ring") {
+        if (gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.ring.length > 0) {
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.ring[0]);
+        }
+        gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.ring[0] =
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+    }
+    if (equipedObj.objectType === "amulet") {
+        if (gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.amulet.length > 0) {
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.amulet[0]);
+        }
+        gameObject_1.game.usersInventoryAndEquipment[socketID].equipment.amulet[0] =
+            gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[equipedObj.index];
+    }
+    // удаляем объект из яцейки инвентаря
+    gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.splice(equipedObj.index, 1);
+    io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
+        inventory: gameObject_1.game.usersInventoryAndEquipment[socketID].inventory,
+        equipment: gameObject_1.game.usersInventoryAndEquipment[socketID].equipment,
+    });
+};
+exports.equipUserObject = equipUserObject;
