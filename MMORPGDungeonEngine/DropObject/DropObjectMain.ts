@@ -222,7 +222,7 @@ export const equipUserObject = (
     objectType: "",
   };
 
-  for (let i = 0; i < game.usersInventoryAndEquipment[socketID].inventory.length; i++) {
+  for (let i = 0; i < game.usersInventoryAndEquipment[socketID]?.inventory.length; i++) {
     if (game.usersInventoryAndEquipment[socketID].inventory[i].id === objectID) {
       equipedObj.index = i;
       equipedObj.objectType = game.usersInventoryAndEquipment[socketID].inventory[i].type;

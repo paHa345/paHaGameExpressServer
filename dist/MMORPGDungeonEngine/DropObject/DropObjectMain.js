@@ -149,6 +149,7 @@ const pickUpDropNearUser = (io, socketID, roomID) => {
 };
 exports.pickUpDropNearUser = pickUpDropNearUser;
 const equipUserObject = (io, socketID, objectID) => {
+    var _a;
     console.log(`Equip ${objectID} object to user ${socketID}`);
     // найти данный объект у конкретного пользователя
     // если его нет, то не продолжаем выполнять функцию
@@ -156,7 +157,7 @@ const equipUserObject = (io, socketID, objectID) => {
         index: -1,
         objectType: "",
     };
-    for (let i = 0; i < gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.length; i++) {
+    for (let i = 0; i < ((_a = gameObject_1.game.usersInventoryAndEquipment[socketID]) === null || _a === void 0 ? void 0 : _a.inventory.length); i++) {
         if (gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[i].id === objectID) {
             equipedObj.index = i;
             equipedObj.objectType = gameObject_1.game.usersInventoryAndEquipment[socketID].inventory[i].type;
