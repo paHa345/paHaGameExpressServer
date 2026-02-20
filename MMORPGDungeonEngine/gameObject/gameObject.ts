@@ -239,6 +239,12 @@ export interface IGameMain {
     moveDirection: UserMoveDirections;
     NPCViewDirection?: UserMoveDirections;
   }>;
+
+  dropUsersCurrentChanks: {
+    [socketID: string]: {
+      chank: string;
+    };
+  };
 }
 
 export const game: IGameMain = {
@@ -261,6 +267,7 @@ export const game: IGameMain = {
     mainFrame: 0,
     objects: {},
   },
+  dropUsersCurrentChanks: {},
 };
 
 //функция перезаписи текущей позиции в чанки

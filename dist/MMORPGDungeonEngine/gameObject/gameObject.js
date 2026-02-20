@@ -29,6 +29,7 @@ exports.game = {
         mainFrame: 0,
         objects: {},
     },
+    dropUsersCurrentChanks: {},
 };
 //функция перезаписи текущей позиции в чанки
 const increaseFrameNumber = () => {

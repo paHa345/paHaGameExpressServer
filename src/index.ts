@@ -28,6 +28,7 @@ import { setClientCoordinates } from "../MMORPGDungeonEngine/MoveObjects/moveObj
 import { createGameField } from "../MMORPGDungeonEngine/CreateGameField/createGameFieldMain";
 import { attackObjectMainMechanism } from "../MMORPGDungeonEngine/AttackObjects/attackObjectsMain";
 import {
+  checkDropNearUser,
   equipUserObject,
   pickUpDropNearUser,
 } from "../MMORPGDungeonEngine/DropObject/DropObjectMain";
@@ -325,6 +326,7 @@ io.on("connection", (socket) => {
       objects: {},
     };
   });
+  checkDropNearUser(io);
 
   socket.on("disconnecting", () => {
     console.log(socket.rooms);

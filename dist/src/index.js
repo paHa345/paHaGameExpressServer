@@ -250,6 +250,7 @@ exports.io.on("connection", (socket) => {
             objects: {},
         };
     });
+    (0, DropObjectMain_1.checkDropNearUser)(exports.io);
     socket.on("disconnecting", () => {
         console.log(socket.rooms);
     });

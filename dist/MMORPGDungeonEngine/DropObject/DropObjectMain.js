@@ -3,28 +3,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.equipUserObject = exports.pickUpDropNearUser = exports.clearCheckDropNearUserInterval = exports.checkDropNearUser = void 0;
 const gameObject_1 = require("../gameObject/gameObject");
 let checkDropNearUserInterval;
-const usersCurrentChanks = {};
-const checkDropNearUser = (io, socketID) => {
+// const setDropUsersCurrentChanks: {
+//   [socketID: string]: {
+//     chank: string;
+//   };
+// } = {};
+const checkDropNearUser = (io
+// socketID: string
+) => {
     checkDropNearUserInterval = setInterval(() => {
         var _a;
         for (const userID in gameObject_1.game.users) {
             if (gameObject_1.game.users[userID].type === "NPC")
                 continue;
             const currentUserBottomLeftChanks = gameObject_1.game.users[userID].square.currentCoord.bottomLeft;
-            if (!usersCurrentChanks[userID]) {
-                !usersCurrentChanks[`${Math.floor(currentUserBottomLeftChanks.x / 8)}:${Math.floor(currentUserBottomLeftChanks.y / 8)}`];
+            if (!gameObject_1.game.dropUsersCurrentChanks[String(userID)]) {
+                gameObject_1.game.dropUsersCurrentChanks[String(userID)];
             }
-            if (((_a = usersCurrentChanks[userID]) === null || _a === void 0 ? void 0 : _a.chank) !==
+            if (((_a = gameObject_1.game.dropUsersCurrentChanks[String(userID)]) === null || _a === void 0 ? void 0 : _a.chank) !==
                 `${Math.floor(currentUserBottomLeftChanks.x / 8)}:${Math.floor(currentUserBottomLeftChanks.y / 8)}`) {
-                usersCurrentChanks[userID] = {
+                gameObject_1.game.dropUsersCurrentChanks[String(userID)] = {
                     chank: `${Math.floor(currentUserBottomLeftChanks.x / 8)}:${Math.floor(currentUserBottomLeftChanks.y / 8)}`,
                 };
             }
             else {
                 continue;
             }
+            // console.log(`User ${userID} move`);
+            // console.log(game.dropUsersCurrentChanks);
             // сектор в котором находится игрок
-            const curreUserBottonLeftSector = {
+            const curreUserBottomLeftSector = {
                 sectorID: `${Math.floor(Math.floor(currentUserBottomLeftChanks.y / 8) / 20)}:${Math.floor(Math.floor(currentUserBottomLeftChanks.x / 8) / 20)}`,
                 sectorXValue: Math.floor(Math.floor(currentUserBottomLeftChanks.y / 8) / 20),
                 sectorYValue: Math.floor(Math.floor(currentUserBottomLeftChanks.x / 8) / 20),
@@ -38,43 +46,45 @@ const checkDropNearUser = (io, socketID) => {
             //   )}`
             // );
             let isDropNearUser = false;
-            for (let i = curreUserBottonLeftSector.sectorXValue; i < curreUserBottonLeftSector.sectorXValue + 2; i++) {
+            for (let i = curreUserBottomLeftSector.sectorXValue; i < curreUserBottomLeftSector.sectorXValue + 2; i++) {
                 if (isDropNearUser)
                     break;
                 if (i > Math.floor(gameObject_1.game.mapSize / 20) - 1)
                     continue;
-                for (let j = curreUserBottonLeftSector.sectorYValue - 1; j < curreUserBottonLeftSector.sectorYValue + 2; j++) {
+                for (let j = curreUserBottomLeftSector.sectorYValue - 1; j < curreUserBottomLeftSector.sectorYValue + 2; j++) {
                     if (isDropNearUser)
                         break;
                     if (j < 0 || j > Math.floor(gameObject_1.game.mapSize / 20) - 1)
                         continue;
                     if (!gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`])
                         continue;
-                    // console.log(game.dropObject.dropObjectSectors[`${i}:${j}`]);
                     gameObject_1.game.dropObject.dropObjectSectors[`${i}:${j}`].forEach((dropSectorEl) => {
                         if (Math.pow(dropSectorEl.XChank - Math.floor(currentUserBottomLeftChanks.y / 8), 2) <
                             25 &&
                             Math.pow(dropSectorEl.YChank - Math.floor(currentUserBottomLeftChanks.x / 8), 2) < 25) {
-                            // console.log(`Drop near`);
+                            // console.log(`Drop near ${userID}`);
                             isDropNearUser = true;
                         }
                     });
                 }
             }
+            // delete usersCurrentChanks[socketID];
+            // console.log(`${socketID}: ${isDropNearUser}`);
             if (!isDropNearUser) {
-                io.to(socketID).emit("showPickUpDropButtonStatus", {
+                io.to(userID).emit("showPickUpDropButtonStatus", {
                     showButtonStatus: false,
                     XButtonImageCoord: 0,
                     YButtonImageCoord: 0,
                 });
             }
             else {
-                io.to(socketID).emit("showPickUpDropButtonStatus", {
+                io.to(userID).emit("showPickUpDropButtonStatus", {
                     showButtonStatus: true,
                     XButtonImageCoord: 0,
                     YButtonImageCoord: 0,
                 });
             }
+            isDropNearUser = false;
         }
     }, 1000);
 };

@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createGameField = void 0;
 const src_1 = require("../../src");
 const addObjectsMain_1 = require("../AddObjects/addObjectsMain");
-const DropObjectMain_1 = require("../DropObject/DropObjectMain");
 const gameObject_1 = require("../gameObject/gameObject");
 const moveObjectsMain_1 = require("../MoveObjects/moveObjectsMain");
 const uuid_1 = require("uuid");
@@ -277,6 +276,5 @@ const createGameField = (socketID) => {
         YCoord: 10,
     });
     gameObject_1.game.gameIsstarted = true;
-    (0, DropObjectMain_1.checkDropNearUser)(src_1.io, socketID);
 };
 exports.createGameField = createGameField;

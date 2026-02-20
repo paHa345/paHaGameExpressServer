@@ -622,6 +622,4 @@ export const createGameField = (socketID: string) => {
   });
 
   game.gameIsstarted = true;
-
-  checkDropNearUser(io, socketID);
 };
