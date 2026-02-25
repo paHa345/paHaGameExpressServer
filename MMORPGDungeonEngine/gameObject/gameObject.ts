@@ -21,6 +21,9 @@ export interface IUserInventoryObj {
   YSpriteCoord: number | undefined;
   sourceXLength: number | undefined;
   sourceYLength: number | undefined;
+  damage: number;
+  armour: number;
+  HP: number;
 }
 
 export interface IGameMain {
@@ -81,6 +84,9 @@ export interface IGameMain {
         sourceY?: number;
         heigthChanks?: number;
         widthChanks?: number;
+        damage: number;
+        armour: number;
+        HP: number;
       }[];
     };
     dropObjectSectors: {

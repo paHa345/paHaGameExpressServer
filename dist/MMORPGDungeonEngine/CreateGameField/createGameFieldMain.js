@@ -30,7 +30,7 @@ const createGameField = (socketID) => {
             }
         };
         createGameFieldSectors();
-        const createDropObjectTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceXLenght, sourceYLenght, heightChanks, widthChanks, objectType, imageName) => {
+        const createDropObjectTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceXLenght, sourceYLenght, heightChanks, widthChanks, objectType, imageName, damage = 0, armour = 0, HP = 0) => {
             if (gameObject_1.game.dropObject.objectData[`${XChank}:${YChank}`]) {
                 gameObject_1.game.dropObject.objectData[`${XChank}:${YChank}`].push({
                     id: (0, uuid_1.v4)(),
@@ -44,6 +44,9 @@ const createGameField = (socketID) => {
                     heigthChanks: heightChanks,
                     widthChanks: widthChanks,
                     type: objectType,
+                    damage: damage,
+                    armour: armour,
+                    HP: HP,
                 });
             }
             else {
@@ -60,6 +63,9 @@ const createGameField = (socketID) => {
                         heigthChanks: heightChanks,
                         widthChanks: widthChanks,
                         type: objectType,
+                        damage: damage,
+                        armour: armour,
+                        HP: HP,
                     },
                 ];
             }
@@ -124,20 +130,20 @@ const createGameField = (socketID) => {
         createBackgroundObjectTextureHomogenous(52, 66, 8, 135, 24, 24, 4, 4, "road", "roadTile", false);
         createBackgroundObjectTextureHomogenous(85, 110, 126, 774, 24, 16, 6, 4, "grass", "exterior", false);
         createBackgroundObjectTextureHomogenous(3, 3, 126, 774, 24, 16, 6, 4, "grass", "exterior", false);
-        createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
-        createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "weapon", "equipment");
-        createDropObjectTexture(30, 30, 56, 396, 114, 107, 3, 3, "boots", "equipment");
+        createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "helmet", "equipment", 0, 10, 0);
+        createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "weapon", "equipment", 10, 0, 0);
+        createDropObjectTexture(30, 30, 56, 396, 114, 107, 3, 3, "boots", "equipment", 0, 5, 0);
         createDropObjectTexture(34, 34, 396, 396, 114, 107, 3, 3, "other", "equipment");
-        createDropObjectTexture(30, 60, 56, 169, 114, 107, 3, 3, "armour", "equipment");
-        createDropObjectTexture(27, 17, 510, 56, 114, 107, 3, 3, "shield", "equipment");
-        createDropObjectTexture(40, 60, 516, 394, 114, 107, 3, 3, "ring", "equipment");
-        createDropObjectTexture(60, 60, 510, 284, 114, 107, 3, 3, "amulet", "equipment");
-        createDropObjectTexture(80, 80, 397, 170, 113, 112, 3, 3, "weapon", "equipment");
-        createDropObjectTexture(110, 88, 397, 282, 113, 112, 3, 3, "weapon", "equipment");
-        createDropObjectTexture(90, 80, 510, 170, 113, 112, 3, 3, "shield", "equipment");
-        createDropObjectTexture(100, 120, 170, 170, 113, 112, 3, 3, "armour", "equipment");
-        createDropObjectTexture(130, 130, 283, 170, 113, 112, 3, 3, "armour", "equipment");
-        createDropObjectTexture(120, 130, 516, 394, 113, 112, 3, 3, "ring", "equipment");
+        createDropObjectTexture(30, 60, 56, 169, 114, 107, 3, 3, "armour", "equipment", 0, 20, 0);
+        createDropObjectTexture(27, 17, 510, 56, 114, 107, 3, 3, "shield", "equipment", 0, 15, 0);
+        createDropObjectTexture(40, 60, 516, 394, 114, 107, 3, 3, "ring", "equipment", 0, 0, 50);
+        createDropObjectTexture(60, 60, 510, 284, 114, 107, 3, 3, "amulet", "equipment", 10, 10, 10);
+        createDropObjectTexture(80, 80, 397, 170, 113, 112, 3, 3, "weapon", "equipment", 20, 0, 0);
+        createDropObjectTexture(110, 88, 397, 282, 113, 112, 3, 3, "weapon", "equipment", 40, 0, 0);
+        createDropObjectTexture(90, 80, 510, 170, 113, 112, 3, 3, "shield", "equipment", 0, 30, 0);
+        createDropObjectTexture(100, 120, 170, 170, 113, 112, 3, 3, "armour", "equipment", 0, 40, 0);
+        createDropObjectTexture(130, 130, 283, 170, 113, 112, 3, 3, "armour", "equipment", 0, 80, 0);
+        createDropObjectTexture(120, 130, 516, 394, 113, 112, 3, 3, "ring", "equipment", 0, 0, 100);
         createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
         createBackgroundObjectTextureHomogenous(45, 100, 101, 517, 25, 25, 3, 3, "mushroom", "exterior", true);
         const createBackgroundObjectTreeTexture = (XChank, YChank, XSpriteCoord, YSpriteCoord, sourceX, sourceY, heightChanks, widthChanks, objectType, imageName) => {

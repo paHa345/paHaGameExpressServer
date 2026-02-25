@@ -43,7 +43,10 @@ export const createGameField = (socketID: string) => {
       heightChanks: number,
       widthChanks: number,
       objectType: string,
-      imageName: string
+      imageName: string,
+      damage: number = 0,
+      armour: number = 0,
+      HP: number = 0
     ) => {
       if (game.dropObject.objectData[`${XChank}:${YChank}`]) {
         game.dropObject.objectData[`${XChank}:${YChank}`].push({
@@ -58,6 +61,9 @@ export const createGameField = (socketID: string) => {
           heigthChanks: heightChanks,
           widthChanks: widthChanks,
           type: objectType,
+          damage: damage,
+          armour: armour,
+          HP: HP,
         });
       } else {
         game.dropObject.objectData[`${XChank}:${YChank}`] = [
@@ -73,6 +79,9 @@ export const createGameField = (socketID: string) => {
             heigthChanks: heightChanks,
             widthChanks: widthChanks,
             type: objectType,
+            damage: damage,
+            armour: armour,
+            HP: HP,
           },
         ];
       }
@@ -424,21 +433,21 @@ export const createGameField = (socketID: string) => {
       false
     );
 
-    createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "helmet", "equipment");
-    createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "weapon", "equipment");
-    createDropObjectTexture(30, 30, 56, 396, 114, 107, 3, 3, "boots", "equipment");
+    createDropObjectTexture(25, 16, 56, 63, 114, 107, 3, 3, "helmet", "equipment", 0, 10, 0);
+    createDropObjectTexture(23, 23, 397, 57, 113, 112, 3, 3, "weapon", "equipment", 10, 0, 0);
+    createDropObjectTexture(30, 30, 56, 396, 114, 107, 3, 3, "boots", "equipment", 0, 5, 0);
     createDropObjectTexture(34, 34, 396, 396, 114, 107, 3, 3, "other", "equipment");
-    createDropObjectTexture(30, 60, 56, 169, 114, 107, 3, 3, "armour", "equipment");
-    createDropObjectTexture(27, 17, 510, 56, 114, 107, 3, 3, "shield", "equipment");
-    createDropObjectTexture(40, 60, 516, 394, 114, 107, 3, 3, "ring", "equipment");
-    createDropObjectTexture(60, 60, 510, 284, 114, 107, 3, 3, "amulet", "equipment");
+    createDropObjectTexture(30, 60, 56, 169, 114, 107, 3, 3, "armour", "equipment", 0, 20, 0);
+    createDropObjectTexture(27, 17, 510, 56, 114, 107, 3, 3, "shield", "equipment", 0, 15, 0);
+    createDropObjectTexture(40, 60, 516, 394, 114, 107, 3, 3, "ring", "equipment", 0, 0, 50);
+    createDropObjectTexture(60, 60, 510, 284, 114, 107, 3, 3, "amulet", "equipment", 10, 10, 10);
 
-    createDropObjectTexture(80, 80, 397, 170, 113, 112, 3, 3, "weapon", "equipment");
-    createDropObjectTexture(110, 88, 397, 282, 113, 112, 3, 3, "weapon", "equipment");
-    createDropObjectTexture(90, 80, 510, 170, 113, 112, 3, 3, "shield", "equipment");
-    createDropObjectTexture(100, 120, 170, 170, 113, 112, 3, 3, "armour", "equipment");
-    createDropObjectTexture(130, 130, 283, 170, 113, 112, 3, 3, "armour", "equipment");
-    createDropObjectTexture(120, 130, 516, 394, 113, 112, 3, 3, "ring", "equipment");
+    createDropObjectTexture(80, 80, 397, 170, 113, 112, 3, 3, "weapon", "equipment", 20, 0, 0);
+    createDropObjectTexture(110, 88, 397, 282, 113, 112, 3, 3, "weapon", "equipment", 40, 0, 0);
+    createDropObjectTexture(90, 80, 510, 170, 113, 112, 3, 3, "shield", "equipment", 0, 30, 0);
+    createDropObjectTexture(100, 120, 170, 170, 113, 112, 3, 3, "armour", "equipment", 0, 40, 0);
+    createDropObjectTexture(130, 130, 283, 170, 113, 112, 3, 3, "armour", "equipment", 0, 80, 0);
+    createDropObjectTexture(120, 130, 516, 394, 113, 112, 3, 3, "ring", "equipment", 0, 0, 100);
 
     createBackgroundObjectTextureHomogenous(50, 100, 0, 497, 35, 35, 5, 5, "pit", "exterior", true);
     createBackgroundObjectTextureHomogenous(

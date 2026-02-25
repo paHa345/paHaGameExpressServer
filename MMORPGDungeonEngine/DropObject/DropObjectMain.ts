@@ -184,6 +184,9 @@ export const pickUpDropNearUser = (
               YSpriteCoord: dropObj.YSpriteCoord,
               sourceXLength: dropObj.sourceX,
               sourceYLength: dropObj.sourceY,
+              damage: dropObj.damage,
+              armour: dropObj.armour,
+              HP: dropObj.HP,
             });
           });
 
@@ -300,6 +303,24 @@ export const equipUserObject = (
 
   // удаляем объект из яцейки инвентаря
   game.usersInventoryAndEquipment[socketID].inventory.splice(equipedObj.index, 1);
+
+  io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
+    inventory: game.usersInventoryAndEquipment[socketID].inventory,
+    equipment: game.usersInventoryAndEquipment[socketID].equipment,
+  });
+};
+
+export const takeOffEquipmentObj = (
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+  socketID: string,
+  objectID: string,
+  objectType: "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
+) => {
+  // console.log(game.usersInventoryAndEquipment[socketID].equipment[objectType][0]);
+  game.usersInventoryAndEquipment[socketID].inventory.push(
+    game.usersInventoryAndEquipment[socketID].equipment[objectType][0]
+  );
+  game.usersInventoryAndEquipment[socketID].equipment[objectType] = [];
 
   io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
     inventory: game.usersInventoryAndEquipment[socketID].inventory,

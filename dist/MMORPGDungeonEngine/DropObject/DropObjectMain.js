@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.equipUserObject = exports.pickUpDropNearUser = exports.clearCheckDropNearUserInterval = exports.checkDropNearUser = void 0;
+exports.takeOffEquipmentObj = exports.equipUserObject = exports.pickUpDropNearUser = exports.clearCheckDropNearUserInterval = exports.checkDropNearUser = void 0;
 const gameObject_1 = require("../gameObject/gameObject");
 let checkDropNearUserInterval;
 // const setDropUsersCurrentChanks: {
@@ -132,6 +132,9 @@ const pickUpDropNearUser = (io, socketID, roomID) => {
                             YSpriteCoord: dropObj.YSpriteCoord,
                             sourceXLength: dropObj.sourceX,
                             sourceYLength: dropObj.sourceY,
+                            damage: dropObj.damage,
+                            armour: dropObj.armour,
+                            HP: dropObj.HP,
                         });
                     });
                     io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
@@ -225,3 +228,13 @@ const equipUserObject = (io, socketID, objectID) => {
     });
 };
 exports.equipUserObject = equipUserObject;
+const takeOffEquipmentObj = (io, socketID, objectID, objectType) => {
+    // console.log(game.usersInventoryAndEquipment[socketID].equipment[objectType][0]);
+    gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[objectType][0]);
+    gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[objectType] = [];
+    io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
+        inventory: gameObject_1.game.usersInventoryAndEquipment[socketID].inventory,
+        equipment: gameObject_1.game.usersInventoryAndEquipment[socketID].equipment,
+    });
+};
+exports.takeOffEquipmentObj = takeOffEquipmentObj;

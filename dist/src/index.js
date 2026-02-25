@@ -195,6 +195,10 @@ exports.io.on("connection", (socket) => {
         console.log(objectID);
         (0, DropObjectMain_1.equipUserObject)(exports.io, socket.id, objectID);
     });
+    socket.on("clientTakeOffEquipmentObject", (equipmentObjData) => {
+        console.log(equipmentObjData.equipmentObjectType);
+        (0, DropObjectMain_1.takeOffEquipmentObj)(exports.io, socket.id, equipmentObjData.equipmentObjectID, equipmentObjData.equipmentObjectType);
+    });
     socket.on("clientLevelUpHandler", (upStatData) => {
         //тут увеличиваем харктеристики
         console.log(upStatData);

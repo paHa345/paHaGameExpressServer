@@ -31,6 +31,7 @@ import {
   checkDropNearUser,
   equipUserObject,
   pickUpDropNearUser,
+  takeOffEquipmentObj,
 } from "../MMORPGDungeonEngine/DropObject/DropObjectMain";
 
 dotenv.config();
@@ -264,6 +265,27 @@ io.on("connection", (socket) => {
     console.log(objectID);
     equipUserObject(io, socket.id, objectID);
   });
+
+  socket.on(
+    "clientTakeOffEquipmentObject",
+    (equipmentObjData: { equipmentObjectType: string; equipmentObjectID: string }) => {
+      console.log(equipmentObjData.equipmentObjectType);
+
+      takeOffEquipmentObj(
+        io,
+        socket.id,
+        equipmentObjData.equipmentObjectID,
+        equipmentObjData.equipmentObjectType as
+          | "helmet"
+          | "weapon"
+          | "shield"
+          | "armour"
+          | "boots"
+          | "ring"
+          | "amulet"
+      );
+    }
+  );
 
   socket.on(
     "clientLevelUpHandler",
