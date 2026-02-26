@@ -269,8 +269,6 @@ const createGameField = (socketID) => {
         // addGamerOrNPC("NPC", "orc3", "ORC#5", 100, 0.1, 20, 100, 260);
         (0, moveObjectsMain_1.moveNPCMain)(src_1.io);
     }
-    console.log("Update game field");
-    // console.log(game.dropObject);
     (0, addObjectsMain_1.addGamerOrNPC)({
         addedElType: "gamer",
         objectType: "gamer",

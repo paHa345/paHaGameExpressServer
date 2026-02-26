@@ -616,9 +616,6 @@ export const createGameField = (socketID: string) => {
     moveNPCMain(io);
   }
 
-  console.log("Update game field");
-  // console.log(game.dropObject);
-
   addGamerOrNPC({
     addedElType: "gamer",
     objectType: "gamer",
