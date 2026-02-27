@@ -152,10 +152,9 @@ const pickUpDropNearUser = (io, socketID, roomID) => {
 };
 exports.pickUpDropNearUser = pickUpDropNearUser;
 const equipUserObject = (io, socketID, objectID) => {
-    var _a;
-    console.log(`Equip ${objectID} object to user ${socketID}`);
     // найти данный объект у конкретного пользователя
     // если его нет, то не продолжаем выполнять функцию
+    var _a;
     const equipedObj = {
         index: -1,
         objectType: "",
@@ -222,6 +221,30 @@ const equipUserObject = (io, socketID, objectID) => {
     }
     // удаляем объект из яцейки инвентаря
     gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.splice(equipedObj.index, 1);
+    //добавляем статы к пользователю
+    // при недевании экипировки
+    const equipmentStatData = {
+        damage: 0,
+        armour: 0,
+        HP: 0,
+    };
+    for (const key in gameObject_1.game.usersInventoryAndEquipment[socketID].equipment) {
+        // if (!Object.hasOwn(game.usersInventoryAndEquipment[socketID].equipment, key)) continue;
+        if (gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[key].length === 0) {
+            continue;
+        }
+        console.log(key);
+        equipmentStatData.damage =
+            equipmentStatData.damage +
+                gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[key][0].damage;
+        equipmentStatData.armour =
+            equipmentStatData.armour +
+                gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[key][0].armour;
+        equipmentStatData.HP =
+            equipmentStatData.HP +
+                gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[key][0].HP;
+    }
+    console.log(equipmentStatData);
     io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
         inventory: gameObject_1.game.usersInventoryAndEquipment[socketID].inventory,
         equipment: gameObject_1.game.usersInventoryAndEquipment[socketID].equipment,

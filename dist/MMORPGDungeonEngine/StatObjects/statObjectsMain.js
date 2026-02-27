@@ -26,7 +26,6 @@ const reduceGamerHP = (underAttackObjectID, attackObjectID) => {
         (gameObject_1.game.statObj.gamers[underAttackObjectID].currentHP /
             gameObject_1.game.statObj.gamers[underAttackObjectID].baseHP) *
             100;
-    console.log("Gamer Stat");
     console.log(gameObject_1.game.statObj.gamers[underAttackObjectID].currentHP);
 };
 exports.reduceGamerHP = reduceGamerHP;

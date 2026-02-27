@@ -215,8 +215,6 @@ export const equipUserObject = (
   socketID: string,
   objectID: string
 ) => {
-  console.log(`Equip ${objectID} object to user ${socketID}`);
-
   // найти данный объект у конкретного пользователя
   // если его нет, то не продолжаем выполнять функцию
 
@@ -303,6 +301,47 @@ export const equipUserObject = (
 
   // удаляем объект из яцейки инвентаря
   game.usersInventoryAndEquipment[socketID].inventory.splice(equipedObj.index, 1);
+
+  //добавляем статы к пользователю
+  // при недевании экипировки
+
+  const equipmentStatData = {
+    damage: 0,
+    armour: 0,
+    HP: 0,
+  };
+
+  for (const key in game.usersInventoryAndEquipment[socketID].equipment) {
+    // if (!Object.hasOwn(game.usersInventoryAndEquipment[socketID].equipment, key)) continue;
+
+    if (
+      game.usersInventoryAndEquipment[socketID].equipment[
+        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
+      ].length === 0
+    ) {
+      continue;
+    }
+
+    console.log(key);
+
+    equipmentStatData.damage =
+      equipmentStatData.damage +
+      game.usersInventoryAndEquipment[socketID].equipment[
+        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
+      ][0].damage;
+    equipmentStatData.armour =
+      equipmentStatData.armour +
+      game.usersInventoryAndEquipment[socketID].equipment[
+        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
+      ][0].armour;
+    equipmentStatData.HP =
+      equipmentStatData.HP +
+      game.usersInventoryAndEquipment[socketID].equipment[
+        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
+      ][0].HP;
+  }
+
+  console.log(equipmentStatData);
 
   io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
     inventory: game.usersInventoryAndEquipment[socketID].inventory,
