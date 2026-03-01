@@ -18,6 +18,6 @@ const connectMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
     if (mongoose_1.default.connection.readyState === 1) {
         return mongoose_1.default.connection.asPromise();
     }
-    return yield mongoose_1.default.connect(`mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@95.140.157.193:27017/paHaGTSGameDB?authSource=admin&directConnection=true`);
+    return yield mongoose_1.default.connect(`mongodb+srv://Vercel-Admin-${process.env.MONGODB_USERNAME}-VercelDB:${process.env.MONGODB_PASSWORD}@paha345-verceldb.z4hjuwq.mongodb.net/paHaGameDB?retryWrites=true&w=majority`);
 });
 exports.connectMongoDB = connectMongoDB;

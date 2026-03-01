@@ -5,6 +5,6 @@ export const connectMongoDB = async () => {
     return mongoose.connection.asPromise();
   }
   return await mongoose.connect(
-    `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@95.140.157.193:27017/paHaGTSGameDB?authSource=admin&directConnection=true`
+    `mongodb+srv://Vercel-Admin-${process.env.MONGODB_USERNAME}-VercelDB:${process.env.MONGODB_PASSWORD}@paha345-verceldb.z4hjuwq.mongodb.net/paHaGameDB?retryWrites=true&w=majority`,
   );
 };
