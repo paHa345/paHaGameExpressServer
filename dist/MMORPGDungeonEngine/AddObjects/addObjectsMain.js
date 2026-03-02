@@ -25,6 +25,9 @@ const addGamerOrNPC = (addedObjectData) => {
             currentLVLUserPoint: 0,
             currentLVLMaxPoint: 10,
             levelPoints: 0,
+            equipmentArmour: 0,
+            equipmentDamage: 0,
+            equipmentHP: 0,
         };
     }
     else {

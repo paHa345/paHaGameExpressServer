@@ -305,43 +305,7 @@ export const equipUserObject = (
   //добавляем статы к пользователю
   // при недевании экипировки
 
-  const equipmentStatData = {
-    damage: 0,
-    armour: 0,
-    HP: 0,
-  };
-
-  for (const key in game.usersInventoryAndEquipment[socketID].equipment) {
-    // if (!Object.hasOwn(game.usersInventoryAndEquipment[socketID].equipment, key)) continue;
-
-    if (
-      game.usersInventoryAndEquipment[socketID].equipment[
-        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
-      ].length === 0
-    ) {
-      continue;
-    }
-
-    console.log(key);
-
-    equipmentStatData.damage =
-      equipmentStatData.damage +
-      game.usersInventoryAndEquipment[socketID].equipment[
-        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
-      ][0].damage;
-    equipmentStatData.armour =
-      equipmentStatData.armour +
-      game.usersInventoryAndEquipment[socketID].equipment[
-        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
-      ][0].armour;
-    equipmentStatData.HP =
-      equipmentStatData.HP +
-      game.usersInventoryAndEquipment[socketID].equipment[
-        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
-      ][0].HP;
-  }
-
-  console.log(equipmentStatData);
+  calclateEquipmentUserStat(socketID, io);
 
   io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
     inventory: game.usersInventoryAndEquipment[socketID].inventory,
@@ -361,8 +325,63 @@ export const takeOffEquipmentObj = (
   );
   game.usersInventoryAndEquipment[socketID].equipment[objectType] = [];
 
+  calclateEquipmentUserStat(socketID, io);
+
   io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
     inventory: game.usersInventoryAndEquipment[socketID].inventory,
     equipment: game.usersInventoryAndEquipment[socketID].equipment,
+  });
+};
+
+export const calclateEquipmentUserStat = (
+  socketID: string,
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+) => {
+  const equipmentStatData = {
+    damage: 0,
+    armour: 0,
+    HP: 0,
+  };
+
+  for (const key in game.usersInventoryAndEquipment[socketID].equipment) {
+    // if (!Object.hasOwn(game.usersInventoryAndEquipment[socketID].equipment, key)) continue;
+
+    if (
+      game.usersInventoryAndEquipment[socketID].equipment[
+        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
+      ].length === 0
+    ) {
+      continue;
+    }
+
+    equipmentStatData.damage =
+      equipmentStatData.damage +
+      game.usersInventoryAndEquipment[socketID].equipment[
+        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
+      ][0].damage;
+    equipmentStatData.armour =
+      equipmentStatData.armour +
+      game.usersInventoryAndEquipment[socketID].equipment[
+        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
+      ][0].armour;
+    equipmentStatData.HP =
+      equipmentStatData.HP +
+      game.usersInventoryAndEquipment[socketID].equipment[
+        key as "helmet" | "weapon" | "shield" | "armour" | "boots" | "ring" | "amulet"
+      ][0].HP;
+  }
+
+  console.log(equipmentStatData);
+  game.statObj.gamers[socketID].baseHP =
+    game.statObj.gamers[socketID].baseHP - game.statObj.gamers[socketID].equipmentHP;
+  game.statObj.gamers[socketID].equipmentDamage = equipmentStatData.damage;
+  game.statObj.gamers[socketID].equipmentArmour = equipmentStatData.armour;
+  game.statObj.gamers[socketID].equipmentHP = equipmentStatData.HP;
+  game.statObj.gamers[socketID].baseHP =
+    game.statObj.gamers[socketID].baseHP + equipmentStatData.HP;
+
+  io.to(socketID).emit("serverIncreaseUserXP", {
+    userID: socketID,
+    userStat: game.statObj.gamers[socketID],
   });
 };

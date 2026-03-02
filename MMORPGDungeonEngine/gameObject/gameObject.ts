@@ -134,6 +134,9 @@ export interface IGameMain {
         currentLVLUserPoint: number;
         currentLVLMaxPoint: number;
         levelPoints: number;
+        equipmentDamage: number;
+        equipmentArmour: number;
+        equipmentHP: number;
       };
     };
   };

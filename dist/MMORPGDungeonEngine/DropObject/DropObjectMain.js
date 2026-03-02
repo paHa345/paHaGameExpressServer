@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.takeOffEquipmentObj = exports.equipUserObject = exports.pickUpDropNearUser = exports.clearCheckDropNearUserInterval = exports.checkDropNearUser = void 0;
+exports.calclateEquipmentUserStat = exports.takeOffEquipmentObj = exports.equipUserObject = exports.pickUpDropNearUser = exports.clearCheckDropNearUserInterval = exports.checkDropNearUser = void 0;
 const gameObject_1 = require("../gameObject/gameObject");
 let checkDropNearUserInterval;
 // const setDropUsersCurrentChanks: {
@@ -223,6 +223,25 @@ const equipUserObject = (io, socketID, objectID) => {
     gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.splice(equipedObj.index, 1);
     //добавляем статы к пользователю
     // при недевании экипировки
+    (0, exports.calclateEquipmentUserStat)(socketID, io);
+    io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
+        inventory: gameObject_1.game.usersInventoryAndEquipment[socketID].inventory,
+        equipment: gameObject_1.game.usersInventoryAndEquipment[socketID].equipment,
+    });
+};
+exports.equipUserObject = equipUserObject;
+const takeOffEquipmentObj = (io, socketID, objectID, objectType) => {
+    // console.log(game.usersInventoryAndEquipment[socketID].equipment[objectType][0]);
+    gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[objectType][0]);
+    gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[objectType] = [];
+    (0, exports.calclateEquipmentUserStat)(socketID, io);
+    io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
+        inventory: gameObject_1.game.usersInventoryAndEquipment[socketID].inventory,
+        equipment: gameObject_1.game.usersInventoryAndEquipment[socketID].equipment,
+    });
+};
+exports.takeOffEquipmentObj = takeOffEquipmentObj;
+const calclateEquipmentUserStat = (socketID, io) => {
     const equipmentStatData = {
         damage: 0,
         armour: 0,
@@ -233,7 +252,6 @@ const equipUserObject = (io, socketID, objectID) => {
         if (gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[key].length === 0) {
             continue;
         }
-        console.log(key);
         equipmentStatData.damage =
             equipmentStatData.damage +
                 gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[key][0].damage;
@@ -245,19 +263,16 @@ const equipUserObject = (io, socketID, objectID) => {
                 gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[key][0].HP;
     }
     console.log(equipmentStatData);
-    io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
-        inventory: gameObject_1.game.usersInventoryAndEquipment[socketID].inventory,
-        equipment: gameObject_1.game.usersInventoryAndEquipment[socketID].equipment,
+    gameObject_1.game.statObj.gamers[socketID].baseHP =
+        gameObject_1.game.statObj.gamers[socketID].baseHP - gameObject_1.game.statObj.gamers[socketID].equipmentHP;
+    gameObject_1.game.statObj.gamers[socketID].equipmentDamage = equipmentStatData.damage;
+    gameObject_1.game.statObj.gamers[socketID].equipmentArmour = equipmentStatData.armour;
+    gameObject_1.game.statObj.gamers[socketID].equipmentHP = equipmentStatData.HP;
+    gameObject_1.game.statObj.gamers[socketID].baseHP =
+        gameObject_1.game.statObj.gamers[socketID].baseHP + equipmentStatData.HP;
+    io.to(socketID).emit("serverIncreaseUserXP", {
+        userID: socketID,
+        userStat: gameObject_1.game.statObj.gamers[socketID],
     });
 };
-exports.equipUserObject = equipUserObject;
-const takeOffEquipmentObj = (io, socketID, objectID, objectType) => {
-    // console.log(game.usersInventoryAndEquipment[socketID].equipment[objectType][0]);
-    gameObject_1.game.usersInventoryAndEquipment[socketID].inventory.push(gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[objectType][0]);
-    gameObject_1.game.usersInventoryAndEquipment[socketID].equipment[objectType] = [];
-    io.to(socketID).emit("setUserEquipmentAndInventoryFromServer", {
-        inventory: gameObject_1.game.usersInventoryAndEquipment[socketID].inventory,
-        equipment: gameObject_1.game.usersInventoryAndEquipment[socketID].equipment,
-    });
-};
-exports.takeOffEquipmentObj = takeOffEquipmentObj;
+exports.calclateEquipmentUserStat = calclateEquipmentUserStat;
