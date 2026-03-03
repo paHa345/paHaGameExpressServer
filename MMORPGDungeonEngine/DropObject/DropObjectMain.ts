@@ -374,11 +374,16 @@ export const calclateEquipmentUserStat = (
   console.log(equipmentStatData);
   game.statObj.gamers[socketID].baseHP =
     game.statObj.gamers[socketID].baseHP - game.statObj.gamers[socketID].equipmentHP;
+  game.statObj.gamers[socketID].currentHP =
+    game.statObj.gamers[socketID].currentHP - game.statObj.gamers[socketID].equipmentHP;
+
   game.statObj.gamers[socketID].equipmentDamage = equipmentStatData.damage;
   game.statObj.gamers[socketID].equipmentArmour = equipmentStatData.armour;
   game.statObj.gamers[socketID].equipmentHP = equipmentStatData.HP;
   game.statObj.gamers[socketID].baseHP =
     game.statObj.gamers[socketID].baseHP + equipmentStatData.HP;
+  game.statObj.gamers[socketID].currentHP =
+    game.statObj.gamers[socketID].currentHP + equipmentStatData.HP;
 
   io.to(socketID).emit("serverIncreaseUserXP", {
     userID: socketID,
